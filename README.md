@@ -1,16 +1,50 @@
-# myapp
+## Struktur Folder
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+lib/
+└── pages/
+    └── home/
+        ├── dashboard/
+        │   ├── keuangan_page.dart
+        │   ├── kegiatan_page.dart
+        │   └── kependudukan_page.dart
+        ├── data_warga_rumah/
+        │   ├── warga_daftar_page.dart
+        │   ├── warga_tambah_page.dart
+        │   ├── keluarga_page.dart
+        │   ├── rumah_daftar_page.dart
+        │   └── rumah_tambah_page.dart
+        ├── pemasukan/
+        │   ├── kategori_iuran_page.dart
+        │   ├── tagih_iuran_page.dart
+        │   ├── tagihan_page.dart
+        │   ├── pemasukan_lain_daftar_page.dart
+        │   └── pemasukan_lain_tambah_page.dart
+        ├── pengeluaran/
+        │   ├── daftar_page.dart
+        │   └── tambah_page.dart
+        ├── laporan_keuangan/
+        │   ├── semua_pemasukan_page.dart
+        │   ├── semua_pengeluaran_page.dart
+        │   └── cetak_laporan_page.dart
+        ├── kegiatan_broadcast/
+        │   ├── kegiatan_daftar_page.dart
+        │   ├── kegiatan_tambah_page.dart
+        │   ├── broadcast_daftar_page.dart
+        │   └── broadcast_tambah_page.dart
+        ├── pesan_warga/
+        │   └── informasi_aspirasi_page.dart
+        ├── penerimaan_warga/
+        │   └── penerimaan_warga_page.dart
+        ├── mutasi_keluarga/
+        │   ├── daftar_page.dart
+        │   └── tambah_page.dart
+        ├── log_aktifitas/
+        │   └── semua_aktifitas_page.dart
+        ├── manajemen_pengguna/
+        │   ├── daftar_pengguna_page.dart
+        │   └── tambah_pengguna_page.dart
+        └── channel_transfer/
+            ├── daftar_channel_page.dart
+            └── tambah_channel_page.dart
+```
