@@ -17,7 +17,7 @@ class LoginActionSection extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () {
-              Navigator.pushNamed(context, '/home');
+              Navigator.pushNamed(context, '/kegiatan');
             },
             child: const Text('Login', style: TextStyle(fontSize: 16, color: Colors.white)),
           ),
