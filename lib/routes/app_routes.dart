@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/pages/auth/login_page.dart';
 import 'package:myapp/pages/auth/register_page.dart';
 import 'package:myapp/pages/home/dashboard/kegiatan_page.dart';
-import 'package:myapp/pages/home/warga_rumah/rumah_tambah_page.dart';
+import 'package:myapp/pages/home/data_warga_rumah/rumah_tambah_page.dart';
 import 'package:myapp/pages/home/kegiatan_broadcast/broadcast_tambah_page.dart'; 
 
 class AppRoutes {
