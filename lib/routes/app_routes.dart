@@ -19,6 +19,10 @@ import 'package:myapp/pages/home/channel_transfer/tambah_channel_page.dart';
 import 'package:myapp/pages/home/pesan_warga/informasi_aspirasi_page.dart';
 import 'package:myapp/pages/home/mutasi_keluarga/tambah_mutasi_page.dart';
 import 'package:myapp/pages/home/pengeluaran/tambah_page.dart';
+import 'package:myapp/pages/home/kegiatan_broadcast/broadcast_daftar_page.dart';
+import 'package:myapp/pages/home/laporan_keuangan/cetak_laporan_page.dart';
+import 'package:myapp/pages/home/manajemen_pengguna/daftar_pengguna_page.dart';
+import 'package:myapp/pages/home/penerimaan_warga/penerimaan_warga_page.dart';
 
 class AppRoutes {
   static const login = '/login';
@@ -31,6 +35,7 @@ class AppRoutes {
   static const wargaDaftar = '/warga_daftar';
 
   static const broadcastTambah = '/broadcast_tambah';
+  static const broadcastDaftar = '/broadcast_daftar';
   static const kegiatanDaftar = '/kegiatan_daftar';
 
   static const tagihIuran = '/tagih_iuran';
@@ -45,6 +50,9 @@ class AppRoutes {
   static const tambahMutasiPage = '/tambah_mutasi_page';
 
   static const tambahPengeluaran = '/tambah_pengeluaran';
+  static const cetakLaporan = '/cetak_laporan';
+  static const daftarPengguna = '/daftar_pengguna';
+  static const penerimaanWarga = '/penerimaan_warga';
 
   static final Map<String, WidgetBuilder> routes = {
     // Auth
@@ -61,6 +69,7 @@ class AppRoutes {
 
     // Kegiatan & Broadcast
     broadcastTambah: (context) => const BroadcastTambahPage(),
+    broadcastDaftar: (context) => const BroadcastDaftarPage(),
     kegiatanDaftar: (context) => const KegiatanDaftarPage(),
 
     // Pemasukan
@@ -69,12 +78,14 @@ class AppRoutes {
 
     // Laporan Keuangan
     semuaPemasukan: (context) => const SemuaPemasukanPage(),
+    cetakLaporan: (context) => const CetakLaporanPage(),
 
     // Log Aktifitas
     semuaAktifitasPage: (context) => const SemuaAktifitasPage(),
 
     // Manajemen Pengguna
     tambahPengguna: (context) => const TambahPenggunaPage(),
+    daftarPengguna: (context) => const DaftarPenggunaPage(),
 
     // Channel Transfer
     daftarChannel: (context) => const DaftarChannelPage(),
@@ -88,5 +99,8 @@ class AppRoutes {
 
     // Pengeluaran
     tambahPengeluaran: (context) => const TambahPage(),
+
+    // Penerimaan Warga
+    penerimaanWarga: (context) => const PenerimaanWargaPage(),
   };
 }

@@ -27,19 +27,19 @@ final Map<String, String> childToRoute = {
   // Laporan Keuangan
   "Semua Pemasukan": AppRoutes.semuaPemasukan,
   // "Semua Pengeluaran": belum ada route
-  // "Cetak Laporan": belum ada route
+  "Cetak Laporan": AppRoutes.cetakLaporan,
 
   // Kegiatan & Broadcast
   "Kegiatan - Daftar": AppRoutes.kegiatanDaftar,
   // "Kegiatan - Tambah": belum ada route
-  // "Broadcast - Daftar": belum ada route
+  "Broadcast - Daftar": AppRoutes.broadcastDaftar,
   "Broadcast - Tambah": AppRoutes.broadcastTambah,
 
   // Pesan Warga
   "Informasi Aspirasi": AppRoutes.informasiAspirasiPage,
 
   // Penerimaan Warga
-  // "Penerimaan Warga": belum ada route
+  "Penerimaan Warga": AppRoutes.penerimaanWarga,
 
   // Mutasi Keluarga
   // "Daftar Mutasi": belum ada route
@@ -49,7 +49,7 @@ final Map<String, String> childToRoute = {
   "Semua Aktifitas": AppRoutes.semuaAktifitasPage,
 
   // Manajemen Pengguna
-  // "Daftar Pengguna": belum ada route
+  "Daftar Pengguna": AppRoutes.daftarPengguna,
   "Tambah Pengguna": AppRoutes.tambahPengguna,
 
   // Channel Transfer
