@@ -62,7 +62,7 @@ const List<NavItem> menuItems = [
   NavItem(
     title: "Mutasi Keluarga",
     icon: Icons.sync_alt,
-    children: ["Daftar", "Tambah"],
+    children: ["Daftar Mutasi", "Tambah Mutasi"],
   ),
   NavItem(
     title: "Log Aktifitas",

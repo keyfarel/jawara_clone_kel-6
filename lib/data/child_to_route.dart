@@ -4,21 +4,21 @@ final Map<String, String> childToRoute = {
   // Dashboard
   "Keuangan": AppRoutes.keuangan,
   "Kegiatan": AppRoutes.kegiatan,
-  // "Kependudukan": belum ada route
+  "Kependudukan": AppRoutes.kependudukan,
 
   // Data Warga & Rumah
   "Warga - Daftar": AppRoutes.wargaDaftar,
   // "Warga - Tambah": belum ada route
   // "Keluarga": belum ada route
-  // "Rumah - Daftar": belum ada route
+  "Rumah - Daftar": AppRoutes.rumahDaftar,
   "Rumah - Tambah": AppRoutes.rumahTambah,
 
   // Pemasukan
   "Kategori Iuran": AppRoutes.kategoriIuran,
   "Tagih Iuran": AppRoutes.tagihIuran,
   // "Tagihan": belum ada route
-  // "Pemasukan Lain - Daftar": belum ada route
-  // "Pemasukan Lain - Tambah": belum ada route
+  "Pemasukan Lain - Daftar": AppRoutes.pemasukanDaftar,
+  "Pemasukan Lain - Tambah": AppRoutes.pemasukanTambah,
 
   // Pengeluaran
   // "Daftar": belum ada route
@@ -31,7 +31,7 @@ final Map<String, String> childToRoute = {
 
   // Kegiatan & Broadcast
   "Kegiatan - Daftar": AppRoutes.kegiatanDaftar,
-  // "Kegiatan - Tambah": belum ada route
+  "Kegiatan - Tambah": AppRoutes.kegiatanTambah,
   "Broadcast - Daftar": AppRoutes.broadcastDaftar,
   "Broadcast - Tambah": AppRoutes.broadcastTambah,
 
@@ -42,8 +42,8 @@ final Map<String, String> childToRoute = {
   "Penerimaan Warga": AppRoutes.penerimaanWarga,
 
   // Mutasi Keluarga
-  // "Daftar Mutasi": belum ada route
-  "Tambah Mutasi": AppRoutes.tambahMutasiPage,
+  "Daftar Mutasi": AppRoutes.daftarMutasi,
+  "Tambah Mutasi": AppRoutes.tambahMutasi,
 
   // Log Aktifitas
   "Semua Aktifitas": AppRoutes.semuaAktifitasPage,

@@ -4,11 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:myapp/pages/auth/login_page.dart';
 import 'package:myapp/pages/auth/register_page.dart';
 import 'package:myapp/pages/home/dashboard/kegiatan_page.dart';
+import 'package:myapp/pages/home/dashboard/kependudukan_page.dart';
 import 'package:myapp/pages/home/dashboard/keuangan_page.dart';
+import 'package:myapp/pages/home/data_warga_rumah/rumah_daftar_page.dart';
 import 'package:myapp/pages/home/data_warga_rumah/rumah_tambah_page.dart';
 import 'package:myapp/pages/home/data_warga_rumah/warga_daftar_page.dart';
 import 'package:myapp/pages/home/kegiatan_broadcast/broadcast_tambah_page.dart';
 import 'package:myapp/pages/home/kegiatan_broadcast/kegiatan_daftar_page.dart';
+import 'package:myapp/pages/home/kegiatan_broadcast/kegiatan_tambah_page.dart';
+import 'package:myapp/pages/home/mutasi_keluarga/daftar_mutasi_page.dart';
+import 'package:myapp/pages/home/pemasukan/pemasukan_lain_daftar_page.dart';
+import 'package:myapp/pages/home/pemasukan/pemasukan_lain_tambah_page.dart';
 import 'package:myapp/pages/home/pemasukan/tagih_iuran_page.dart';
 import 'package:myapp/pages/home/pemasukan/kategori_iuran_page.dart';
 import 'package:myapp/pages/home/laporan_keuangan/semua_pemasukan_page.dart';
@@ -30,9 +36,12 @@ class AppRoutes {
 
   static const kegiatan = '/kegiatan';
   static const keuangan = '/keuangan';
+  static const kependudukan = '/kependudukan';
+  static const kegiatanTambah = '/kegiatan_tambah';
 
   static const rumahTambah = '/rumah_tambah';
   static const wargaDaftar = '/warga_daftar';
+  static const rumahDaftar = '/rumah-daftar';
 
   static const broadcastTambah = '/broadcast_tambah';
   static const broadcastDaftar = '/broadcast_daftar';
@@ -43,11 +52,14 @@ class AppRoutes {
   static const semuaPemasukan = '/semua_pemasukan';
   static const semuaAktifitasPage = '/semua_aktifitas_page';
   static const tambahPengguna = '/tambah_pengguna';
+  static const pemasukanTambah = '/pemasukan_tambah';
+  static const pemasukanDaftar = '/pemasukan_daftar';
 
   static const daftarChannel = '/daftar_channel';
   static const tambahChannel = '/tambah_channel';
   static const informasiAspirasiPage = '/informasi_aspirasi_page';
-  static const tambahMutasiPage = '/tambah_mutasi_page';
+  static const tambahMutasi = '/tambah_mutasi';
+  static const daftarMutasi = '/mutasi_daftar';
 
   static const tambahPengeluaran = '/tambah_pengeluaran';
   static const cetakLaporan = '/cetak_laporan';
@@ -62,19 +74,24 @@ class AppRoutes {
     // Dashboard
     kegiatan: (context) => const KegiatanPage(),
     keuangan: (context) => const KeuanganPage(),
+    kependudukan: (context) => const KependudukanPage(),
 
     // Data Warga & Rumah
     rumahTambah: (context) => const RumahTambahPage(),
     wargaDaftar: (context) => const WargaDaftarPage(),
+    rumahDaftar: (context) => const RumahDaftarPage(),
 
     // Kegiatan & Broadcast
     broadcastTambah: (context) => const BroadcastTambahPage(),
     broadcastDaftar: (context) => const BroadcastDaftarPage(),
     kegiatanDaftar: (context) => const KegiatanDaftarPage(),
+    kegiatanTambah: (context) => const KegiatanTambahPage(),
 
     // Pemasukan
     tagihIuran: (context) => const TagihIuranPage(),
     kategoriIuran: (context) => const KategoriIuranPage(),
+    pemasukanTambah: (context) => const PemasukanLainTambahPage(),
+    pemasukanDaftar: (context) => const PemasukanLainDaftarPage(),
 
     // Laporan Keuangan
     semuaPemasukan: (context) => const SemuaPemasukanPage(),
@@ -95,7 +112,8 @@ class AppRoutes {
     informasiAspirasiPage: (context) => const InformasiAspirasiPage(),
 
     // Mutasi Keluarga
-    tambahMutasiPage: (context) => const TambahMutasiPage(),
+    tambahMutasi: (context) => const TambahMutasiPage(),
+    daftarMutasi: (context) => const DaftarMutasiPage(),
 
     // Pengeluaran
     tambahPengeluaran: (context) => const TambahPage(),
