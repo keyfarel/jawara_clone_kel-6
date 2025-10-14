@@ -10,6 +10,7 @@ import 'package:myapp/pages/home/data_warga_rumah/warga_daftar_page.dart';
 import 'package:myapp/pages/home/kegiatan_broadcast/broadcast_tambah_page.dart';
 import 'package:myapp/pages/home/kegiatan_broadcast/kegiatan_daftar_page.dart';
 import 'package:myapp/pages/home/pemasukan/tagih_iuran_page.dart';
+import 'package:myapp/pages/home/pemasukan/kategori_iuran_page.dart';
 import 'package:myapp/pages/home/laporan_keuangan/semua_pemasukan_page.dart';
 import 'package:myapp/pages/home/log_aktifitas/semua_aktifitas_page.dart';
 import 'package:myapp/pages/home/manajemen_pengguna/tambah_pengguna_page.dart';
@@ -17,6 +18,7 @@ import 'package:myapp/pages/home/channel_transfer/daftar_channel_page.dart';
 import 'package:myapp/pages/home/channel_transfer/tambah_channel_page.dart';
 import 'package:myapp/pages/home/pesan_warga/informasi_aspirasi_page.dart';
 import 'package:myapp/pages/home/mutasi_keluarga/tambah_mutasi_page.dart';
+import 'package:myapp/pages/home/pengeluaran/tambah_page.dart';
 
 class AppRoutes {
   static const login = '/login';
@@ -32,6 +34,7 @@ class AppRoutes {
   static const kegiatanDaftar = '/kegiatan_daftar';
 
   static const tagihIuran = '/tagih_iuran';
+  static const kategoriIuran = '/kategori_iuran';
   static const semuaPemasukan = '/semua_pemasukan';
   static const semuaAktifitasPage = '/semua_aktifitas_page';
   static const tambahPengguna = '/tambah_pengguna';
@@ -40,6 +43,8 @@ class AppRoutes {
   static const tambahChannel = '/tambah_channel';
   static const informasiAspirasiPage = '/informasi_aspirasi_page';
   static const tambahMutasiPage = '/tambah_mutasi_page';
+
+  static const tambahPengeluaran = '/tambah_pengeluaran';
 
   static final Map<String, WidgetBuilder> routes = {
     // Auth
@@ -60,6 +65,7 @@ class AppRoutes {
 
     // Pemasukan
     tagihIuran: (context) => const TagihIuranPage(),
+    kategoriIuran: (context) => const KategoriIuranPage(),
 
     // Laporan Keuangan
     semuaPemasukan: (context) => const SemuaPemasukanPage(),
@@ -79,5 +85,8 @@ class AppRoutes {
 
     // Mutasi Keluarga
     tambahMutasiPage: (context) => const TambahMutasiPage(),
+
+    // Pengeluaran
+    tambahPengeluaran: (context) => const TambahPage(),
   };
 }

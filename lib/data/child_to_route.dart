@@ -14,7 +14,7 @@ final Map<String, String> childToRoute = {
   "Rumah - Tambah": AppRoutes.rumahTambah,
 
   // Pemasukan
-  // "Kategori Iuran": belum ada route
+  "Kategori Iuran": AppRoutes.kategoriIuran,
   "Tagih Iuran": AppRoutes.tagihIuran,
   // "Tagihan": belum ada route
   // "Pemasukan Lain - Daftar": belum ada route
@@ -22,7 +22,7 @@ final Map<String, String> childToRoute = {
 
   // Pengeluaran
   // "Daftar": belum ada route
-  // "Tambah": belum ada route
+  "Tambah": AppRoutes.tambahPengeluaran,
 
   // Laporan Keuangan
   "Semua Pemasukan": AppRoutes.semuaPemasukan,
