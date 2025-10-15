@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../layouts/pages_layout.dart';
 
 class KegiatanDaftarPage extends StatefulWidget {
   const KegiatanDaftarPage({super.key});
@@ -34,19 +35,24 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Daftar Kegiatan'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: _showSearchDialog,
-          ),
-          IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: _showFilterDialog,
-          ),
-        ],
+    return PageLayout(
+      title: 'Daftar Kegiatan',
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: _showSearchDialog,
+        ),
+        IconButton(
+          icon: const Icon(Icons.filter_list),
+          onPressed: _showFilterDialog,
+        ),
+      ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigasi ke tambah kegiatan
+        },
+        backgroundColor: Colors.blue.shade700,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       body: ListView.builder(
         itemCount: daftarKegiatan.length,
@@ -54,6 +60,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
           final kegiatan = daftarKegiatan[index];
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            elevation: 2,
             child: ListTile(
               leading: Container(
                 width: 50,
@@ -78,8 +85,27 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 4),
-                  Text('📅 ${kegiatan['tanggal']}'),
-                  Text('📍 ${kegiatan['lokasi']}'),
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_today, size: 14, color: Colors.grey[600]),
+                      const SizedBox(width: 4),
+                      Text(
+                        kegiatan['tanggal']!,
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Icon(Icons.location_on, size: 14, color: Colors.grey[600]),
+                      const SizedBox(width: 4),
+                      Text(
+                        kegiatan['lokasi']!,
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
                 ],
               ),
               trailing: Container(
@@ -104,12 +130,6 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigasi ke tambah kegiatan
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
 
@@ -132,14 +152,37 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(kegiatan['nama']!),
+        title: Text(
+          kegiatan['nama']!,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Tanggal: ${kegiatan['tanggal']}'),
-            Text('Lokasi: ${kegiatan['lokasi']}'),
-            Text('Status: ${kegiatan['status']}'),
+            Row(
+              children: [
+                Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 8),
+                Text('Tanggal: ${kegiatan['tanggal']}'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 8),
+                Text('Lokasi: ${kegiatan['lokasi']}'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.info, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 8),
+                Text('Status: ${kegiatan['status']}'),
+              ],
+            ),
           ],
         ),
         actions: [
@@ -167,6 +210,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
         content: TextField(
           decoration: const InputDecoration(
             hintText: 'Masukkan nama kegiatan...',
+            border: OutlineInputBorder(),
           ),
           onChanged: (value) {
             // Implementasi pencarian
@@ -177,7 +221,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
             onPressed: () => Navigator.pop(context),
             child: const Text('Batal'),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               // Implementasi pencarian
               Navigator.pop(context);
@@ -198,6 +242,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
+              leading: const Icon(Icons.all_inclusive),
               title: const Text('Semua Status'),
               onTap: () {
                 // Filter semua
@@ -205,6 +250,7 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.schedule, color: Colors.orange),
               title: const Text('Akan Datang'),
               onTap: () {
                 // Filter akan datang
@@ -212,9 +258,18 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.check_circle, color: Colors.green),
               title: const Text('Selesai'),
               onTap: () {
                 // Filter selesai
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.cancel, color: Colors.red),
+              title: const Text('Dibatalkan'),
+              onTap: () {
+                // Filter dibatalkan
                 Navigator.pop(context);
               },
             ),
