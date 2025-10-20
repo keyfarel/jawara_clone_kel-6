@@ -8,8 +8,8 @@ final Map<String, String> childToRoute = {
 
   // Data Warga & Rumah
   "Warga - Daftar": AppRoutes.wargaDaftar,
-  // "Warga - Tambah": belum ada route
-  // "Keluarga": belum ada route
+  "Warga - Tambah": AppRoutes.wargaTambah,
+  "Keluarga": AppRoutes.keluarga,
   "Rumah - Daftar": AppRoutes.rumahDaftar,
   "Rumah - Tambah": AppRoutes.rumahTambah,
 
