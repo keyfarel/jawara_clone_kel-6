@@ -20,14 +20,10 @@ class PageLayout extends StatelessWidget {
     return Scaffold(
       drawer: const SideNavWidget(),
       appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
         title: Text(
           title,
           style: const TextStyle(
             fontWeight: FontWeight.w600,
-            color: Colors.white,
           ),
         ),
         backgroundColor: Colors.blue.shade700,

@@ -1,3 +1,4 @@
+// TODO: Implement daftar_pengguna_page.dart
 import 'package:flutter/material.dart';
 import '../../../layouts/pages_layout.dart';
 
@@ -6,157 +7,12 @@ class DaftarPenggunaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Data contoh
-    final List<Map<String, String>> pengguna = [
-      {'no': '1', 'nama': 'Rendha Putra Rahmadya', 'email': 'rendha@mail.com'},
-      {'no': '2', 'nama': 'bla', 'email': 'y@gmail.com'},
-      {'no': '3', 'nama': 'Anti Micin', 'email': 'anti@mail.com'},
-      {'no': '4', 'nama': 'ijat4', 'email': 'ijat4@mail.com'},
-      {'no': '5', 'nama': 'ijat3', 'email': 'ijat3@mail.com'},
-      {'no': '6', 'nama': 'ijat2', 'email': 'ijat2@mail.com'},
-      {'no': '7', 'nama': 'AFIFAH KHOIRUNNISA', 'email': 'afi@mail.com'},
-      {'no': '8', 'nama': 'Raudhli Firdaus Naufal', 'email': 'raudhli@mail.com'},
-      {'no': '9', 'nama': 'varizky naldiba rimra', 'email': 'zel@mail.com'},
-      {'no': '10', 'nama': 'ASDOPAR', 'email': 'asd@mail.com'},
-    ];
-
     return PageLayout(
-      title: 'Daftar Pengguna',
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  // Tombol Filter
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    child: const Icon(Icons.filter_alt, color: Colors.white),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Tabel Data
-                  Table(
-                    border: const TableBorder(
-                      horizontalInside: BorderSide(
-                        width: 0.5,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    columnWidths: const {
-                      0: FlexColumnWidth(0.5),
-                      1: FlexColumnWidth(2),
-                      2: FlexColumnWidth(2),
-                    },
-                    children: [
-                      const TableRow(
-                        decoration: BoxDecoration(
-                          color: Color(0xFFF7F8FA),
-                        ),
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'NO',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'NAMA',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'EMAIL',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      ...pengguna.map(
-                        (item) => TableRow(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(item['no']!),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(item['nama']!),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(item['email']!),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Pagination
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.chevron_left),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.blueAccent,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        child: const Text(
-                          '1',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.chevron_right),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+      title: 'daftar pengguna',
+      body: const Center(
+        child: Text(
+          'Ini adalah page daftar pengguna',
+          style: TextStyle(fontSize: 20),
         ),
       ),
     );
