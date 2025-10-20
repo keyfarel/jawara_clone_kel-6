@@ -9,7 +9,7 @@ final Map<String, String> childToRoute = {
   // Data Warga & Rumah
   "Warga - Daftar": AppRoutes.wargaDaftar,
   // "Warga - Tambah": belum ada route
-  "Keluarga": AppRoutes.keluarga,
+  // "Keluarga": belum ada route
   "Rumah - Daftar": AppRoutes.rumahDaftar,
   "Rumah - Tambah": AppRoutes.rumahTambah,
 

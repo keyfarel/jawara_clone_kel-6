@@ -6,7 +6,6 @@ import 'package:myapp/pages/auth/register_page.dart';
 import 'package:myapp/pages/home/dashboard/kegiatan_page.dart';
 import 'package:myapp/pages/home/dashboard/kependudukan_page.dart';
 import 'package:myapp/pages/home/dashboard/keuangan_page.dart';
-import 'package:myapp/pages/home/data_warga_rumah/keluarga_page.dart';
 import 'package:myapp/pages/home/data_warga_rumah/rumah_daftar_page.dart';
 import 'package:myapp/pages/home/data_warga_rumah/rumah_tambah_page.dart';
 import 'package:myapp/pages/home/data_warga_rumah/warga_daftar_page.dart';
@@ -40,7 +39,6 @@ class AppRoutes {
   static const kependudukan = '/kependudukan';
   static const kegiatanTambah = '/kegiatan_tambah';
 
-  static const keluarga = '/keluarga';
   static const rumahTambah = '/rumah_tambah';
   static const wargaDaftar = '/warga_daftar';
   static const rumahDaftar = '/rumah-daftar';
@@ -79,7 +77,6 @@ class AppRoutes {
     kependudukan: (context) => const KependudukanPage(),
 
     // Data Warga & Rumah
-    keluarga: (context) => const KeluargaDaftarPage(),
     rumahTambah: (context) => const RumahTambahPage(),
     wargaDaftar: (context) => const WargaDaftarPage(),
     rumahDaftar: (context) => const RumahDaftarPage(),
