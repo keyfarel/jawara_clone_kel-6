@@ -16,17 +16,17 @@ final Map<String, String> childToRoute = {
   // Pemasukan
   "Kategori Iuran": AppRoutes.kategoriIuran,
   "Tagih Iuran": AppRoutes.tagihIuran,
-  // "Tagihan": belum ada route
+  "Tagihan": AppRoutes.tagihan,
   "Pemasukan Lain - Daftar": AppRoutes.pemasukanDaftar,
   "Pemasukan Lain - Tambah": AppRoutes.pemasukanTambah,
 
   // Pengeluaran
-  // "Daftar": belum ada route
+  "Daftar": AppRoutes.daftarPengeluaran,
   "Tambah": AppRoutes.tambahPengeluaran,
 
   // Laporan Keuangan
   "Semua Pemasukan": AppRoutes.semuaPemasukan,
-  // "Semua Pengeluaran": belum ada route
+  "Semua Pengeluaran": AppRoutes.semuaPengeluaran,
   "Cetak Laporan": AppRoutes.cetakLaporan,
 
   // Kegiatan & Broadcast

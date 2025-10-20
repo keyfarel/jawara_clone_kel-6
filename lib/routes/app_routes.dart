@@ -20,12 +20,15 @@ import 'package:myapp/pages/home/pemasukan/pemasukan_lain_tambah_page.dart';
 import 'package:myapp/pages/home/pemasukan/tagih_iuran_page.dart';
 import 'package:myapp/pages/home/pemasukan/kategori_iuran_page.dart';
 import 'package:myapp/pages/home/laporan_keuangan/semua_pemasukan_page.dart';
+import 'package:myapp/pages/home/laporan_keuangan/semua_pengeluaran_page.dart';
 import 'package:myapp/pages/home/log_aktifitas/semua_aktifitas_page.dart';
 import 'package:myapp/pages/home/manajemen_pengguna/tambah_pengguna_page.dart';
 import 'package:myapp/pages/home/channel_transfer/daftar_channel_page.dart';
 import 'package:myapp/pages/home/channel_transfer/tambah_channel_page.dart';
+import 'package:myapp/pages/home/pemasukan/tagihan_page.dart';
 import 'package:myapp/pages/home/pesan_warga/informasi_aspirasi_page.dart';
 import 'package:myapp/pages/home/mutasi_keluarga/tambah_mutasi_page.dart';
+import 'package:myapp/pages/home/pengeluaran/daftar_page.dart';
 import 'package:myapp/pages/home/pengeluaran/tambah_page.dart';
 import 'package:myapp/pages/home/kegiatan_broadcast/broadcast_daftar_page.dart';
 import 'package:myapp/pages/home/laporan_keuangan/cetak_laporan_page.dart';
@@ -54,8 +57,10 @@ class AppRoutes {
   static const tagihIuran = '/tagih_iuran';
   static const kategoriIuran = '/kategori_iuran';
   static const semuaPemasukan = '/semua_pemasukan';
+  static const semuaPengeluaran = '/semua_pengeluaran';
   static const semuaAktifitasPage = '/semua_aktifitas_page';
   static const tambahPengguna = '/tambah_pengguna';
+  static const tagihan = '/tagihan';
   static const pemasukanTambah = '/pemasukan_tambah';
   static const pemasukanDaftar = '/pemasukan_daftar';
 
@@ -65,6 +70,7 @@ class AppRoutes {
   static const tambahMutasi = '/tambah_mutasi';
   static const daftarMutasi = '/mutasi_daftar';
 
+  static const daftarPengeluaran = '/daftar_pengeluaran';
   static const tambahPengeluaran = '/tambah_pengeluaran';
   static const cetakLaporan = '/cetak_laporan';
   static const daftarPengguna = '/daftar_pengguna';
@@ -96,11 +102,13 @@ class AppRoutes {
     // Pemasukan
     tagihIuran: (context) => const TagihIuranPage(),
     kategoriIuran: (context) => const KategoriIuranPage(),
+    tagihan: (context) => const TagihanDaftarPage(),
     pemasukanTambah: (context) => const PemasukanLainTambahPage(),
     pemasukanDaftar: (context) => const PemasukanLainDaftarPage(),
 
     // Laporan Keuangan
     semuaPemasukan: (context) => const SemuaPemasukanPage(),
+    semuaPengeluaran: (context) => const SemuaPengeluaranPage(),
     cetakLaporan: (context) => const CetakLaporanPage(),
 
     // Log Aktifitas
@@ -122,6 +130,7 @@ class AppRoutes {
     daftarMutasi: (context) => const DaftarMutasiPage(),
 
     // Pengeluaran
+    daftarPengeluaran: (context) => const PengeluaranDaftarPage(),
     tambahPengeluaran: (context) => const TambahPage(),
 
     // Penerimaan Warga
