@@ -75,8 +75,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
             elevation: 2,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Row(
@@ -95,15 +94,48 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                   ),
                   const SizedBox(width: 8),
 
-                  // Detail Tagihan
+                  // Detail Tagihan (nama + info + chip status)
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(tagihan.namaKeluarga,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16)),
-                        const SizedBox(height: 4),
+                        // Baris atas: nama + status chip
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                tagihan.namaKeluarga,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: tagihan.status == "Sudah Dibayar"
+                                    ? Colors.green[100]
+                                    : Colors.amber[100],
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Text(
+                                tagihan.status,
+                                style: TextStyle(
+                                  color: tagihan.status == "Sudah Dibayar"
+                                      ? Colors.green[800]
+                                      : Colors.amber[800],
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+
+                        // Informasi lainnya
                         Wrap(
                           spacing: 10,
                           runSpacing: 4,
@@ -120,27 +152,6 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                           ],
                         ),
                       ],
-                    ),
-                  ),
-
-                  // Status Chip
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: tagihan.status == "Sudah Dibayar"
-                          ? Colors.green[100]
-                          : Colors.amber[100],
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Text(
-                      tagihan.status,
-                      style: TextStyle(
-                        color: tagihan.status == "Sudah Dibayar"
-                            ? Colors.green[800]
-                            : Colors.amber[800],
-                        fontWeight: FontWeight.w600,
-                      ),
                     ),
                   ),
                 ],
