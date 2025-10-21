@@ -61,18 +61,47 @@ class KategoriIuranPage extends StatelessWidget {
 
             // ================== Tombol Aksi ==================
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // Tombol tambah
                 ElevatedButton(
                   onPressed: () {
-                    // TODO: tampilkan modal form tambah iuran
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Tambah Iuran'),
+                          content: Form(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _buildTextFormField('Nama Iuran', 'Masukkan nama iuran')(FormFieldState<String>()),
+                                const SizedBox(height: 10),
+                                _buildTextFormField('Jenis Iuran', 'Masukkan jenis iuran')(FormFieldState<String>()),
+                              ],
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Batal'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                // TODO: simpan data ke tabel
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Simpan'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6C63FF),
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(16),
-                    elevation: 2,
                   ),
                   child: const Icon(Icons.add, color: Colors.white),
                 ),
@@ -101,7 +130,7 @@ class KategoriIuranPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
+                    color: Colors.grey.withOpacity(0.2),
                     blurRadius: 6,
                     offset: const Offset(0, 3),
                   ),
@@ -110,8 +139,8 @@ class KategoriIuranPage extends StatelessWidget {
               child: Table(
                 columnWidths: const {
                   0: FixedColumnWidth(40),
-                  1: FlexColumnWidth(2),
-                  2: FlexColumnWidth(2),
+                  1: FlexColumnWidth(1),
+                  2: FlexColumnWidth(1),
                 },
                 border: TableBorder.symmetric(
                   inside: BorderSide(color: Colors.grey.shade300),
@@ -176,5 +205,25 @@ class KategoriIuranPage extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  static FormFieldBuilder<String> _buildTextFormField(String label, String hint) {
+    return (FormFieldState<String> state) {
+      return TextFormField(
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Field ini tidak boleh kosong';
+          }
+          return null;
+        },
+      );
+    };
   }
 }
