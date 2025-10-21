@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/widgets/chart/doughnut_chart_widget.dart';
+import 'package:myapp/widgets/header_card/double_header_card_widget.dart';
 import '../../../layouts/pages_layout.dart';
 // import '../../../widgets/chart/doughnut_chart_widget.dart';
 // import '../../../widgets/chart/pie_chart_widget.dart';
@@ -55,43 +57,68 @@ class KependudukanPage extends StatelessWidget {
             const SizedBox(height: 12),
 
             // --- TODO: Section Card Statistik Utama (Total Keluarga & Total Penduduk) ---
-            // code in here
+            DoubleHeaderCardWidget(
+              leftIcon: Icons.group,
+              leftTitle: 'Total Keluarga',
+              leftValue: totalKeluarga,
+              rightIcon: Icons.person,
+              rightTitle: 'Total Penduduk',
+              rightValue: totalPenduduk,
+            ),
 
             const SizedBox(height: 24),
             const Divider(),
 
-            // --- TODO: Section Doughnut Chart - Status Penduduk ---
-            // gunakan statusPenduduk
+            // --- Section Doughnut Chart - Status Penduduk ---
+            DoughnutChartWidget(
+              title: 'Status Penduduk',
+              data: statusPenduduk,
+            ),
 
             const SizedBox(height: 24),
             const Divider(),
 
-            // --- TODO: Section Doughnut Chart - Jenis Kelamin ---
-            // gunakan jenisKelamin
+            // --- Section Doughnut Chart - Jenis Kelamin ---
+            DoughnutChartWidget(
+              title: 'Jenis Kelamin',
+              data: jenisKelamin,
+            ),
 
             const SizedBox(height: 24),
             const Divider(),
 
-            // --- TODO: Section Pie Chart - Pekerjaan Penduduk ---
-            // gunakan pekerjaanPenduduk
+            // --- Section Pie Chart - Pekerjaan Penduduk ---
+            DoughnutChartWidget(
+              title: 'Pekerjaan Penduduk',
+              data: pekerjaanPenduduk,
+            ),
 
             const SizedBox(height: 24),
             const Divider(),
 
-            // --- TODO: Section Pie Chart - Peran dalam Keluarga ---
-            // gunakan peranKeluarga
+            // --- Section Pie Chart - Peran dalam Keluarga ---
+            DoughnutChartWidget(
+              title: 'Peran dalam Keluarga',
+              data: peranKeluarga,
+            ),
 
             const SizedBox(height: 24),
             const Divider(),
 
-            // --- TODO: Section Pie Chart - Agama ---
-            // gunakan agama
+            // --- Section Pie Chart - Agama ---
+            DoughnutChartWidget(
+              title: 'Agama',
+              data: agama,
+            ),
 
             const SizedBox(height: 24),
             const Divider(),
 
-            // --- TODO: Section Pie Chart - Pendidikan ---
-            // gunakan pendidikan
+            // --- Section Pie Chart - Pendidikan ---
+            DoughnutChartWidget(
+              title: 'Pendidikan',
+              data: pendidikan,
+            ),
           ],
         ),
       ),
