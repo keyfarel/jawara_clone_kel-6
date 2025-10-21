@@ -71,6 +71,7 @@ class KependudukanPage extends StatelessWidget {
 
             // --- Section Doughnut Chart - Status Penduduk ---
             DoughnutChartWidget(
+              icon: Icons.info,
               title: 'Status Penduduk',
               data: statusPenduduk,
             ),
@@ -80,6 +81,7 @@ class KependudukanPage extends StatelessWidget {
 
             // --- Section Doughnut Chart - Jenis Kelamin ---
             DoughnutChartWidget(
+              icon: Icons.wc,
               title: 'Jenis Kelamin',
               data: jenisKelamin,
             ),
@@ -89,6 +91,7 @@ class KependudukanPage extends StatelessWidget {
 
             // --- Section Pie Chart - Pekerjaan Penduduk ---
             DoughnutChartWidget(
+              icon: Icons.work,
               title: 'Pekerjaan Penduduk',
               data: pekerjaanPenduduk,
             ),
@@ -98,6 +101,7 @@ class KependudukanPage extends StatelessWidget {
 
             // --- Section Pie Chart - Peran dalam Keluarga ---
             DoughnutChartWidget(
+              icon: Icons.family_restroom,
               title: 'Peran dalam Keluarga',
               data: peranKeluarga,
             ),
@@ -107,6 +111,7 @@ class KependudukanPage extends StatelessWidget {
 
             // --- Section Pie Chart - Agama ---
             DoughnutChartWidget(
+              icon: Icons.account_balance,
               title: 'Agama',
               data: agama,
             ),
@@ -116,6 +121,7 @@ class KependudukanPage extends StatelessWidget {
 
             // --- Section Pie Chart - Pendidikan ---
             DoughnutChartWidget(
+              icon: Icons.school,
               title: 'Pendidikan',
               data: pendidikan,
             ),

@@ -115,6 +115,7 @@ class KegiatanPage extends StatelessWidget {
             // 🔹 Section Pie Chart
             const SizedBox(height: 12),
             PieChartWidget(
+              icon: Icons.event_available,
               title: 'Distribusi Jenis Kegiatan',
               data: kegiatanWaktuData,
             ),
@@ -125,6 +126,7 @@ class KegiatanPage extends StatelessWidget {
             // 🔹 Section Doughnut Chart
             const SizedBox(height: 12),
             DoughnutChartWidget(
+              icon: Icons.event_note,
               title: 'Distribusi Jenis Kegiatan',
               data: kegiatanData,
             ),
@@ -135,6 +137,7 @@ class KegiatanPage extends StatelessWidget {
             // 🔹 Section Bar Chart
             const SizedBox(height: 12),
             BarChartWidget(
+              icon: Icons.bar_chart,
               title: 'Kegiatan per Bulan (2025)',
               data: barChartData,
             ),

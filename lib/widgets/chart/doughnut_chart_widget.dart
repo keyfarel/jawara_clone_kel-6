@@ -2,11 +2,15 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class DoughnutChartWidget extends StatefulWidget {
+  final IconData? icon;
+  final Color? iconColor;
   final String title;
   final List<Map<String, dynamic>> data;
 
   const DoughnutChartWidget({
     super.key,
+    this.icon,
+    this.iconColor,
     required this.title,
     required this.data,
   });
@@ -30,19 +34,30 @@ class _DoughnutChartWidgetState extends State<DoughnutChartWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Judul chart
-            Padding(
-              padding: const EdgeInsets.only(bottom: 55),
-              child: Text(
-                widget.title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
+            // ======= Judul chart + Icon =======
+            Row(
+              children: [
+                if (widget.icon != null)
+                  Icon(
+                    widget.icon,
+                    color: widget.iconColor ?? Colors.indigoAccent,
+                    size: 20,
+                  ),
+                if (widget.icon != null) const SizedBox(width: 8),
+                Text(
+                  widget.title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: widget.iconColor ?? Colors.indigoAccent,
+                  ),
                 ),
-              ),
+              ],
             ),
 
-            // Chart utama
+            const SizedBox(height: 55),
+
+            // ======= Chart utama =======
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 12),
@@ -67,9 +82,9 @@ class _DoughnutChartWidgetState extends State<DoughnutChartWidget> {
                             final index =
                                 response.touchedSection!.touchedSectionIndex;
                             touchedIndex =
-                                (index >= 0 && index < data.length)
-                                    ? index
-                                    : null;
+                            (index >= 0 && index < data.length)
+                                ? index
+                                : null;
                           });
                         },
                       ),
@@ -89,58 +104,58 @@ class _DoughnutChartWidgetState extends State<DoughnutChartWidget> {
               ),
             ),
 
-            // Tooltip custom
+            // ======= Tooltip custom =======
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 180),
               transitionBuilder: (child, animation) =>
                   FadeTransition(opacity: animation, child: child),
               child: touchedIndex != null
                   ? Center(
-                      key: ValueKey<int>(touchedIndex!),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.black87,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
-                              blurRadius: 6,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              data[touchedIndex!]['kategori'] as String,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${data[touchedIndex!]['value']} kegiatan',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
+                key: ValueKey<int>(touchedIndex!),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        data[touchedIndex!]['kategori'] as String,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
                         ),
                       ),
-                    )
+                      const SizedBox(height: 4),
+                      Text(
+                        '${data[touchedIndex!]['value']} kegiatan',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
                   : const SizedBox.shrink(key: ValueKey('empty')),
             ),
 
             const SizedBox(height: 12),
 
-            // Keterangan kategori
+            // ======= Keterangan kategori =======
             Padding(
               padding: const EdgeInsets.only(top: 15),
               child: Row(
@@ -154,29 +169,29 @@ class _DoughnutChartWidgetState extends State<DoughnutChartWidget> {
                       children: data
                           .map(
                             (e) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 4),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 12,
-                                    height: 12,
-                                    decoration: BoxDecoration(
-                                      color: e['color'] as Color,
-                                      borderRadius: BorderRadius.circular(2),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      e['kategori'] as String,
-                                      style: const TextStyle(fontSize: 13),
-                                    ),
-                                  ),
-                                ],
+                          padding:
+                          const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: e['color'] as Color,
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
                               ),
-                            ),
-                          )
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  e['kategori'] as String,
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
                           .toList(),
                     ),
                   ),
@@ -188,17 +203,17 @@ class _DoughnutChartWidgetState extends State<DoughnutChartWidget> {
                       children: data
                           .map(
                             (e) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 4),
-                              child: Text(
-                                '${e['value']}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
-                                ),
-                              ),
+                          padding:
+                          const EdgeInsets.symmetric(vertical: 4),
+                          child: Text(
+                            '${e['value']}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
                             ),
-                          )
+                          ),
+                        ),
+                      )
                           .toList(),
                     ),
                   ),
