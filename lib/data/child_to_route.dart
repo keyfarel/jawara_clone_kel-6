@@ -2,7 +2,7 @@ import '../routes/app_routes.dart';
 
 final Map<String, String> childToRoute = {
   // Dashboard
-  // "Dashboard": belum ada route
+  "Dashboard": AppRoutes.dashboard,
   "Keuangan": AppRoutes.keuangan,
   "Kegiatan": AppRoutes.kegiatan,
   "Kependudukan": AppRoutes.kependudukan,

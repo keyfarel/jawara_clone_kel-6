@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // Import semua pages
 import 'package:myapp/pages/auth/login_page.dart';
 import 'package:myapp/pages/auth/register_page.dart';
+import 'package:myapp/pages/home/dashboard/dashboard_page.dart';
 import 'package:myapp/pages/home/dashboard/kegiatan_page.dart';
 import 'package:myapp/pages/home/dashboard/kependudukan_page.dart';
 import 'package:myapp/pages/home/dashboard/keuangan_page.dart';
@@ -39,6 +40,7 @@ class AppRoutes {
   static const login = '/login';
   static const register = '/register';
 
+  static const dashboard = '/dashboard';
   static const kegiatan = '/kegiatan';
   static const keuangan = '/keuangan';
   static const kependudukan = '/kependudukan';
@@ -82,7 +84,7 @@ class AppRoutes {
     register: (context) => const RegisterPage(),
 
     // Dashboard
-    
+    dashboard: (context) => const DashboardPage(),
     kegiatan: (context) => const KegiatanPage(),
     keuangan: (context) => const KeuanganPage(),
     kependudukan: (context) => const KependudukanPage(),
