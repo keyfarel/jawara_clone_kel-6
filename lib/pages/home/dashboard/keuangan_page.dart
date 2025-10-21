@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../layouts/pages_layout.dart';
 import '../../../widgets/header_card/double_header_card_widget.dart';
 import '../../../widgets/chart/bar_chart_widget.dart';
+import '../../../widgets/chart/pie_chart_widget.dart';
+import '../../../widgets/chart/doughnut_chart_widget.dart';
 
 class KeuanganPage extends StatelessWidget {
   const KeuanganPage({super.key});
@@ -83,24 +85,24 @@ class KeuanganPage extends StatelessWidget {
             const SizedBox(height: 12),
 
             // --- Section Card Statistik Utama ---
-            const DoubleHeaderCardWidget(
+            DoubleHeaderCardWidget(
               leftIcon: Icons.arrow_upward,
               leftTitle: 'Total Pemasukan',
-              leftValue: '50 jt',
+              leftValue: totalPemasukan,
               rightIcon: Icons.arrow_downward,
               rightTitle: 'Total Pengeluaran',
-              rightValue: '152.1 rb',
+              rightValue: totalPengeluaran,
             ),
 
             const SizedBox(height: 16),
 
-            const DoubleHeaderCardWidget(
+            DoubleHeaderCardWidget(
               leftIcon: Icons.account_balance_wallet,
               leftTitle: 'Saldo Akhir',
-              leftValue: '49.8 jt',
+              leftValue: saldoAkhir,
               rightIcon: Icons.receipt_long,
               rightTitle: 'Jumlah Transaksi',
-              rightValue: '7',
+              rightValue: jumlahTransaksi,
             ),
 
             const SizedBox(height: 24),
@@ -134,10 +136,26 @@ class KeuanganPage extends StatelessWidget {
             ),
 
             // --- TODO: Section Doughnut Chart - Pemasukan Berdasarkan Kategori ---
-            // code in here
+            DoughnutChartWidget(
+              title: 'Pemasukan Berdasarkan Kategori',
+              data: pemasukanKategori,
+            ),
+
+            DoughnutChartWidget(
+              title: 'Pengeluaran Berdasarkan Kategori',
+              data: pengeluaranKategori,
+            ),
 
             // --- TODO: Section Pie Chart - Pengeluaran Berdasarkan Kategori ---
-            // code in here
+            PieChartWidget(
+              title: 'Pengeluaran Berdasarkan Kategori',
+              data: pengeluaranKategori,
+            ),
+
+            PieChartWidget(
+              title: 'Pemasukan Berdasarkan Kategori',
+              data: pemasukanKategori,
+            ),
 
           ],
         ),
