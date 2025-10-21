@@ -21,7 +21,8 @@ class DoubleHeaderCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    const Color iconAndTitleColor = Colors.indigoAccent;
+    const Color valueColor = Colors.black;
 
     Widget buildCard(IconData? icon, String title, String value) {
       return Expanded(
@@ -38,15 +39,16 @@ class DoubleHeaderCardWidget extends StatelessWidget {
                 Row(
                   children: [
                     if (icon != null) ...[
-                      Icon(icon, color: theme.primaryColor, size: 18),
+                      Icon(icon, color: iconAndTitleColor, size: 18),
                       const SizedBox(width: 6),
                     ],
                     Flexible(
                       child: Text(
                         title,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: iconAndTitleColor, // 🔹 sama seperti icon
+                          fontSize: 13,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -56,9 +58,9 @@ class DoubleHeaderCardWidget extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   value,
-                  style: theme.textTheme.titleLarge?.copyWith(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: theme.primaryColor,
+                    color: valueColor, // 🔹 angka warna hitam
                     fontSize: 20,
                   ),
                 ),
