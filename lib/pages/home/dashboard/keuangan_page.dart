@@ -111,6 +111,7 @@ class KeuanganPage extends StatelessWidget {
             // Section Bar Chart - Pemasukan per Bulan 
             const SizedBox(height: 12),
             BarChartWidget(
+              icon: Icons.arrow_upward,
               title: 'Pemasukan per Bulan',
               data: pemasukanPerBulan,
               formatAxisLabel: (value) {
@@ -126,6 +127,7 @@ class KeuanganPage extends StatelessWidget {
             // Section Bar Chart - Pengeluaran per Bulan 
             const SizedBox(height: 12),
             BarChartWidget(
+              icon: Icons.arrow_downward,
               title: 'Pengeluaran per Bulan',
               data: pengeluaranPerBulan,
               formatAxisLabel: (value) {
@@ -137,22 +139,26 @@ class KeuanganPage extends StatelessWidget {
 
             // --- TODO: Section Doughnut Chart - Pemasukan Berdasarkan Kategori ---
             DoughnutChartWidget(
+              icon: Icons.arrow_upward,
               title: 'Pemasukan Berdasarkan Kategori',
               data: pemasukanKategori,
             ),
 
             DoughnutChartWidget(
+              icon: Icons.arrow_downward,
               title: 'Pengeluaran Berdasarkan Kategori',
               data: pengeluaranKategori,
             ),
 
             // --- TODO: Section Pie Chart - Pengeluaran Berdasarkan Kategori ---
             PieChartWidget(
+              icon: Icons.arrow_downward,
               title: 'Pengeluaran Berdasarkan Kategori',
               data: pengeluaranKategori,
             ),
 
             PieChartWidget(
+              icon: Icons.arrow_upward,
               title: 'Pemasukan Berdasarkan Kategori',
               data: pemasukanKategori,
             ),
