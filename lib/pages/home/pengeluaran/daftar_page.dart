@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/layouts/pages_layout.dart';
 import '../../../models/pengeluaran_model.dart';
 
 class PengeluaranDaftarPage extends StatefulWidget {
@@ -36,58 +37,70 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
     ),
   ];
 
+  String? selectedJenis; // Filter berdasarkan jenis pengeluaran
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Daftar Pengeluaran'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () {
-              // Aksi filter
-            },
+    // Filter data jika jenis dipilih
+    final filteredList = selectedJenis == null
+        ? daftarPengeluaran
+        : daftarPengeluaran
+            .where((p) => p.jenisPengeluaran == selectedJenis)
+            .toList();
+
+    return PageLayout(
+      title: "Pengeluaran - Daftar",
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.filter_alt),
+          onPressed: () => _showFilterDialog(context),
+        ),
+        TextButton.icon(
+          onPressed: () {
+            // TODO: Implementasi cetak PDF
+          },
+          icon: const Icon(Icons.picture_as_pdf, color: Colors.black87),
+          label: const Text(
+            "Cetak PDF",
+            style: TextStyle(color: Colors.black87),
           ),
-          TextButton.icon(
-            onPressed: () {
-              // Aksi cetak PDF
-            },
-            icon: const Icon(Icons.picture_as_pdf, color: Colors.black),
-            label: const Text(
-              "Cetak PDF",
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-          const SizedBox(width: 8),
-        ],
+        ),
+      ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // TODO: Navigasi ke halaman tambah pengeluaran
+        },
+        child: const Icon(Icons.add),
       ),
       body: ListView.builder(
-        itemCount: daftarPengeluaran.length,
+        padding: const EdgeInsets.all(16),
+        itemCount: filteredList.length,
         itemBuilder: (context, index) {
-          final pengeluaran = daftarPengeluaran[index];
+          final pengeluaran = filteredList[index];
           return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            margin: const EdgeInsets.only(bottom: 12),
             elevation: 2,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+              padding: const EdgeInsets.all(12.0),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // No
+                  // Nomor urut
                   SizedBox(
                     width: 30,
-                    child: Text(
-                      "${index + 1}",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 14),
+                    child: Center(
+                      child: Text(
+                        "${index + 1}",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
                     ),
                   ),
+                  const SizedBox(width: 8),
 
-                  const SizedBox(width: 12),
-
-                  // Detail utama
+                  // Detail Pengeluaran
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,14 +109,24 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 16)),
                         const SizedBox(height: 4),
-                        Text("Jenis: ${pengeluaran.jenisPengeluaran}"),
-                        Text("Tanggal: ${pengeluaran.tanggal}"),
-                        Text("Nominal: ${pengeluaran.nominal}"),
+                        Wrap(
+                          spacing: 10,
+                          runSpacing: 4,
+                          children: [
+                            _infoChip(
+                              pengeluaran.jenisPengeluaran,
+                              Colors.blue[100]!,
+                              Colors.blue[800]!,
+                            ),
+                            _infoText("Tanggal", pengeluaran.tanggal),
+                            _infoText("Nominal", pengeluaran.nominal),
+                          ],
+                        ),
                       ],
                     ),
                   ),
 
-                  // Tombol aksi (3 titik)
+                  // Tombol aksi (edit/hapus)
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert),
                     onSelected: (value) {
@@ -113,12 +136,12 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
                         // Aksi hapus
                       }
                     },
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
+                    itemBuilder: (context) => const [
+                      PopupMenuItem(
                         value: 'edit',
                         child: Text('Edit'),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'hapus',
                         child: Text('Hapus'),
                       ),
@@ -130,12 +153,92 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigasi ke tambah pengeluaran
-        },
-        child: const Icon(Icons.add),
+    );
+  }
+
+  // === FILTER DIALOG ===
+  void _showFilterDialog(BuildContext context) {
+    String? tempJenis = selectedJenis;
+
+    final jenisList = daftarPengeluaran
+        .map((p) => p.jenisPengeluaran)
+        .toSet()
+        .toList(); // Jenis unik
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Filter Pengeluaran"),
+          content: DropdownButtonFormField<String>(
+            value: tempJenis,
+            items: jenisList
+                .map((jenis) => DropdownMenuItem(
+                      value: jenis,
+                      child: Text(jenis),
+                    ))
+                .toList(),
+            onChanged: (val) {
+              tempJenis = val;
+            },
+            decoration: const InputDecoration(
+              labelText: "Pilih Jenis Pengeluaran",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  selectedJenis = null;
+                });
+                Navigator.pop(context);
+              },
+              child: const Text("Reset"),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+              ),
+              onPressed: () {
+                setState(() {
+                  selectedJenis = tempJenis;
+                });
+                Navigator.pop(context);
+              },
+              child: const Text("Terapkan"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // === UTILITAS ===
+  Widget _infoChip(String value, Color bg, Color textColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(16),
       ),
+      child: Text(
+        value,
+        style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
+  Widget _infoText(String label, String value) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          "$label: ",
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(value),
+      ],
     );
   }
 }

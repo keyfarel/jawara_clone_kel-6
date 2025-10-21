@@ -1,193 +1,259 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:myapp/layouts/pages_layout.dart';
 import '../../../models/semua_pengeluaran_model.dart';
 
-class SemuaPengeluaranPage extends StatelessWidget {
+class SemuaPengeluaranPage extends StatefulWidget {
   const SemuaPengeluaranPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Contoh data dummy
-    final List<Pengeluaran> daftarPengeluaran = [
-      Pengeluaran(
-        id: '1',
-        nama: 'Kerja Bakti',
-        jenisPengeluaran: 'Pemeliharaan Fasilitas',
-        tanggal: DateTime(2025, 10, 19, 20, 26),
-        nominal: 50000,
-      ),
-      Pengeluaran(
-        id: '2',
-        nama: 'Kerja Bakti',
-        jenisPengeluaran: 'Kegiatan Warga',
-        tanggal: DateTime(2025, 10, 19, 20, 26),
-        nominal: 100000,
-      ),
-      Pengeluaran(
-        id: '3',
-        nama: 'Arka',
-        jenisPengeluaran: 'Operasional RT/RW',
-        tanggal: DateTime(2025, 10, 17, 2, 31),
-        nominal: 6,
-      ),
-      Pengeluaran(
-        id: '4',
-        nama: 'adsad',
-        jenisPengeluaran: 'Pemeliharaan Fasilitas',
-        tanggal: DateTime(2025, 10, 10, 1, 8),
-        nominal: 2112,
-      ),
-    ];
+  State<SemuaPengeluaranPage> createState() => _SemuaPengeluaranPageState();
+}
 
-    // --- Format uang aman tanpa error locale ---
-    final NumberFormat currencyFormatter =
-        NumberFormat.currency(locale: 'en_US', symbol: 'Rp ', decimalDigits: 0);
+class _SemuaPengeluaranPageState extends State<SemuaPengeluaranPage> {
+  List<Pengeluaran> daftarPengeluaran = [
+    Pengeluaran(
+      id: '1',
+      nama: 'Kerja Bakti',
+      jenisPengeluaran: 'Pemeliharaan Fasilitas',
+      tanggal: DateTime(2025, 10, 19, 20, 26),
+      nominal: 50000,
+    ),
+    Pengeluaran(
+      id: '2',
+      nama: 'Kerja Bakti',
+      jenisPengeluaran: 'Kegiatan Warga',
+      tanggal: DateTime(2025, 10, 19, 20, 26),
+      nominal: 100000,
+    ),
+    Pengeluaran(
+      id: '3',
+      nama: 'Arka',
+      jenisPengeluaran: 'Operasional RT/RW',
+      tanggal: DateTime(2025, 10, 17, 2, 31),
+      nominal: 6,
+    ),
+    Pengeluaran(
+      id: '4',
+      nama: 'adsad',
+      jenisPengeluaran: 'Pemeliharaan Fasilitas',
+      tanggal: DateTime(2025, 10, 10, 1, 8),
+      nominal: 2112,
+    ),
+  ];
 
-    // --- Format tanggal aman tanpa error locale ---
-    String formatTanggal(DateTime date) {
-      try {
-        return DateFormat('dd MMM yyyy HH:mm', 'id_ID').format(date);
-      } catch (e) {
-        // fallback jika 'id_ID' tidak tersedia
-        return DateFormat('dd MMM yyyy HH:mm').format(date);
-      }
+  String? selectedJenis; // untuk filter
+
+  final NumberFormat currencyFormatter =
+      NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+
+  String formatTanggal(DateTime date) {
+    try {
+      return DateFormat('dd MMM yyyy HH:mm', 'id_ID').format(date);
+    } catch (_) {
+      return DateFormat('dd MMM yyyy HH:mm').format(date);
     }
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Semua Pengeluaran',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
+  @override
+  Widget build(BuildContext context) {
+    // Filter jika jenis dipilih
+    final filteredList = selectedJenis == null
+        ? daftarPengeluaran
+        : daftarPengeluaran
+            .where((p) => p.jenisPengeluaran == selectedJenis)
+            .toList();
+
+    return PageLayout(
+      title: "Semua Pengeluaran",
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.filter_alt),
+          onPressed: () => _showFilterDialog(context),
+        ),
+        TextButton.icon(
+          onPressed: () {
+            // TODO: Implementasi cetak PDF
+          },
+          icon: const Icon(Icons.picture_as_pdf, color: Colors.black87),
+          label: const Text(
+            "Cetak PDF",
+            style: TextStyle(color: Colors.black87),
           ),
         ),
-        centerTitle: true,
-        backgroundColor: Colors.blueAccent,
-        elevation: 2,
-        iconTheme: const IconThemeData(color: Colors.white),
+      ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // TODO: Navigasi ke tambah pengeluaran
+        },
+        child: const Icon(Icons.add),
       ),
-      backgroundColor: const Color(0xFFF7F7F7),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isMobile = constraints.maxWidth < 600;
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: filteredList.length,
+        itemBuilder: (context, index) {
+          final pengeluaran = filteredList[index];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            elevation: 2,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Nomor urut
+                  SizedBox(
+                    width: 30,
+                    child: Center(
+                      child: Text(
+                        "${index + 1}",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
 
-          return Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: ListView.builder(
-              itemCount: daftarPengeluaran.length,
-              itemBuilder: (context, index) {
-                final pengeluaran = daftarPengeluaran[index];
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.15),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
+                  // Detail Pengeluaran
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(pengeluaran.nama,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16)),
+                        const SizedBox(height: 4),
+                        Wrap(
+                          spacing: 10,
+                          runSpacing: 4,
+                          children: [
+                            _infoChip(
+                              pengeluaran.jenisPengeluaran,
+                              Colors.red[100]!,
+                              Colors.red[800]!,
+                            ),
+                            _infoText("Tanggal", formatTanggal(pengeluaran.tanggal)),
+                            _infoText("Nominal",
+                                currencyFormatter.format(pengeluaran.nominal)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Tombol aksi (edit/hapus)
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert),
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        // TODO: aksi edit
+                      } else if (value == 'hapus') {
+                        // TODO: aksi hapus
+                      }
+                    },
+                    itemBuilder: (context) => const [
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Text('Edit'),
+                      ),
+                      PopupMenuItem(
+                        value: 'hapus',
+                        child: Text('Hapus'),
                       ),
                     ],
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Panah merah di sisi kiri
-                      Container(
-                        width: 50,
-                        height: 80,
-                        decoration: const BoxDecoration(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            bottomLeft: Radius.circular(16),
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.arrow_upward,
-                          color: Colors.redAccent,
-                          size: 28,
-                        ),
-                      ),
-
-                      // Isi pengeluaran
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Nama dan nominal
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      pengeluaran.nama,
-                                      style: TextStyle(
-                                        fontSize: isMobile ? 16 : 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    currencyFormatter
-                                        .format(pengeluaran.nominal),
-                                    style: TextStyle(
-                                      fontSize: isMobile ? 15 : 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.redAccent,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-                              // Jenis pengeluaran
-                              Text(
-                                pengeluaran.jenisPengeluaran,
-                                style: TextStyle(
-                                  fontSize: isMobile ? 14 : 15,
-                                  color: Colors.grey[700],
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              // Tanggal
-                              Text(
-                                formatTanggal(pengeluaran.tanggal),
-                                style: TextStyle(
-                                  fontSize: isMobile ? 13 : 14,
-                                  color: Colors.grey[500],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Tombol aksi (...)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 12, top: 8),
-                        child: IconButton(
-                          icon: const Icon(Icons.more_horiz,
-                              color: Colors.grey, size: 22),
-                          onPressed: () {
-                            // Tambahkan aksi (edit, hapus, detail)
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                ],
+              ),
             ),
           );
         },
       ),
+    );
+  }
+
+  // === FILTER DIALOG ===
+  void _showFilterDialog(BuildContext context) {
+    String? tempJenis = selectedJenis;
+
+    final jenisList =
+        daftarPengeluaran.map((p) => p.jenisPengeluaran).toSet().toList();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Filter Pengeluaran"),
+          content: DropdownButtonFormField<String>(
+            value: tempJenis,
+            items: jenisList
+                .map((jenis) => DropdownMenuItem(
+                      value: jenis,
+                      child: Text(jenis),
+                    ))
+                .toList(),
+            onChanged: (val) {
+              tempJenis = val;
+            },
+            decoration: const InputDecoration(
+              labelText: "Pilih Jenis Pengeluaran",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  selectedJenis = null;
+                });
+                Navigator.pop(context);
+              },
+              child: const Text("Reset"),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+              ),
+              onPressed: () {
+                setState(() {
+                  selectedJenis = tempJenis;
+                });
+                Navigator.pop(context);
+              },
+              child: const Text("Terapkan"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // === UTILITAS ===
+  Widget _infoChip(String value, Color bg, Color textColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        value,
+        style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
+  Widget _infoText(String label, String value) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          "$label: ",
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(value),
+      ],
     );
   }
 }
