@@ -1,0 +1,80 @@
+import 'package:flutter/material.dart';
+
+class DoubleHeaderCardWidget extends StatelessWidget {
+  final IconData? leftIcon;
+  final String leftTitle;
+  final String leftValue;
+
+  final IconData? rightIcon;
+  final String rightTitle;
+  final String rightValue;
+
+  const DoubleHeaderCardWidget({
+    super.key,
+    this.leftIcon,
+    required this.leftTitle,
+    required this.leftValue,
+    this.rightIcon,
+    required this.rightTitle,
+    required this.rightValue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    Widget buildCard(IconData? icon, String title, String value) {
+      return Expanded(
+        child: Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    if (icon != null) ...[
+                      Icon(icon, color: theme.primaryColor, size: 18),
+                      const SizedBox(width: 6),
+                    ],
+                    Flexible(
+                      child: Text(
+                        title,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  value,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.primaryColor,
+                    fontSize: 20,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Row(
+      children: [
+        buildCard(leftIcon, leftTitle, leftValue),
+        const SizedBox(width: 12), // 🔹 jarak antar card
+        buildCard(rightIcon, rightTitle, rightValue),
+      ],
+    );
+  }
+}

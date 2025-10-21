@@ -61,15 +61,16 @@ class SideNavWidget extends StatelessWidget {
               subtitle: const Text("admin1@gmail.com"),
               trailing: const Icon(Icons.expand_more),
               onTap: () {
+                final rootContext = context; // simpan context root
+
                 showModalBottomSheet(
-                  context: context,
+                  context: rootContext,
                   isScrollControlled: true,
                   backgroundColor: Colors.white,
                   shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(20)),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                   ),
-                  builder: (context) => const ProfileBottomWidget(),
+                  builder: (sheetContext) => ProfileBottomWidget(rootContext: rootContext),
                 );
               },
             ),

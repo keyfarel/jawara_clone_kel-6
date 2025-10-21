@@ -5,7 +5,7 @@ const List<NavItem> menuItems = [
   NavItem(
     title: "Dashboard",
     icon: Icons.dashboard,
-    children: ["Keuangan", "Kegiatan", "Kependudukan"],
+    children: ["Dashboard", "Keuangan", "Kegiatan", "Kependudukan"],
   ),
   NavItem(
     title: "Data Warga & Rumah",

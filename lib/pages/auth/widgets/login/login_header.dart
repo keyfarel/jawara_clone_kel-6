@@ -20,12 +20,6 @@ class LoginHeader extends StatelessWidget {
           'Selamat Datang',
           style: TextStyle(fontSize: 18, color: Colors.black54),
         ),
-        const SizedBox(height: 24),
-        const Text(
-          'Login untuk mengakses sistem Jawara Pintar.',
-          style: TextStyle(fontSize: 14, color: Colors.black54),
-          textAlign: TextAlign.center,
-        ),
         const SizedBox(height: 40),
         const Align(
           alignment: Alignment.centerLeft,

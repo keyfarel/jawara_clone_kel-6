@@ -1,84 +1,132 @@
 import 'package:flutter/material.dart';
 import '../../../layouts/pages_layout.dart';
+// import '../../../widgets/chart/doughnut_chart_widget.dart';
+// import '../../../widgets/chart/pie_chart_widget.dart';
+// import '../../../widgets/header_card/double_header_card_widget.dart';
+import '../../../widgets/chart/bar_chart_widget.dart';
 
 class KeuanganPage extends StatelessWidget {
   const KeuanganPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    // data untuk chart dan card (dummy)
+    final String totalPemasukan = '50 jt';
+    final String totalPengeluaran = '152.1 rb';
+    final String jumlahTransaksi = '7';
+
+    final List<Map<String, dynamic>> pemasukanPerBulan = [
+      {'bulan': 'Jan', 'value': 12000, 'label': '12 jt', 'color': Colors.greenAccent},
+      {'bulan': 'Feb', 'value': 25000, 'label': '25 jt', 'color': Colors.greenAccent},
+      {'bulan': 'Mar', 'value': 18000, 'label': '18 jt', 'color': Colors.greenAccent},
+      {'bulan': 'Apr', 'value': 22000, 'label': '22 jt', 'color': Colors.greenAccent},
+      {'bulan': 'Mei', 'value': 30000, 'label': '30 jt', 'color': Colors.greenAccent},
+      {'bulan': 'Jun', 'value': 27000, 'label': '27 jt', 'color': Colors.greenAccent},
+      {'bulan': 'Jul', 'value': 35000, 'label': '35 jt', 'color': Colors.greenAccent},
+      {'bulan': 'Agu', 'value': 0, 'label': '0', 'color': Colors.greenAccent}, // tetap
+      {'bulan': 'Sep', 'value': 40000, 'label': '40 jt', 'color': Colors.greenAccent},
+      {'bulan': 'Okt', 'value': 15000, 'label': '15 jt', 'color': Colors.greenAccent}, // tetap
+      {'bulan': 'Des', 'value': 60000, 'label': '60 jt', 'color': Colors.greenAccent}, // tetap
+    ];
+
+    final List<Map<String, dynamic>> pengeluaranPerBulan = [
+      {'bulan': 'Jan', 'value': 10, 'label': '10 rb', 'color': Colors.redAccent},
+      {'bulan': 'Feb', 'value': 12, 'label': '12 rb', 'color': Colors.redAccent},
+      {'bulan': 'Mar', 'value': 14, 'label': '14 rb', 'color': Colors.redAccent},
+      {'bulan': 'Apr', 'value': 16, 'label': '16 rb', 'color': Colors.redAccent},
+      {'bulan': 'Mei', 'value': 18, 'label': '18 rb', 'color': Colors.redAccent},
+      {'bulan': 'Jun', 'value': 20, 'label': '20 rb', 'color': Colors.redAccent},
+      {'bulan': 'Jul', 'value': 15, 'label': '15 rb', 'color': Colors.redAccent},
+      {'bulan': 'Agu', 'value': 13, 'label': '13 rb', 'color': Colors.redAccent},
+      {'bulan': 'Sep', 'value': 17, 'label': '17 rb', 'color': Colors.redAccent},
+      {'bulan': 'Okt', 'value': 160, 'label': '160 rb', 'color': Colors.redAccent}, // tetap
+    ];
+
+
+    final List<Map<String, dynamic>> pemasukanKategori = [
+      {
+        'kategori': 'Dana Bantuan Pemerintah',
+        'value': 100,
+        'color': Colors.greenAccent,
+      },
+      {
+        'kategori': 'Pendapatan Lainnya',
+        'value': 0,
+        'color': Colors.grey,
+      },
+    ];
+
+    final List<Map<String, dynamic>> pengeluaranKategori = [
+      {
+        'kategori': 'Operasional RT/RW',
+        'value': 34,
+        'color': Colors.orange,
+      },
+      {
+        'kategori': 'Pemeliharaan Fasilitas',
+        'value': 66,
+        'color': Colors.purpleAccent,
+      },
+      {
+        'kategori': 'Kegiatan Warga',
+        'value': 0,
+        'color': Colors.grey,
+      },
+    ];
+
     return PageLayout(
-      title: 'Dashboard Keuangan',
-      body: Column(
-        children: [
-          // Card ringkasan keuangan
-          Card(
-            margin: const EdgeInsets.all(16.0),
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildInfoCard(
-                    'Total Pemasukan',
-                    'Rp 5.000.000',
-                    Colors.green,
-                  ),
-                  _buildInfoCard(
-                    'Total Pengeluaran',
-                    'Rp 3.200.000',
-                    Colors.red,
-                  ),
-                  _buildInfoCard('Saldo', 'Rp 1.800.000', Colors.blue),
-                ],
-              ),
+      title: 'Keuangan',
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 12),
+
+            // --- Todo: Section Card Statistik Utama ---
+            // code in here
+
+            const SizedBox(height: 24),
+            const Divider(),
+
+            // Section Bar Chart - Pemasukan per Bulan 
+            const SizedBox(height: 12),
+            BarChartWidget(
+              title: 'Pemasukan per Bulan',
+              data: pemasukanPerBulan,
+              formatAxisLabel: (value) {
+                if (value >= 1000) return '${(value / 1000).toStringAsFixed(0)} jt';
+                if (value >= 1) return '${value.toStringAsFixed(0)} rb';
+                return value.toStringAsFixed(0);
+              },
             ),
-          ),
-          // Grafik atau list transaksi terbaru
-          Expanded(
-            child: Card(
-              margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              elevation: 4,
-              child: ListView.builder(
-                itemCount: 5,
-                itemBuilder: (context, index) => ListTile(
-                  leading: const Icon(Icons.money, color: Colors.blue),
-                  title: Text('Transaksi ${index + 1}'),
-                  subtitle: Text('Rp ${(index + 1) * 100000}'),
-                  trailing: Text(
-                    '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                ),
-              ),
+
+            const SizedBox(height: 24),
+            const Divider(),
+
+            // Section Bar Chart - Pengeluaran per Bulan 
+            const SizedBox(height: 12),
+            BarChartWidget(
+              title: 'Pengeluaran per Bulan',
+              data: pengeluaranPerBulan,
+              formatAxisLabel: (value) {
+                if (value >= 1000) return '${(value / 1000).toStringAsFixed(0)} jt';
+                if (value >= 1) return '${value.toStringAsFixed(0)} rb';
+                return value.toStringAsFixed(0);
+              },
             ),
-          ),
-        ],
+
+            // --- TODO: Section Doughnut Chart - Pemasukan Berdasarkan Kategori ---
+            // code in here
+
+            // --- TODO: Section Pie Chart - Pengeluaran Berdasarkan Kategori ---
+            // code in here
+
+          ],
+        ),
       ),
     
-    );
-  }
-
-  Widget _buildInfoCard(String title, String value, Color color) {
-    return Column(
-      children: [
-        Text(
-          title, 
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -116,9 +116,10 @@ class _NavListWidgetState extends State<NavListWidget>
                         ),
                       ),
                       onTap: () {
-                        Navigator.pop(context);
+                        final rootContext = Navigator.of(context, rootNavigator: true).context;
+
                         if (childToRoute.containsKey(child)) {
-                          Navigator.pushNamed(context, childToRoute[child]!);
+                          Navigator.pushNamed(rootContext, childToRoute[child]!);
                         }
                       },
                     ),

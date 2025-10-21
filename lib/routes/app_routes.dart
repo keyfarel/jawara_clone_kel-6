@@ -82,6 +82,7 @@ class AppRoutes {
     register: (context) => const RegisterPage(),
 
     // Dashboard
+    
     kegiatan: (context) => const KegiatanPage(),
     keuangan: (context) => const KeuanganPage(),
     kependudukan: (context) => const KependudukanPage(),
