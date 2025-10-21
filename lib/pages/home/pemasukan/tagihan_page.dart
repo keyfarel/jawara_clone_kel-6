@@ -12,7 +12,7 @@ class TagihanDaftarPage extends StatefulWidget {
 class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
   List<Tagihan> daftarTagihan = [
     Tagihan(
-      namaKeluarga: "Keluarga Habibie Ed Dien",
+      namaKeluarga: "Keluarga Somad",
       statusKeluarga: "Aktif",
       iuran: "Mingguan",
       kodeTagihan: "IR175458A501",
@@ -21,7 +21,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
       status: "Belum Dibayar",
     ),
     Tagihan(
-      namaKeluarga: "Keluarga Habibie Ed Dien",
+      namaKeluarga: "Keluarga Somad",
       statusKeluarga: "Aktif",
       iuran: "Mingguan",
       kodeTagihan: "IR185702KX01",
@@ -30,7 +30,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
       status: "Belum Dibayar",
     ),
     Tagihan(
-      namaKeluarga: "Keluarga Habibie Ed Dien",
+      namaKeluarga: "Keluarga Somad",
       statusKeluarga: "Aktif",
       iuran: "Mingguan",
       kodeTagihan: "IR223936NM01",
@@ -40,14 +40,22 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
     ),
   ];
 
-  String? selectedStatus; // Filter berdasarkan status tagihan
+  String? selectedStatus;
+  int currentPage = 1;
+  final int itemsPerPage = 2;
 
   @override
   Widget build(BuildContext context) {
-    // Filter daftar tagihan berdasarkan status
     final filteredList = selectedStatus == null
         ? daftarTagihan
         : daftarTagihan.where((t) => t.status == selectedStatus).toList();
+
+    final totalPages = (filteredList.length / itemsPerPage).ceil();
+    final startIndex = (currentPage - 1) * itemsPerPage;
+    final endIndex = (startIndex + itemsPerPage) > filteredList.length
+        ? filteredList.length
+        : (startIndex + itemsPerPage);
+    final paginatedList = filteredList.sublist(startIndex, endIndex);
 
     return PageLayout(
       title: "Tagihan - Daftar",
@@ -58,7 +66,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
         ),
         TextButton.icon(
           onPressed: () {
-            // TODO: Implementasi cetak PDF
+            // TODO: Cetak PDF
           },
           icon: const Icon(Icons.picture_as_pdf, color: Colors.black87),
           label: const Text(
@@ -67,54 +75,42 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
           ),
         ),
       ],
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: filteredList.length,
-        itemBuilder: (context, index) {
-          final tagihan = filteredList[index];
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Nomor urut
-                  SizedBox(
-                    width: 30,
-                    child: Center(
-                      child: Text(
-                        "${index + 1}",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14),
-                      ),
-                    ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: paginatedList.length,
+              itemBuilder: (context, index) {
+                final tagihan = paginatedList[index];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(width: 8),
-
-                  // Detail Tagihan (nama + info + chip status)
-                  Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Baris atas: nama + status chip
+                        // --- Header ---
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                               child: Text(
-                                tagihan.namaKeluarga,
+                                "${startIndex + index + 1}. ${tagihan.namaKeluarga}",
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            const SizedBox(width: 8),
                             Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
                               decoration: BoxDecoration(
                                 color: tagihan.status == "Sudah Dibayar"
                                     ? Colors.green[100]
@@ -128,42 +124,109 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                                       ? Colors.green[800]
                                       : Colors.amber[800],
                                   fontWeight: FontWeight.w600,
+                                  fontSize: 12,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
 
-                        // Informasi lainnya
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 4,
+                        const SizedBox(height: 10),
+                        const Divider(height: 1),
+                        const SizedBox(height: 8),
+
+                        // --- Info Tabel ---
+                        Table(
+                          columnWidths: const {
+                            0: FixedColumnWidth(140),
+                            1: FixedColumnWidth(20),
+                            2: FlexColumnWidth(),
+                          },
+                          defaultVerticalAlignment:
+                              TableCellVerticalAlignment.middle,
                           children: [
-                            _infoChip(
-                              tagihan.statusKeluarga,
-                              Colors.green[100]!,
-                              Colors.green[800]!,
-                            ),
-                            _infoText("Iuran", tagihan.iuran),
-                            _infoText("Kode", tagihan.kodeTagihan),
-                            _infoText("Nominal", tagihan.nominal),
-                            _infoText("Periode", tagihan.periode),
+                            _buildTableRow("Status Keluarga",
+                                tagihan.statusKeluarga, Colors.green),
+                            _buildTableRow("Jenis Iuran", tagihan.iuran),
+                            _buildTableRow("Kode Tagihan", tagihan.kodeTagihan),
+                            _buildTableRow("Nominal", tagihan.nominal),
+                            _buildTableRow("Periode", tagihan.periode),
                           ],
                         ),
                       ],
                     ),
                   ),
+                );
+              },
+            ),
+          ),
+
+          // --- Pagination ---
+          if (totalPages > 1)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16, top: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.chevron_left),
+                    onPressed: currentPage > 1
+                        ? () => setState(() => currentPage--)
+                        : null,
+                  ),
+                  Text(
+                    "$currentPage",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.chevron_right),
+                    onPressed: currentPage < totalPages
+                        ? () => setState(() => currentPage++)
+                        : null,
+                  ),
                 ],
               ),
             ),
-          );
-        },
+        ],
       ),
     );
   }
 
-  // === FILTER DIALOG ===
+  TableRow _buildTableRow(String label, String value, [Color? accent]) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+          child: Text(":", textAlign: TextAlign.center),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 13,
+              color: accent ?? Colors.black87,
+              fontWeight: accent != null ? FontWeight.w600 : FontWeight.normal,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   void _showFilterDialog(BuildContext context) {
     String? tempStatus = selectedStatus;
 
@@ -180,9 +243,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
                       child: Text(status),
                     ))
                 .toList(),
-            onChanged: (val) {
-              tempStatus = val;
-            },
+            onChanged: (val) => tempStatus = val,
             decoration: const InputDecoration(
               labelText: "Pilih Status Tagihan",
               border: OutlineInputBorder(),
@@ -191,9 +252,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
           actions: [
             TextButton(
               onPressed: () {
-                setState(() {
-                  selectedStatus = null;
-                });
+                setState(() => selectedStatus = null);
                 Navigator.pop(context);
               },
               child: const Text("Reset"),
@@ -205,6 +264,7 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
               onPressed: () {
                 setState(() {
                   selectedStatus = tempStatus;
+                  currentPage = 1;
                 });
                 Navigator.pop(context);
               },
@@ -213,34 +273,6 @@ class _TagihanDaftarPageState extends State<TagihanDaftarPage> {
           ],
         );
       },
-    );
-  }
-
-  // === WIDGET UTILITAS ===
-  Widget _infoChip(String value, Color bg, Color textColor) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Text(
-        value,
-        style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
-      ),
-    );
-  }
-
-  Widget _infoText(String label, String value) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          "$label: ",
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        Text(value),
-      ],
     );
   }
 }
