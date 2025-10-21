@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../layouts/pages_layout.dart';
-// import '../../../widgets/chart/doughnut_chart_widget.dart';
-// import '../../../widgets/chart/pie_chart_widget.dart';
-// import '../../../widgets/header_card/double_header_card_widget.dart';
+import '../../../widgets/header_card/double_header_card_widget.dart';
 import '../../../widgets/chart/bar_chart_widget.dart';
 
 class KeuanganPage extends StatelessWidget {
@@ -15,6 +13,7 @@ class KeuanganPage extends StatelessWidget {
     final String totalPemasukan = '50 jt';
     final String totalPengeluaran = '152.1 rb';
     final String jumlahTransaksi = '7';
+    final String saldoAkhir = '49.8 jt'; // Contoh perhitungan saldo
 
     final List<Map<String, dynamic>> pemasukanPerBulan = [
       {'bulan': 'Jan', 'value': 12000, 'label': '12 jt', 'color': Colors.greenAccent},
@@ -42,7 +41,6 @@ class KeuanganPage extends StatelessWidget {
       {'bulan': 'Sep', 'value': 17, 'label': '17 rb', 'color': Colors.redAccent},
       {'bulan': 'Okt', 'value': 160, 'label': '160 rb', 'color': Colors.redAccent}, // tetap
     ];
-
 
     final List<Map<String, dynamic>> pemasukanKategori = [
       {
@@ -84,8 +82,26 @@ class KeuanganPage extends StatelessWidget {
           children: [
             const SizedBox(height: 12),
 
-            // --- Todo: Section Card Statistik Utama ---
-            // code in here
+            // --- Section Card Statistik Utama ---
+            const DoubleHeaderCardWidget(
+              leftIcon: Icons.arrow_upward,
+              leftTitle: 'Total Pemasukan',
+              leftValue: '50 jt',
+              rightIcon: Icons.arrow_downward,
+              rightTitle: 'Total Pengeluaran',
+              rightValue: '152.1 rb',
+            ),
+
+            const SizedBox(height: 16),
+
+            const DoubleHeaderCardWidget(
+              leftIcon: Icons.account_balance_wallet,
+              leftTitle: 'Saldo Akhir',
+              leftValue: '49.8 jt',
+              rightIcon: Icons.receipt_long,
+              rightTitle: 'Jumlah Transaksi',
+              rightValue: '7',
+            ),
 
             const SizedBox(height: 24),
             const Divider(),
@@ -126,7 +142,6 @@ class KeuanganPage extends StatelessWidget {
           ],
         ),
       ),
-    
     );
   }
 }
