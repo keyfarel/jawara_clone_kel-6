@@ -36,7 +36,7 @@ class _PieChartWidgetState extends State<PieChartWidget> {
           children: [
             // === Bagian Judul dengan Icon ===
             Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: 35),
               child: Row(
                 children: [
                   if (widget.icon != null)
