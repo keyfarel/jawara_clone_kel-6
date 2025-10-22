@@ -1,4 +1,4 @@
-// penerimaan_warga_page.dart
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../../layouts/pages_layout.dart';
 
@@ -10,13 +10,23 @@ class PenerimaanWargaPage extends StatefulWidget {
 }
 
 class _PenerimaanWargaPageState extends State<PenerimaanWargaPage> {
+  final Random _random = Random();
+
   int currentPage = 1;
   final int itemsPerPage = 10;
 
-  final List<Map<String, String>> wargaList = List.generate(20, (index) {
+  late final List<Map<String, dynamic>> wargaList = List.generate(20, (index) {
+    final jenisKelamin = _random.nextBool() ? 'L' : 'P';
+    final fotoUrl = 'https://picsum.photos/seed/${index + 1}/100/100';
+    final status = _random.nextBool() ? 'Diterima' : 'Menunggu';
+
     return {
       'nama': 'Nama Warga ${index + 1}',
-      'nii': '12${index + 10}',
+      'nik': '12${index + 10}',
+      'email': 'email${index + 1}@mail.com',
+      'jk': jenisKelamin,
+      'foto': fotoUrl,
+      'status': status,
     };
   });
 
@@ -39,8 +49,8 @@ class _PenerimaanWargaPageState extends State<PenerimaanWargaPage> {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () {},
-                icon: const Icon(Icons.filter, color: Colors.white),
-                label: const Text(""),
+                icon: const Icon(Icons.filter_alt, color: Colors.white),
+                label: const Text("Filter"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF6C63FF),
                   padding: const EdgeInsets.symmetric(
@@ -55,7 +65,7 @@ class _PenerimaanWargaPageState extends State<PenerimaanWargaPage> {
             ),
             const SizedBox(height: 16),
 
-            // Tabel
+            // TABEL
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -68,43 +78,128 @@ class _PenerimaanWargaPageState extends State<PenerimaanWargaPage> {
                   ),
                 ],
               ),
-              child: DataTable(
-                headingRowColor:
-                    MaterialStateProperty.all(Colors.grey.shade100),
-                columns: const [
-                  DataColumn(
-                    label: Text(
-                      'No',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Nama',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'NII',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-                rows: List.generate(displayedItems.length, (index) {
-                  final item = displayedItems[index];
-                  return DataRow(cells: [
-                    DataCell(Text('${start + index + 1}')),
-                    DataCell(Text(item['nama']!)),
-                    DataCell(Text(item['nii']!)),
-                  ]);
-                }),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                  headingRowColor:
+                      MaterialStateProperty.all(Colors.grey.shade100),
+                  columns: const [
+                    DataColumn(label: Center(child: Text('No', style: TextStyle(fontWeight: FontWeight.bold)))),
+                    DataColumn(label: Center(child: Text('Nama', style: TextStyle(fontWeight: FontWeight.bold)))),
+                    DataColumn(label: Center(child: Text('NIK', style: TextStyle(fontWeight: FontWeight.bold)))),
+                    DataColumn(label: Center(child: Text('Email', style: TextStyle(fontWeight: FontWeight.bold)))),
+                    DataColumn(label: Center(child: Text('Jenis Kelamin', style: TextStyle(fontWeight: FontWeight.bold)))),
+                    DataColumn(label: Center(child: Text('Foto Identitas', style: TextStyle(fontWeight: FontWeight.bold)))),
+                    DataColumn(label: Center(child: Text('Status Registrasi', style: TextStyle(fontWeight: FontWeight.bold)))),
+                    DataColumn(label: Center(child: Text('Aksi', style: TextStyle(fontWeight: FontWeight.bold)))),
+                  ],
+                  rows: List.generate(displayedItems.length, (index) {
+                    final item = displayedItems[index];
+                    final isDiterima = item['status'] == 'Diterima';
+
+                    return DataRow(
+                      cells: [
+                        DataCell(Text('${start + index + 1}')),
+                        DataCell(Text(item['nama']!)),
+                        DataCell(Text(item['nik']!)),
+                        DataCell(Text(item['email']!)),
+                        DataCell(Text(item['jk']!)),
+
+                        // FOTO
+                        DataCell(
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: Image.network(
+                              item['foto']!,
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.person,
+                                      size: 40, color: Colors.grey),
+                            ),
+                          ),
+                        ),
+
+                        // STATUS
+                        DataCell(
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: isDiterima
+                                  ? Colors.green.withOpacity(0.2)
+                                  : Colors.orange.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              item['status']!,
+                              style: TextStyle(
+                                color: isDiterima
+                                    ? Colors.green[700]
+                                    : Colors.orange[700],
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // AKSI
+                        DataCell(
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.info,
+                                    color: Colors.blueAccent),
+                                tooltip: 'Detail',
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Detail ${item['nama']} ditekan'),
+                                    ),
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.edit,
+                                    color: Colors.orangeAccent),
+                                tooltip: 'Edit',
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text('Edit ${item['nama']} ditekan'),
+                                    ),
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete,
+                                    color: Colors.redAccent),
+                                tooltip: 'Hapus',
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text('Hapus ${item['nama']} ditekan'),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
+                ),
               ),
             ),
 
             const SizedBox(height: 20),
 
-            // Pagination
+            // PAGINATION
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
