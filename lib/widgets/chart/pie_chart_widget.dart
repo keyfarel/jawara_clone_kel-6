@@ -38,26 +38,30 @@ class _PieChartWidgetState extends State<PieChartWidget> {
             Padding(
               padding: const EdgeInsets.only(bottom: 35),
               child: Row(
-                children: [
-                  if (widget.icon != null)
-                    Icon(
-                      widget.icon,
-                      color: widget.iconColor ?? Colors.indigoAccent,
-                      size: 20,
-                    ),
-                  if (widget.icon != null) const SizedBox(width: 8),
-                  Text(
+              children: [
+                if (widget.icon != null)
+                  Icon(
+                    widget.icon,
+                    color: widget.iconColor ?? Colors.indigoAccent,
+                    size: 20,
+                  ),
+                if (widget.icon != null) const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
                     widget.title,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color:
-                      widget.iconColor ?? Colors.indigoAccent,
+                      color: widget.iconColor ?? Colors.indigoAccent,
                     ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    softWrap: false,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+          ),
 
             // === Chart ===
             Center(

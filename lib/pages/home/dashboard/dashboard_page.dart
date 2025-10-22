@@ -98,7 +98,7 @@ class DashboardPage extends StatelessWidget {
             const SizedBox(height: 12),
             DoughnutChartWidget(
               icon: Icons.wc,
-              title: 'Distribusi Jenis Kelamin Penduduk',
+              title: 'Distribusi Jenis Kelamin',
               data: jenisKelamin,
             ),
 
@@ -107,7 +107,7 @@ class DashboardPage extends StatelessWidget {
 
             BarChartWidget(
               icon: Icons.bar_chart,
-              title: 'Perbandingan Pemasukan & Pengeluaran',
+              title: 'Pemasukan vs Pengeluaran',
               data: pemasukanVsPengeluaran,
               formatAxisLabel: (value) => '${value.toStringAsFixed(0)} jt',
             ),

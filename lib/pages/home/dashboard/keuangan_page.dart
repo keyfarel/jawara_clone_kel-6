@@ -140,29 +140,16 @@ class KeuanganPage extends StatelessWidget {
             // --- TODO: Section Doughnut Chart - Pemasukan Berdasarkan Kategori ---
             DoughnutChartWidget(
               icon: Icons.arrow_upward,
-              title: 'Pemasukan Berdasarkan Kategori',
+              title: 'Pemasukan per Kategori',
               data: pemasukanKategori,
-            ),
-
-            DoughnutChartWidget(
-              icon: Icons.arrow_downward,
-              title: 'Pengeluaran Berdasarkan Kategori',
-              data: pengeluaranKategori,
             ),
 
             // --- TODO: Section Pie Chart - Pengeluaran Berdasarkan Kategori ---
             PieChartWidget(
               icon: Icons.arrow_downward,
-              title: 'Pengeluaran Berdasarkan Kategori',
+              title: 'Pengeluaran Per Kategori',
               data: pengeluaranKategori,
             ),
-
-            PieChartWidget(
-              icon: Icons.arrow_upward,
-              title: 'Pemasukan Berdasarkan Kategori',
-              data: pemasukanKategori,
-            ),
-
           ],
         ),
       ),
