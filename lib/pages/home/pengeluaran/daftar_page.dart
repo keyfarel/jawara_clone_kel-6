@@ -66,12 +66,6 @@ class _PengeluaranDaftarPageState extends State<PengeluaranDaftarPage> {
           ),
         ),
       ],
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Navigasi ke halaman tambah pengeluaran
-        },
-        child: const Icon(Icons.add),
-      ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: filteredList.length,
