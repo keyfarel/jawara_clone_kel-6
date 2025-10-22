@@ -9,7 +9,7 @@ class DaftarPenggunaPage extends StatefulWidget {
 }
 
 class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
-  int currentPage = 0; // Halaman aktif
+  int currentPage = 0;
   final int perPage = 5;
 
   final List<Map<String, String>> pengguna = [
@@ -27,14 +27,9 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Hitung index data yang akan ditampilkan
     int startIndex = currentPage * perPage;
     int endIndex = (startIndex + perPage).clamp(0, pengguna.length);
-
-    // Ambil data sesuai halaman
     List<Map<String, String>> currentData = pengguna.sublist(startIndex, endIndex);
-
-    // Hitung total halaman
     int totalPages = (pengguna.length / perPage).ceil();
 
     return PageLayout(
@@ -57,9 +52,8 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
                 ],
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min, // << agar tabel tidak full ke bawah
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Tombol Filter
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
@@ -73,7 +67,7 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Tabel Data
+                  // ================= TABLE =================
                   Table(
                     border: const TableBorder(
                       horizontalInside: BorderSide(
@@ -82,7 +76,7 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
                       ),
                     ),
                     columnWidths: const {
-                      0: FlexColumnWidth(0.5),
+                      0: FlexColumnWidth(0.8), // 💡 lebih lebar agar tidak turun
                       1: FlexColumnWidth(2),
                       2: FlexColumnWidth(2),
                     },
@@ -94,9 +88,11 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
                         children: [
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'NO',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                            child: Center( // 💡 rata tengah untuk kolom NO
+                              child: Text(
+                                'NO',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                           Padding(
@@ -115,13 +111,16 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
                           ),
                         ],
                       ),
-                      // Generate data berdasarkan halaman
+
+                      // ====== DATA ROWS ======
                       ...currentData.map(
-                        (item) => TableRow(
+                            (item) => TableRow(
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(item['no']!),
+                              child: Center(
+                                child: Text(item['no']!), // 💡 rata tengah juga
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -138,17 +137,17 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Pagination
+                  // ================= PAGINATION =================
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
                         onPressed: currentPage > 0
                             ? () {
-                                setState(() {
-                                  currentPage--;
-                                });
-                              }
+                          setState(() {
+                            currentPage--;
+                          });
+                        }
                             : null,
                         icon: const Icon(Icons.chevron_left),
                       ),
@@ -169,10 +168,10 @@ class _DaftarPenggunaPageState extends State<DaftarPenggunaPage> {
                       IconButton(
                         onPressed: currentPage < totalPages - 1
                             ? () {
-                                setState(() {
-                                  currentPage++;
-                                });
-                              }
+                          setState(() {
+                            currentPage++;
+                          });
+                        }
                             : null,
                         icon: const Icon(Icons.chevron_right),
                       ),
