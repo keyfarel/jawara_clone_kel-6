@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../../../models/warga_model.dart';
 
@@ -63,12 +62,6 @@ class _WargaDaftarPageState extends State<WargaDaftarPage> {
             ),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigasi ke tambah warga
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }
