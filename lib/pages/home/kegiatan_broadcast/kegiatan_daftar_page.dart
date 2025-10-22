@@ -47,13 +47,6 @@ class _KegiatanDaftarPageState extends State<KegiatanDaftarPage> {
           onPressed: _showFilterDialog,
         ),
       ],
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigasi ke tambah kegiatan
-        },
-        backgroundColor: Colors.blue.shade700,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
       body: ListView.builder(
         itemCount: daftarKegiatan.length,
         itemBuilder: (context, index) {

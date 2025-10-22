@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 
 class PieChartWidget extends StatefulWidget {
   final String title;
+  final IconData? icon;
+  final Color? iconColor;
   final List<Map<String, dynamic>> data;
 
   const PieChartWidget({
     super.key,
     required this.title,
     required this.data,
+    this.icon,
+    this.iconColor,
   });
 
   @override
@@ -30,19 +34,36 @@ class _PieChartWidgetState extends State<PieChartWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Judul
+            // === Bagian Judul dengan Icon ===
             Padding(
-              padding: const EdgeInsets.only(bottom: 30),
-              child: Text(
-                widget.title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
+              padding: const EdgeInsets.only(bottom: 35),
+              child: Row(
+              children: [
+                if (widget.icon != null)
+                  Icon(
+                    widget.icon,
+                    color: widget.iconColor ?? Colors.indigoAccent,
+                    size: 20,
+                  ),
+                if (widget.icon != null) const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    widget.title,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: widget.iconColor ?? Colors.indigoAccent,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    softWrap: false,
+                  ),
                 ),
-              ),
+              ],
             ),
+          ),
 
-            // Chart
+            // === Chart ===
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 0),
@@ -51,7 +72,7 @@ class _PieChartWidgetState extends State<PieChartWidget> {
                   width: 130,
                   child: PieChart(
                     PieChartData(
-                      centerSpaceRadius: 0, // ← ini penting agar penuh
+                      centerSpaceRadius: 0,
                       sectionsSpace: 1,
                       startDegreeOffset: -90,
                       pieTouchData: PieTouchData(
@@ -67,9 +88,9 @@ class _PieChartWidgetState extends State<PieChartWidget> {
                             final index =
                                 response.touchedSection!.touchedSectionIndex;
                             touchedIndex =
-                                (index >= 0 && index < data.length)
-                                    ? index
-                                    : null;
+                            (index >= 0 && index < data.length)
+                                ? index
+                                : null;
                           });
                         },
                       ),
@@ -89,58 +110,58 @@ class _PieChartWidgetState extends State<PieChartWidget> {
               ),
             ),
 
-            // Tooltip
+            // === Tooltip ===
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 180),
               transitionBuilder: (child, animation) =>
                   FadeTransition(opacity: animation, child: child),
               child: touchedIndex != null
                   ? Center(
-                      key: ValueKey<int>(touchedIndex!),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.black87,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
-                              blurRadius: 6,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              data[touchedIndex!]['kategori'] as String,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${data[touchedIndex!]['value']} kegiatan',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
+                key: ValueKey<int>(touchedIndex!),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        data[touchedIndex!]['kategori'] as String,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
                         ),
                       ),
-                    )
+                      const SizedBox(height: 4),
+                      Text(
+                        '${data[touchedIndex!]['value']} kegiatan',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
                   : const SizedBox.shrink(key: ValueKey('empty')),
             ),
 
             const SizedBox(height: 12),
 
-            // Keterangan kategori
+            // === Keterangan kategori ===
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: Row(

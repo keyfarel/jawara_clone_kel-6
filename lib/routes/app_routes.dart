@@ -68,7 +68,7 @@ class AppRoutes {
 
   static const daftarChannel = '/daftar_channel';
   static const tambahChannel = '/tambah_channel';
-  static const informasiAspirasiPage = '/informasi_aspirasi_page';
+  static const informasiAspirasiPage = '/informasi_aspirasi';
   static const tambahMutasi = '/tambah_mutasi';
   static const daftarMutasi = '/mutasi_daftar';
 

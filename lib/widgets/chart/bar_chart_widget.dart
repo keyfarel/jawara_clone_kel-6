@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class BarChartWidget extends StatefulWidget {
   final String title;
+  final IconData? icon;
+  final Color? iconColor;
   final List<Map<String, dynamic>> data; // {'bulan': 'Jan', 'value': 8, 'color': Colors.blue}
   final String Function(double value)? formatAxisLabel;
   final double heightPerItem;
@@ -9,6 +11,8 @@ class BarChartWidget extends StatefulWidget {
   const BarChartWidget({
     super.key,
     required this.title,
+    this.icon,
+    this.iconColor,
     required this.data,
     this.heightPerItem = 44,
     this.formatAxisLabel,
@@ -49,15 +53,28 @@ class _BarChartWidgetState extends State<BarChartWidget> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title
+                // === Title dengan ikon ===
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
-                  child: Text(
-                    widget.title,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Row(
+                    children: [
+                      if (widget.icon != null)
+                        Icon(
+                          widget.icon,
+                          color: widget.iconColor ?? Colors.indigoAccent,
+                          size: 20,
+                        ),
+                      if (widget.icon != null) const SizedBox(width: 8),
+                      Text(
+                        widget.title,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color:
+                          widget.iconColor ?? Colors.indigoAccent,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
@@ -66,14 +83,14 @@ class _BarChartWidgetState extends State<BarChartWidget> {
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
-                      // Bar chart list
+                      // === Bar chart list ===
                       ...List.generate(data.length, (index) {
                         final item = data[index];
                         final value = (item['value'] as num).toDouble();
                         final color = item['color'] as Color;
                         final label = item['bulan'] as String;
                         final fraction =
-                            (maxValue == 0) ? 0.0 : (value / maxValue);
+                        (maxValue == 0) ? 0.0 : (value / maxValue);
 
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -93,7 +110,7 @@ class _BarChartWidgetState extends State<BarChartWidget> {
                                   onTap: () {
                                     setState(() {
                                       selectedIndex =
-                                          selectedIndex == index ? null : index;
+                                      selectedIndex == index ? null : index;
                                     });
                                   },
                                   child: Stack(
@@ -104,31 +121,31 @@ class _BarChartWidgetState extends State<BarChartWidget> {
                                         decoration: BoxDecoration(
                                           color: Colors.grey.shade200,
                                           borderRadius:
-                                              BorderRadius.circular(6),
+                                          BorderRadius.circular(6),
                                         ),
                                       ),
                                       FractionallySizedBox(
                                         widthFactor: fraction.clamp(0.0, 1.0),
                                         child: AnimatedContainer(
                                           duration:
-                                              const Duration(milliseconds: 300),
+                                          const Duration(milliseconds: 300),
                                           height: 18,
                                           decoration: BoxDecoration(
                                             color: selectedIndex == index
                                                 ? color.withOpacity(0.9)
                                                 : color,
                                             borderRadius:
-                                                BorderRadius.circular(6),
+                                            BorderRadius.circular(6),
                                             boxShadow: selectedIndex == index
                                                 ? [
-                                                    BoxShadow(
-                                                      color: color
-                                                          .withOpacity(0.25),
-                                                      blurRadius: 8,
-                                                      offset:
-                                                          const Offset(0, 3),
-                                                    )
-                                                  ]
+                                              BoxShadow(
+                                                color: color
+                                                    .withOpacity(0.25),
+                                                blurRadius: 8,
+                                                offset:
+                                                const Offset(0, 3),
+                                              )
+                                            ]
                                                 : null,
                                           ),
                                         ),
@@ -137,13 +154,16 @@ class _BarChartWidgetState extends State<BarChartWidget> {
                                         Positioned(
                                           right: 6,
                                           child: Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 3),
                                             decoration: BoxDecoration(
                                               color: Colors.black87,
-                                              borderRadius: BorderRadius.circular(6),
+                                              borderRadius:
+                                              BorderRadius.circular(6),
                                             ),
                                             child: Text(
-                                              item['label'] ?? value.toString(),
+                                              item['label'] ??
+                                                  value.toString(),
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 12,
@@ -162,14 +182,12 @@ class _BarChartWidgetState extends State<BarChartWidget> {
 
                       const SizedBox(height: 12),
 
-                      // Axis scale
+                      // === Axis scale ===
                       Padding(
                         padding: const EdgeInsets.only(left: 56 + 8, right: 8),
                         child: Row(
                           children: List.generate(ticks + 1, (i) {
                             final tickValue = (maxValue / ticks * i);
-
-                            // 🔹 Gunakan formatAxisLabel jika diberikan, kalau tidak pakai angka mentah
                             final tickLabel = widget.formatAxisLabel != null
                                 ? widget.formatAxisLabel!(tickValue)
                                 : tickValue.round().toString();
@@ -179,8 +197,8 @@ class _BarChartWidgetState extends State<BarChartWidget> {
                                 alignment: i == 0
                                     ? Alignment.centerLeft
                                     : i == ticks
-                                        ? Alignment.centerRight
-                                        : Alignment.center,
+                                    ? Alignment.centerRight
+                                    : Alignment.center,
                                 child: Text(
                                   tickLabel,
                                   style: const TextStyle(
