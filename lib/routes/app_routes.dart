@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
-// Import semua pages
-import 'package:myapp/pages/auth/login_page.dart';
-import 'package:myapp/pages/auth/register_page.dart';
+// auth
+import 'package:myapp/features/auth/presentation/pages/login_page.dart';
+import 'package:myapp/features/auth/presentation/pages/register_page.dart';
+import 'package:myapp/features/auth/presentation/pages/splash_page.dart';
+
+// dashboard
 import 'package:myapp/pages/home/dashboard/dashboard_page.dart';
 import 'package:myapp/pages/home/dashboard/kegiatan_page.dart';
 import 'package:myapp/pages/home/dashboard/kependudukan_page.dart';
@@ -39,6 +42,7 @@ import 'package:myapp/pages/home/penerimaan_warga/penerimaan_warga_page.dart';
 class AppRoutes {
   static const login = '/login';
   static const register = '/register';
+  static const splash = '/splash';
 
   static const dashboard = '/dashboard';
   static const kegiatan = '/kegiatan';
@@ -80,8 +84,9 @@ class AppRoutes {
 
   static final Map<String, WidgetBuilder> routes = {
     // Auth
-    login: (context) => const LoginPage(),
-    register: (context) => const RegisterPage(),
+    login: (context) => LoginPage(),
+    register: (context) => RegisterPage(),
+    splash: (context) => const SplashPage(),
 
     // Dashboard
     dashboard: (context) => const DashboardPage(),
