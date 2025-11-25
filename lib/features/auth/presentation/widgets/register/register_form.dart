@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+// Import file custom input yang baru dibuat
+import 'custom_inputs.dart';
 
 class RegisterForm extends StatefulWidget {
+  // Semua parameter tetap sama, hanya FocusNode saya siapkan opsional
   final TextEditingController nameController;
   final TextEditingController nikController;
   final TextEditingController emailController;
@@ -10,16 +13,26 @@ class RegisterForm extends StatefulWidget {
   final TextEditingController confirmPasswordController;
   final TextEditingController customAddressController;
 
+  final FocusNode? nameFocus;
+  final FocusNode? nikFocus;
+  final FocusNode? emailFocus;
+  final FocusNode? phoneFocus;
+  final FocusNode? passwordFocus;
+  final FocusNode? confirmPasswordFocus;
+  final FocusNode? customAddressFocus;
+
   final String? selectedGender;
   final String? selectedHouseId;
   final String? selectedOwnership;
   final XFile? selectedImage;
-
+  
   final Function(String?) onGenderChanged;
   final Function(String?) onHouseChanged;
   final Function(String?) onOwnershipChanged;
   final VoidCallback onPickImage;
   
+  final List<dynamic> houseOptions;
+  final bool isLoadingHouses;
   final Color primaryColor;
 
   const RegisterForm({
@@ -31,15 +44,27 @@ class RegisterForm extends StatefulWidget {
     required this.passwordController,
     required this.confirmPasswordController,
     required this.customAddressController,
+    
+    this.nameFocus,
+    this.nikFocus,
+    this.emailFocus,
+    this.phoneFocus,
+    this.passwordFocus,
+    this.confirmPasswordFocus,
+    this.customAddressFocus,
+
     required this.onGenderChanged,
     required this.onHouseChanged,
     required this.onOwnershipChanged,
     required this.onPickImage,
     required this.primaryColor,
+    required this.houseOptions,
+    
     this.selectedGender,
     this.selectedHouseId,
     this.selectedOwnership,
     this.selectedImage,
+    this.isLoadingHouses = false,
   });
 
   @override
@@ -47,25 +72,42 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
-  bool _isPasswordHidden = true;
-  bool _isConfirmPasswordHidden = true;
-
+  // State password hidden sudah pindah ke ModernPasswordField!
+  
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _buildPersonalSection(),
+        const SizedBox(height: 24),
+        _buildAccountSection(),
+        const SizedBox(height: 24),
+        _buildResidenceSection(),
+        const SizedBox(height: 24),
+        _buildPhotoSection(),
+      ],
+    );
+  }
+
+  // --- BAGIAN 1: DATA PRIBADI ---
+  Widget _buildPersonalSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         _buildSectionTitle("Data Pribadi"),
-        _ModernTextField(
+        ModernTextField(
           controller: widget.nameController,
+          focusNode: widget.nameFocus,
           hint: "Nama Lengkap",
           icon: Icons.person_outline,
           validator: (val) => val!.isEmpty ? "Nama wajib diisi" : null,
           primaryColor: widget.primaryColor,
         ),
         const SizedBox(height: 16),
-        _ModernTextField(
+        ModernTextField(
           controller: widget.nikController,
+          focusNode: widget.nikFocus,
           hint: "NIK",
           icon: Icons.badge_outlined,
           inputType: TextInputType.number,
@@ -73,7 +115,7 @@ class _RegisterFormState extends State<RegisterForm> {
           primaryColor: widget.primaryColor,
         ),
         const SizedBox(height: 16),
-        _ModernDropdown(
+        ModernDropdown(
           value: widget.selectedGender,
           hint: "Jenis Kelamin",
           icon: Icons.wc,
@@ -81,11 +123,19 @@ class _RegisterFormState extends State<RegisterForm> {
           onChanged: widget.onGenderChanged,
           primaryColor: widget.primaryColor,
         ),
-        
-        const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  // --- BAGIAN 2: KONTAK & AKUN ---
+  Widget _buildAccountSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         _buildSectionTitle("Kontak & Akun"),
-        _ModernTextField(
+        ModernTextField(
           controller: widget.emailController,
+          focusNode: widget.emailFocus,
           hint: "Email",
           icon: Icons.email_outlined,
           inputType: TextInputType.emailAddress,
@@ -93,8 +143,9 @@ class _RegisterFormState extends State<RegisterForm> {
           primaryColor: widget.primaryColor,
         ),
         const SizedBox(height: 16),
-        _ModernTextField(
+        ModernTextField(
           controller: widget.phoneController,
+          focusNode: widget.phoneFocus,
           hint: "No. Telepon / WA",
           icon: Icons.phone_android_outlined,
           inputType: TextInputType.phone,
@@ -102,88 +153,77 @@ class _RegisterFormState extends State<RegisterForm> {
           primaryColor: widget.primaryColor,
         ),
         const SizedBox(height: 16),
-        
-        TextFormField(
+        // Menggunakan ModernPasswordField baru
+        ModernPasswordField(
           controller: widget.passwordController,
-          obscureText: _isPasswordHidden,
+          focusNode: widget.passwordFocus,
+          hint: "Kata Sandi",
+          primaryColor: widget.primaryColor,
           validator: (val) => val!.isEmpty ? "Password wajib diisi" : null,
-          style: const TextStyle(fontSize: 15),
-          decoration: _modernInputDecoration(
-            "Kata Sandi", 
-            Icons.lock_outline, 
-            widget.primaryColor,
-            suffixIcon: IconButton(
-              icon: Icon(
-                _isPasswordHidden ? Icons.visibility : Icons.visibility_off,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                setState(() {
-                  _isPasswordHidden = !_isPasswordHidden;
-                });
-              },
-            ),
-          ),
         ),
-
         const SizedBox(height: 16),
-        
-        TextFormField(
+        ModernPasswordField(
           controller: widget.confirmPasswordController,
-          obscureText: _isConfirmPasswordHidden,
+          focusNode: widget.confirmPasswordFocus,
+          hint: "Ulangi Kata Sandi",
+          primaryColor: widget.primaryColor,
           validator: (val) {
-             if (val!.isEmpty) return "Konfirmasi password wajib diisi";
-             if (val != widget.passwordController.text) return "Password tidak sama";
-             return null;
+            if (val!.isEmpty) return "Konfirmasi password wajib diisi";
+            if (val != widget.passwordController.text) return "Password tidak sama";
+            return null;
           },
-          style: const TextStyle(fontSize: 15),
-          decoration: _modernInputDecoration(
-            "Ulangi Kata Sandi", 
-            Icons.lock_reset_outlined, 
-            widget.primaryColor,
-            suffixIcon: IconButton(
-              icon: Icon(
-                _isConfirmPasswordHidden ? Icons.visibility : Icons.visibility_off,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                setState(() {
-                  _isConfirmPasswordHidden = !_isConfirmPasswordHidden;
-                });
-              },
-            ),
-          ),
         ),
+      ],
+    );
+  }
 
-        const SizedBox(height: 24),
+  // --- BAGIAN 3: TEMPAT TINGGAL ---
+  Widget _buildResidenceSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         _buildSectionTitle("Tempat Tinggal"),
-        
         DropdownButtonFormField<String>(
           value: widget.selectedHouseId,
           isExpanded: true,
-          decoration: _modernInputDecoration(
-            "Pilih Rumah (Opsional)", 
-            Icons.home_outlined, 
-            widget.primaryColor
+          hint: widget.isLoadingHouses
+              ? const Text("Memuat data rumah...", style: TextStyle(fontSize: 14))
+              : const Text("Pilih Rumah (Opsional)"),
+          decoration: modernInputDecoration( // Panggil dari custom_inputs
+            "Pilih Rumah",
+            Icons.home_outlined,
+            widget.primaryColor,
           ),
-          items: const [
-            DropdownMenuItem(value: "1", child: Text("Blok A1")),
-            DropdownMenuItem(value: "2", child: Text("Blok B2")),
-          ],
-          onChanged: widget.onHouseChanged,
+          onChanged: (widget.isLoadingHouses || widget.houseOptions.isEmpty)
+              ? null
+              : widget.onHouseChanged,
+          items: widget.houseOptions.map<DropdownMenuItem<String>>((house) {
+            return DropdownMenuItem<String>(
+              value: house['id'].toString(),
+              child: Text(house['house_name'], style: const TextStyle(fontSize: 15)),
+            );
+          }).toList(),
         ),
         
+        if (!widget.isLoadingHouses && widget.houseOptions.isEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 8, left: 5),
+            child: Text(
+              "Tidak ada rumah kosong. Silakan isi alamat manual.",
+              style: TextStyle(color: Colors.orange.shade800, fontSize: 12),
+            ),
+          ),
+
         const SizedBox(height: 16),
-        
-        _ModernTextField(
+        ModernTextField(
           controller: widget.customAddressController,
+          focusNode: widget.customAddressFocus,
           hint: "Alamat Manual (Opsional)",
           icon: Icons.add_location_alt_outlined,
           primaryColor: widget.primaryColor,
         ),
-        
         const SizedBox(height: 16),
-        _ModernDropdown(
+        ModernDropdown(
           value: widget.selectedOwnership,
           hint: "Status Kepemilikan",
           icon: Icons.verified_user_outlined,
@@ -191,10 +231,16 @@ class _RegisterFormState extends State<RegisterForm> {
           onChanged: widget.onOwnershipChanged,
           primaryColor: widget.primaryColor,
         ),
+      ],
+    );
+  }
 
-        const SizedBox(height: 24),
+  // --- BAGIAN 4: FOTO IDENTITAS ---
+  Widget _buildPhotoSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         _buildSectionTitle("Foto Identitas"),
-        
         InkWell(
           onTap: widget.onPickImage,
           borderRadius: BorderRadius.circular(12),
@@ -230,10 +276,10 @@ class _RegisterFormState extends State<RegisterForm> {
                     child: Text(
                       widget.selectedImage!.name,
                       style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                      maxLines: 1, 
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  )
+                  ),
               ],
             ),
           ),
@@ -254,98 +300,6 @@ class _RegisterFormState extends State<RegisterForm> {
           letterSpacing: 1.2,
         ),
       ),
-    );
-  }
-}
-
-InputDecoration _modernInputDecoration(String hint, IconData icon, Color color, {Widget? suffixIcon}) {
-  return InputDecoration(
-    hintText: hint,
-    hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-    prefixIcon: Icon(icon, color: Colors.grey.shade400, size: 22),
-    suffixIcon: suffixIcon, 
-    filled: true,
-    fillColor: Colors.grey.shade50, 
-    contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide.none, 
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: Colors.grey.shade200),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: color, width: 1.5),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: Colors.red.shade200),
-    ),
-  );
-}
-
-class _ModernTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final IconData icon;
-  final TextInputType inputType;
-  final String? Function(String?)? validator;
-  final Color primaryColor;
-
-  const _ModernTextField({
-    required this.controller,
-    required this.hint,
-    required this.icon,
-    required this.primaryColor,
-    this.inputType = TextInputType.text,
-    this.validator,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: inputType,
-      validator: validator,
-      style: const TextStyle(fontSize: 15),
-      decoration: _modernInputDecoration(hint, icon, primaryColor),
-    );
-  }
-}
-
-class _ModernDropdown extends StatelessWidget {
-  final String? value;
-  final String hint;
-  final IconData icon;
-  final List<String> items;
-  final Function(String?) onChanged;
-  final Color primaryColor;
-
-  const _ModernDropdown({
-    required this.value,
-    required this.hint,
-    required this.icon,
-    required this.items,
-    required this.onChanged,
-    required this.primaryColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButtonFormField<String>(
-      value: value,
-      icon: const Icon(Icons.keyboard_arrow_down_rounded),
-      decoration: _modernInputDecoration(hint, icon, primaryColor),
-      items: items.map((item) {
-        return DropdownMenuItem(
-          value: item,
-          child: Text(item, style: const TextStyle(fontSize: 15)),
-        );
-      }).toList(),
-      onChanged: onChanged,
-      validator: (val) => val == null ? "$hint wajib dipilih" : null,
     );
   }
 }

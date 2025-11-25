@@ -14,4 +14,13 @@ class AuthRepository {
   Future<Map<String, dynamic>> register(RegisterRequest request) {
     return service.register(request);
   }
+
+  Future<List<dynamic>> getHouseOptions() async {
+    try {
+      final response = await service.fetchHouseOptions();
+      return response; 
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
