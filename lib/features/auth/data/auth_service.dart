@@ -140,6 +140,35 @@ class AuthService {
     }
   }
 
+  Future<List<dynamic>> fetchHouseOptions() async {
+    final uri = Uri.parse('$baseUrl/houses/options');
+
+    try {
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Accept': 'application/json',
+              'ngrok-skip-browser-warning': 'true',
+            },
+          )
+          .timeout(_timeOutDuration);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data;
+      } else {
+        return [];
+      }
+    } on SocketException {
+      throw Exception('Tidak ada koneksi internet');
+    } on TimeoutException {
+      throw Exception('Request timeout');
+    } catch (e) {
+      throw Exception('Gagal memuat data rumah: $e');
+    }
+  }
+
   Future<bool> checkAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     final refreshToken = prefs.getString('refresh_token');
