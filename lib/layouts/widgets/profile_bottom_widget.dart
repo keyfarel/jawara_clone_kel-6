@@ -1,93 +1,104 @@
 import 'package:flutter/material.dart';
-import '../../routes/app_routes.dart';
+import 'package:provider/provider.dart';
+import 'package:myapp/features/auth/data/auth_service.dart';
+import 'package:myapp/routes/app_routes.dart';
 
 class ProfileBottomWidget extends StatelessWidget {
   final BuildContext rootContext;
 
-  const ProfileBottomWidget({super.key, required this.rootContext});
+  const ProfileBottomWidget({
+    super.key,
+    required this.rootContext,
+  });
+
+  void _handleLogout() async {
+    // 1. Tutup Bottom Sheet terlebih dahulu
+    Navigator.pop(rootContext); 
+
+    // 2. Panggil fungsi logout dari AuthService
+    // listen: false karena kita hanya menjalankan fungsi, tidak memantau perubahan state UI
+    await Provider.of<AuthService>(rootContext, listen: false).logout();
+
+    // 3. Arahkan kembali ke halaman Login & Hapus riwayat navigasi (agar tidak bisa di-back)
+    if (rootContext.mounted) {
+      Navigator.of(rootContext).pushNamedAndRemoveUntil(
+        AppRoutes.login,
+        (route) => false,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min, // penting: biar tinggi menyesuaikan isi
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
-                ),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Indikator geser (optional visual)
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const Text(
-              "Akun Admin",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 20),
+          
+          // Info User
+          const Row(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.blue,
+                child: Icon(Icons.person, size: 30, color: Colors.white),
+              ),
+              SizedBox(width: 15),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Admin Jawara",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "admin1@gmail.com",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
+              )
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Divider(),
+          
+          // Tombol Logout
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(Icons.logout, color: Colors.red.shade700),
             ),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: const Text("Lihat Profil"),
-              onTap: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(rootContext).showSnackBar(
-                  const SnackBar(content: Text("Menu Lihat Profil ditekan")),
-                );
-              },
+            title: Text(
+              "Keluar Aplikasi",
+              style: TextStyle(
+                color: Colors.red.shade700,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text("Logout", style: TextStyle(color: Colors.red)),
-              onTap: () async {
-                Navigator.pop(context);
-                await Future.delayed(const Duration(milliseconds: 200));
-
-                if (rootContext.mounted) {
-                  showDialog(
-                    context: rootContext,
-                    builder: (dialogContext) => AlertDialog(
-                      title: const Text("Konfirmasi Logout"),
-                      content: const Text("Apakah Anda yakin ingin keluar?"),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(dialogContext),
-                          child: const Text("Batal"),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(dialogContext);
-                            Navigator.pushNamedAndRemoveUntil(
-                              rootContext,
-                              AppRoutes.login,
-                              (route) => false,
-                            );
-
-                            ScaffoldMessenger.of(rootContext).showSnackBar(
-                              const SnackBar(
-                                content: Text("Logout berhasil"),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          },
-                          child: const Text("Logout"),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
-        ),
+            subtitle: const Text("Hapus sesi dan kembali ke login"),
+            onTap: _handleLogout,
+          ),
+          const SizedBox(height: 10),
+        ],
       ),
     );
   }

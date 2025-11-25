@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -10,26 +12,65 @@ class AuthService {
   final String baseUrl =
       'https://unmoaning-lenora-photomechanically.ngrok-free.dev/api';
 
-  // --- LOGIN ---
+  final Duration _timeOutDuration = const Duration(seconds: 10);
+
+  // LOGIN
   Future<Map<String, dynamic>> login(LoginRequest request) async {
     final uri = Uri.parse('$baseUrl/login');
 
-    final response = await http.post(
-      uri,
-      headers: {'Accept': 'application/json'},
-      body: request.toMap(),
-    );
+    try {
+      final response = await http
+          .post(
+            uri,
+            headers: {'Accept': 'application/json'},
+            body: request.toMap(),
+          )
+          .timeout(_timeOutDuration);
 
-    final data = json.decode(response.body);
+      if (response.statusCode >= 500) {
+        return {
+          'status': 'error',
+          'message': 'Sedang ada gangguan pada server. Silakan coba lagi nanti.'
+        };
+      }
 
-    if (response.statusCode == 200 && data['access_token'] != null) {
-      await _saveTokens(data['access_token'], data['refresh_token']);
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200 && data['access_token'] != null) {
+        await _saveTokens(data['access_token'], data['refresh_token']);
+      }
+
+      return data;
+
+    } on SocketException {
+      return {
+        'status': 'error',
+        'message': 'Tidak ada koneksi internet. Periksa WiFi/Data Anda.'
+      };
+    } on TimeoutException {
+      return {
+        'status': 'error',
+        'message': 'Server tidak merespons. Coba lagi nanti.'
+      };
+    } on FormatException {
+      return {
+        'status': 'error',
+        'message': 'Data dari server tidak valid.'
+      };
+    } on http.ClientException {
+      return {
+        'status': 'error',
+        'message': 'Gagal menghubungi server. Periksa URL atau koneksi.'
+      };
+    } catch (_) {
+      return {
+        'status': 'error',
+        'message': 'Terjadi kesalahan internal.'
+      };
     }
-
-    return data;
   }
 
-  // --- REGISTER ---
+  // REGISTER
   Future<Map<String, dynamic>> register(RegisterRequest request) async {
     final uri = Uri.parse('$baseUrl/register');
 
@@ -68,26 +109,45 @@ class AuthService {
     }
 
     try {
-      final streamedResponse = await multipartRequest.send();
+      final streamedResponse =
+          await multipartRequest.send().timeout(_timeOutDuration);
       final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode >= 500) {
+        return {'status': 'error', 'message': 'Gangguan server internal.'};
+      }
+
       return json.decode(response.body);
+
+    } on SocketException {
+      return {
+        'status': 'error',
+        'message': 'Gagal terhubung. Periksa koneksi internet.'
+      };
+    } on TimeoutException {
+      return {
+        'status': 'error',
+        'message': 'Waktu habis saat mengunggah data.'
+      };
     } catch (e) {
-      return {'status': 'error', 'message': e.toString()};
+      return {'status': 'error', 'message': 'Gagal mendaftar.'};
     }
   }
 
-  // --- AUTO LOGIN ---
+  // AUTO LOGIN
   Future<bool> checkAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     final refreshToken = prefs.getString('refresh_token');
     final accessToken = prefs.getString('access_token');
 
-    if (refreshToken == null) {
-      return false;
-    }
+    if (refreshToken == null) return false;
 
-    if (accessToken != null && !JwtDecoder.isExpired(accessToken)) {
-      return true;
+    if (accessToken != null) {
+      try {
+        if (!JwtDecoder.isExpired(accessToken)) {
+          return true;
+        }
+      } catch (_) {}
     }
 
     return await _performRefreshToken(refreshToken);
@@ -97,11 +157,16 @@ class AuthService {
     final uri = Uri.parse('$baseUrl/refresh-token');
 
     try {
-      final response = await http.post(
-        uri,
-        headers: {'Accept': 'application/json'},
-        body: {'refresh_token': refreshToken},
-      );
+      final response = await http
+          .post(
+            uri,
+            headers: {
+              'Accept': 'application/json',
+              'ngrok-skip-browser-warning': 'true',
+            },
+            body: {'refresh_token': refreshToken},
+          )
+          .timeout(_timeOutDuration);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -110,25 +175,30 @@ class AuthService {
           await _saveTokens(data['access_token'], data['refresh_token']);
           return true;
         }
-
         return false;
-      } else {
+      } else if (response.statusCode == 401) {
         await logout();
         return false;
+      } else {
+        return false;
       }
-    } catch (e) {
+    } on SocketException {
+      return false;
+    } on TimeoutException {
+      return false;
+    } catch (_) {
       return false;
     }
   }
 
-  // --- SAVE TOKENS ---
+  // SAVE TOKENS
   Future<void> _saveTokens(String access, String refresh) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('access_token', access);
     await prefs.setString('refresh_token', refresh);
   }
 
-  // --- LOGOUT ---
+  // LOGOUT
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
