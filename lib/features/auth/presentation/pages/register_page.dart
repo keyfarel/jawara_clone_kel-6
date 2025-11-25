@@ -85,7 +85,6 @@ class _RegisterPageState extends State<RegisterPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Mohon upload foto identitas")),
       );
-
       return;
     }
 
@@ -93,30 +92,19 @@ class _RegisterPageState extends State<RegisterPage> {
 
     final request = RegisterRequest(
       name: nameController.text,
-
       nik: nikController.text,
-
       email: emailController.text,
-
       phone: phoneController.text,
-
       password: passwordController.text,
-
       passwordConfirmation: confirmPasswordController.text,
-
       gender: selectedGender == "Laki-laki" ? "male" : "female",
-
       ownershipStatus: apiOwnershipStatus,
-
       houseId: selectedHouseId,
-
       customHouseAddress: customAddressController.text,
-
       idCardPhoto: idCardPhoto,
     );
 
     final controller = context.read<RegisterController>();
-
     final result = await controller.register(request);
 
     if (!mounted) return;
@@ -124,17 +112,33 @@ class _RegisterPageState extends State<RegisterPage> {
     if (result['status'] == 'success') {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Registrasi Berhasil! Silakan Login."),
+          content: const Text("Registrasi Berhasil!"),
           backgroundColor: primaryColor,
         ),
       );
 
-      Navigator.pushReplacementNamed(context, '/login');
+      // UBAH DISINI: Langsung ke Dashboard (Auto Login)
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/dashboard',
+        (route) => false,
+      );
     } else {
       String errorMessage = result['message'] ?? "Registrasi Gagal";
 
       if (result['errors'] != null) {
-        errorMessage += ": ${result['errors'].toString()}";
+        // Handle validasi detail dari Laravel (misal: email taken)
+        if (result['errors'] is Map) {
+          final errors = result['errors'] as Map;
+          final firstError = errors.values.first;
+          if (firstError is List) {
+            errorMessage = firstError.first;
+          } else {
+            errorMessage = firstError.toString();
+          }
+        } else {
+          errorMessage += ": ${result['errors'].toString()}";
+        }
       }
 
       ScaffoldMessenger.of(context).showSnackBar(

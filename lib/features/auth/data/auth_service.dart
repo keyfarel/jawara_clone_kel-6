@@ -14,7 +14,6 @@ class AuthService {
 
   final Duration _timeOutDuration = const Duration(seconds: 10);
 
-  // LOGIN
   Future<Map<String, dynamic>> login(LoginRequest request) async {
     final uri = Uri.parse('$baseUrl/login');
 
@@ -30,47 +29,38 @@ class AuthService {
       if (response.statusCode >= 500) {
         return {
           'status': 'error',
-          'message': 'Sedang ada gangguan pada server. Silakan coba lagi nanti.'
+          'message': 'Gangguan pada server. Silakan coba lagi nanti.',
         };
       }
 
-      final data = json.decode(response.body);
+      final body = json.decode(response.body);
 
-      if (response.statusCode == 200 && data['access_token'] != null) {
-        await _saveTokens(data['access_token'], data['refresh_token']);
+      if (response.statusCode == 200 && body['status'] == 'success') {
+        final data = body['data'];
+        if (data != null && data['access_token'] != null) {
+          await _saveTokens(data['access_token'], data['refresh_token'] ?? '');
+        }
       }
 
-      return data;
-
+      return body;
     } on SocketException {
-      return {
-        'status': 'error',
-        'message': 'Tidak ada koneksi internet. Periksa WiFi/Data Anda.'
-      };
+      return {'status': 'error', 'message': 'Tidak ada koneksi internet.'};
     } on TimeoutException {
-      return {
-        'status': 'error',
-        'message': 'Server tidak merespons. Coba lagi nanti.'
-      };
+      return {'status': 'error', 'message': 'Server tidak merespons (RTO).'};
     } on FormatException {
+      return {'status': 'error', 'message': 'Data server tidak valid.'};
+    } on http.ClientException catch (e) {
+      print('ClientException: $e');
       return {
         'status': 'error',
-        'message': 'Data dari server tidak valid.'
+        'message': 'Gagal menghubungi server. Periksa URL atau koneksi.',
       };
-    } on http.ClientException {
-      return {
-        'status': 'error',
-        'message': 'Gagal menghubungi server. Periksa URL atau koneksi.'
-      };
-    } catch (_) {
-      return {
-        'status': 'error',
-        'message': 'Terjadi kesalahan internal.'
-      };
+    } catch (e) {
+      print('Unknown Error: $e');
+      return {'status': 'error', 'message': 'Terjadi kesalahan sistem.'};
     }
   }
 
-  // REGISTER
   Future<Map<String, dynamic>> register(RegisterRequest request) async {
     final uri = Uri.parse('$baseUrl/register');
 
@@ -109,32 +99,47 @@ class AuthService {
     }
 
     try {
-      final streamedResponse =
-          await multipartRequest.send().timeout(_timeOutDuration);
+      final streamedResponse = await multipartRequest.send().timeout(
+        _timeOutDuration,
+      );
       final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode >= 500) {
         return {'status': 'error', 'message': 'Gangguan server internal.'};
       }
 
-      return json.decode(response.body);
+      final body = json.decode(response.body);
 
+      // LOGIKA BARU: Simpan Token (Auto Login)
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        if (body['status'] == 'success') {
+          final data = body['data'];
+
+          if (data != null && data['access_token'] != null) {
+            await _saveTokens(
+              data['access_token'],
+              data['refresh_token'] ?? '',
+            );
+          }
+        }
+      }
+
+      return body;
     } on SocketException {
       return {
         'status': 'error',
-        'message': 'Gagal terhubung. Periksa koneksi internet.'
+        'message': 'Gagal terhubung. Periksa internet.',
       };
     } on TimeoutException {
       return {
         'status': 'error',
-        'message': 'Waktu habis saat mengunggah data.'
+        'message': 'Waktu habis saat mengunggah data.',
       };
     } catch (e) {
       return {'status': 'error', 'message': 'Gagal mendaftar.'};
     }
   }
 
-  // AUTO LOGIN
   Future<bool> checkAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     final refreshToken = prefs.getString('refresh_token');
@@ -169,12 +174,17 @@ class AuthService {
           .timeout(_timeOutDuration);
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final body = json.decode(response.body);
+        final data = body['data'];
 
-        if (data['access_token'] != null && data['refresh_token'] != null) {
-          await _saveTokens(data['access_token'], data['refresh_token']);
+        if (data != null && data['access_token'] != null) {
+          await _saveTokens(
+            data['access_token'],
+            data['refresh_token'] ?? refreshToken,
+          );
           return true;
         }
+
         return false;
       } else if (response.statusCode == 401) {
         await logout();
@@ -182,23 +192,17 @@ class AuthService {
       } else {
         return false;
       }
-    } on SocketException {
-      return false;
-    } on TimeoutException {
-      return false;
     } catch (_) {
       return false;
     }
   }
 
-  // SAVE TOKENS
   Future<void> _saveTokens(String access, String refresh) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('access_token', access);
     await prefs.setString('refresh_token', refresh);
   }
 
-  // LOGOUT
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();

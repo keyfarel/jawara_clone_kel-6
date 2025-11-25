@@ -47,7 +47,6 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
-  // State untuk visibility password
   bool _isPasswordHidden = true;
   bool _isConfirmPasswordHidden = true;
 
@@ -67,10 +66,10 @@ class _RegisterFormState extends State<RegisterForm> {
         const SizedBox(height: 16),
         _ModernTextField(
           controller: widget.nikController,
-          hint: "NIK (Sesuai KTP)",
+          hint: "NIK",
           icon: Icons.badge_outlined,
           inputType: TextInputType.number,
-          validator: (val) => val!.length < 16 ? "NIK minimal 16 digit" : null,
+          validator: (val) => val!.isEmpty ? "NIK wajib diisi" : null,
           primaryColor: widget.primaryColor,
         ),
         const SizedBox(height: 16),
@@ -87,16 +86,16 @@ class _RegisterFormState extends State<RegisterForm> {
         _buildSectionTitle("Kontak & Akun"),
         _ModernTextField(
           controller: widget.emailController,
-          hint: "Alamat Email",
+          hint: "Email",
           icon: Icons.email_outlined,
           inputType: TextInputType.emailAddress,
-          validator: (val) => !val!.contains("@") ? "Email tidak valid" : null,
+          validator: (val) => val!.isEmpty ? "Email wajib diisi" : null,
           primaryColor: widget.primaryColor,
         ),
         const SizedBox(height: 16),
         _ModernTextField(
           controller: widget.phoneController,
-          hint: "Nomor WhatsApp / Telepon",
+          hint: "No. Telepon / WA",
           icon: Icons.phone_android_outlined,
           inputType: TextInputType.phone,
           validator: (val) => val!.isEmpty ? "Nomor wajib diisi" : null,
@@ -104,18 +103,16 @@ class _RegisterFormState extends State<RegisterForm> {
         ),
         const SizedBox(height: 16),
         
-        // --- PASSWORD FIELD (Dibuat Inline agar State Update Lancar) ---
         TextFormField(
           controller: widget.passwordController,
           obscureText: _isPasswordHidden,
-          validator: (val) => val!.length < 6 ? "Minimal 6 karakter" : null,
+          validator: (val) => val!.isEmpty ? "Password wajib diisi" : null,
           style: const TextStyle(fontSize: 15),
           decoration: _modernInputDecoration(
             "Kata Sandi", 
             Icons.lock_outline, 
             widget.primaryColor,
             suffixIcon: IconButton(
-              // Logika Icon: Jika Hidden (True) -> Tampilkan Mata (Buka). Jika Visible (False) -> Tampilkan Mata Silang.
               icon: Icon(
                 _isPasswordHidden ? Icons.visibility : Icons.visibility_off,
                 color: Colors.grey,
@@ -131,13 +128,13 @@ class _RegisterFormState extends State<RegisterForm> {
 
         const SizedBox(height: 16),
         
-        // --- CONFIRM PASSWORD FIELD (Dibuat Inline) ---
         TextFormField(
           controller: widget.confirmPasswordController,
           obscureText: _isConfirmPasswordHidden,
           validator: (val) {
-            if (val != widget.passwordController.text) return "Password tidak sama";
-            return null;
+             if (val!.isEmpty) return "Konfirmasi password wajib diisi";
+             if (val != widget.passwordController.text) return "Password tidak sama";
+             return null;
           },
           style: const TextStyle(fontSize: 15),
           decoration: _modernInputDecoration(
@@ -165,13 +162,13 @@ class _RegisterFormState extends State<RegisterForm> {
           value: widget.selectedHouseId,
           isExpanded: true,
           decoration: _modernInputDecoration(
-            "Pilih Unit Rumah (Opsional)", 
+            "Pilih Rumah (Opsional)", 
             Icons.home_outlined, 
             widget.primaryColor
           ),
           items: const [
-            DropdownMenuItem(value: "1", child: Text("Rumah A - Blok B1")),
-            DropdownMenuItem(value: "2", child: Text("Rumah B - Blok C2")),
+            DropdownMenuItem(value: "1", child: Text("Blok A1")),
+            DropdownMenuItem(value: "2", child: Text("Blok B2")),
           ],
           onChanged: widget.onHouseChanged,
         ),
@@ -180,7 +177,7 @@ class _RegisterFormState extends State<RegisterForm> {
         
         _ModernTextField(
           controller: widget.customAddressController,
-          hint: "Alamat Manual (Jika tidak ada di list)",
+          hint: "Alamat Manual (Opsional)",
           icon: Icons.add_location_alt_outlined,
           primaryColor: widget.primaryColor,
         ),
@@ -196,7 +193,7 @@ class _RegisterFormState extends State<RegisterForm> {
         ),
 
         const SizedBox(height: 24),
-        _buildSectionTitle("Verifikasi"),
+        _buildSectionTitle("Foto Identitas"),
         
         InkWell(
           onTap: widget.onPickImage,
@@ -221,7 +218,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  widget.selectedImage != null ? "Foto Berhasil Dipilih" : "Upload Foto KTP / Identitas",
+                  widget.selectedImage != null ? "Foto Terpilih" : "Upload KTP",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: widget.selectedImage != null ? Colors.green.shade700 : Colors.grey.shade700,
@@ -260,8 +257,6 @@ class _RegisterFormState extends State<RegisterForm> {
     );
   }
 }
-
-// --- Private Helper Widgets & Methods ---
 
 InputDecoration _modernInputDecoration(String hint, IconData icon, Color color, {Widget? suffixIcon}) {
   return InputDecoration(
