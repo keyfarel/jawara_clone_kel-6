@@ -5,6 +5,20 @@ import 'package:myapp/features/auth/presentation/pages/login_page.dart';
 import 'package:myapp/features/auth/presentation/pages/register_page.dart';
 import 'package:myapp/features/auth/presentation/pages/splash_page.dart';
 
+// mutasi
+import 'package:myapp/features/mutasi_keluarga/presentation/pages/daftar_mutasi_page.dart';
+import 'package:myapp/features/mutasi_keluarga/presentation/pages/tambah_mutasi_page.dart';
+
+// log aktifitas
+import 'package:myapp/features/log_aktifitas/presentation/pages/semua_aktifitas_page.dart';
+import 'package:myapp/pages/home/manajemen_pengguna/tambah_pengguna_page.dart';
+
+// channels
+import 'package:myapp/features/channel_transfer/presentation/pages/daftar_channel_page.dart';
+import 'package:myapp/features/channel_transfer/presentation/pages/tambah_channel_page.dart';
+
+// belum update
+
 // dashboard
 import 'package:myapp/pages/home/dashboard/dashboard_page.dart';
 import 'package:myapp/pages/home/dashboard/kegiatan_page.dart';
@@ -18,24 +32,14 @@ import 'package:myapp/pages/home/data_warga_rumah/warga_tambah_page.dart';
 import 'package:myapp/pages/home/kegiatan_broadcast/broadcast_tambah_page.dart';
 import 'package:myapp/pages/home/kegiatan_broadcast/kegiatan_daftar_page.dart';
 import 'package:myapp/pages/home/kegiatan_broadcast/kegiatan_tambah_page.dart';
-import 'package:myapp/pages/home/mutasi_keluarga/daftar_mutasi_page.dart';
 import 'package:myapp/pages/home/pemasukan/pemasukan_lain_daftar_page.dart';
 import 'package:myapp/pages/home/pemasukan/pemasukan_lain_tambah_page.dart';
 import 'package:myapp/pages/home/pemasukan/tagih_iuran_page.dart';
 import 'package:myapp/pages/home/pemasukan/kategori_iuran_page.dart';
 import 'package:myapp/pages/home/laporan_keuangan/semua_pemasukan_page.dart';
 import 'package:myapp/pages/home/laporan_keuangan/semua_pengeluaran_page.dart';
-
-// log aktifitas
-import 'package:myapp/features/log_aktifitas/presentation/pages/semua_aktifitas_page.dart';
-import 'package:myapp/pages/home/manajemen_pengguna/tambah_pengguna_page.dart';
-
-// channels
-import 'package:myapp/features/channel_transfer/presentation/pages/daftar_channel_page.dart';
-import 'package:myapp/features/channel_transfer/presentation/pages/tambah_channel_page.dart';
 import 'package:myapp/pages/home/pemasukan/tagihan_page.dart';
 import 'package:myapp/pages/home/pesan_warga/informasi_aspirasi_page.dart';
-import 'package:myapp/pages/home/mutasi_keluarga/tambah_mutasi_page.dart';
 import 'package:myapp/pages/home/pengeluaran/daftar_page.dart';
 import 'package:myapp/pages/home/pengeluaran/tambah_page.dart';
 import 'package:myapp/pages/home/kegiatan_broadcast/broadcast_daftar_page.dart';
