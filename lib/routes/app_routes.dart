@@ -25,10 +25,14 @@ import 'package:myapp/pages/home/pemasukan/tagih_iuran_page.dart';
 import 'package:myapp/pages/home/pemasukan/kategori_iuran_page.dart';
 import 'package:myapp/pages/home/laporan_keuangan/semua_pemasukan_page.dart';
 import 'package:myapp/pages/home/laporan_keuangan/semua_pengeluaran_page.dart';
-import 'package:myapp/pages/home/log_aktifitas/semua_aktifitas_page.dart';
+
+// log aktifitas
+import 'package:myapp/features/log_aktifitas/presentation/pages/semua_aktifitas_page.dart';
 import 'package:myapp/pages/home/manajemen_pengguna/tambah_pengguna_page.dart';
-import 'package:myapp/pages/home/channel_transfer/daftar_channel_page.dart';
-import 'package:myapp/pages/home/channel_transfer/tambah_channel_page.dart';
+
+// channels
+import 'package:myapp/features/channel_transfer/presentation/pages/daftar_channel_page.dart';
+import 'package:myapp/features/channel_transfer/presentation/pages/tambah_channel_page.dart';
 import 'package:myapp/pages/home/pemasukan/tagihan_page.dart';
 import 'package:myapp/pages/home/pesan_warga/informasi_aspirasi_page.dart';
 import 'package:myapp/pages/home/mutasi_keluarga/tambah_mutasi_page.dart';
