@@ -23,12 +23,63 @@ class MutasiController extends ChangeNotifier {
     try {
       final result = await repository.fetchMutations();
       _mutations = result;
-      // Sort terbaru (opsional)
+      // Sort dari yang paling baru
       _mutations.sort((a, b) => b.tanggal.compareTo(a.tanggal));
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> addMutation({
+    required int familyId,
+    required String mutationType,
+    required String date,
+    required String reason,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await repository.createMutation(
+        familyId: familyId,
+        mutationType: mutationType,
+        date: date,
+        reason: reason,
+      );
+      
+      // Refresh list setelah berhasil tambah
+      await loadMutations(); 
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  List<Map<String, dynamic>> _familyOptions = [];
+  bool _isFamilyOptionsLoading = false;
+
+  List<Map<String, dynamic>> get familyOptions => _familyOptions;
+  bool get isFamilyOptionsLoading => _isFamilyOptionsLoading;
+
+  // METHOD BARU: Load Family Options
+  Future<void> loadFamilyOptions() async {
+    _isFamilyOptionsLoading = true;
+    notifyListeners();
+
+    try {
+      final result = await repository.getFamilyOptions();
+      _familyOptions = result;
+    } catch (e) {
+      print("Error loading families: $e");
+    } finally {
+      _isFamilyOptionsLoading = false;
       notifyListeners();
     }
   }

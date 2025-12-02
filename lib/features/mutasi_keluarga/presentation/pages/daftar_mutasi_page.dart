@@ -14,12 +14,18 @@ class DaftarMutasiPage extends StatefulWidget {
 class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
   // ======= FILTER STATE =======
   String? selectedStatus;
-  // String? selectedKeluarga; // Opsional jika ingin filter keluarga
+
+  // Opsi filter harus sesuai dengan logic 'jenisMutasiRaw' atau 'jenisMutasiDisplay'
+  final List<String> filterOptions = [
+    "Keluar Perumahan", 
+    "Warga Baru", 
+    "Pindah Blok"
+  ];
 
   @override
   void initState() {
     super.initState();
-    // Load data saat halaman dibuka
+    // Load data API saat halaman dibuka
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MutasiController>().loadMutations();
     });
@@ -29,11 +35,11 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
   Widget build(BuildContext context) {
     final controller = context.watch<MutasiController>();
     
-    // Logic Filter Client Side
+    // Filter Logic (Client Side)
     List<MutasiModel> displayedList = controller.mutations;
     if (selectedStatus != null) {
       displayedList = displayedList
-          .where((item) => item.jenisMutasi == selectedStatus)
+          .where((item) => item.jenisMutasiDisplay == selectedStatus)
           .toList();
     }
 
@@ -43,16 +49,16 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Tombol filter & Refresh
+            // Header: Refresh & Filter
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                 // Tombol Refresh Kecil
-                 IconButton(
-                   icon: const Icon(Icons.refresh, color: Colors.blue),
-                   onPressed: () => controller.loadMutations(),
-                 ),
-                 ElevatedButton.icon(
+                IconButton(
+                  icon: const Icon(Icons.refresh, color: Colors.blue),
+                  onPressed: () => controller.loadMutations(),
+                  tooltip: "Muat Ulang",
+                ),
+                ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6C63FF),
                     shape: RoundedRectangleBorder(
@@ -70,98 +76,96 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
             ),
             const SizedBox(height: 16),
 
-            // Konten Utama
+            // Daftar Mutasi
             Expanded(
               child: controller.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : controller.errorMessage != null
                       ? Center(child: Text("Error: ${controller.errorMessage}"))
                       : displayedList.isEmpty
-                          ? const Center(child: Text("Tidak ada data mutasi"))
-                          : RefreshIndicator(
-                              onRefresh: controller.loadMutations,
-                              child: ListView.builder(
-                                itemCount: displayedList.length,
-                                itemBuilder: (context, index) {
-                                  final item = displayedList[index];
-                                  return GestureDetector(
-                                    onTap: () => _showDetail(context, item),
-                                    child: Card(
-                                      elevation: 2,
-                                      margin: const EdgeInsets.only(bottom: 12),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 14, horizontal: 16),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            // No (Index + 1)
-                                            Expanded(
-                                              flex: 1,
-                                              child: Text(
-                                                "${index + 1}",
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.w500),
-                                              ),
+                          ? const Center(child: Text("Belum ada data mutasi"))
+                          : ListView.builder(
+                              itemCount: displayedList.length,
+                              itemBuilder: (context, index) {
+                                final item = displayedList[index];
+                                return GestureDetector(
+                                  onTap: () => _showDetail(context, item),
+                                  child: Card(
+                                    elevation: 2,
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          // No
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text(
+                                              "${index + 1}",
+                                              style: const TextStyle(fontWeight: FontWeight.w500),
                                             ),
-                                            // Tanggal
-                                            Expanded(
-                                              flex: 3,
-                                              child: Text(
-                                                item.formattedDate,
-                                                style: const TextStyle(
-                                                    color: Colors.black87),
-                                              ),
+                                          ),
+                                          // Tanggal
+                                          Expanded(
+                                            flex: 3,
+                                            child: Text(
+                                              item.formattedDate,
+                                              style: const TextStyle(color: Colors.black87, fontSize: 13),
                                             ),
-                                            // Nama Keluarga
-                                            Expanded(
-                                              flex: 4,
-                                              child: Text(
-                                                item.keluarga,
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.w500),
-                                              ),
+                                          ),
+                                          // Keluarga
+                                          Expanded(
+                                            flex: 4,
+                                            child: Text(
+                                              item.keluarga,
+                                              style: const TextStyle(fontWeight: FontWeight.w600),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                            // Badge Jenis Mutasi
-                                            Expanded(
-                                              flex: 3,
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                padding: const EdgeInsets.symmetric(
-                                                    vertical: 6, horizontal: 8),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.green[100],
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                                child: Text(
-                                                  item.jenisMutasi,
-                                                  textAlign: TextAlign.center,
-                                                  style: const TextStyle(
-                                                    color: Colors.green,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 12,
-                                                  ),
+                                          ),
+                                          // Badge Status
+                                          Expanded(
+                                            flex: 3,
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                                              decoration: BoxDecoration(
+                                                color: _getStatusColor(item.jenisMutasiRaw).withOpacity(0.15),
+                                                borderRadius: BorderRadius.circular(20),
+                                              ),
+                                              child: Text(
+                                                item.jenisMutasiDisplay,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: _getStatusColor(item.jenisMutasiRaw),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 11,
                                                 ),
                                               ),
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                );
+                              },
                             ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  // Helper Warna Badge
+  Color _getStatusColor(String rawType) {
+    if (rawType == 'move_out') return Colors.red;
+    if (rawType == 'move_in') return Colors.green;
+    return Colors.blue;
   }
 
   // ========================
@@ -197,12 +201,14 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
               ),
               const Divider(),
               _detailItem("Keluarga", item.keluarga),
-              _detailItem("Alamat Lama", item.alamatLama),
-              _detailItem("Alamat Baru", item.alamatBaru),
               _detailItem("Tanggal Mutasi", item.formattedDate),
-              _detailItem("Jenis Mutasi", item.jenisMutasi),
+              _detailItem("Jenis Mutasi", item.jenisMutasiDisplay),
               _detailItem("Alasan", item.alasan),
-              _detailItem("Status", item.status),
+              
+              // Tampilkan alamat hanya jika datanya valid (bukan '-')
+              if (item.alamatLama != '-') _detailItem("Alamat Lama", item.alamatLama),
+              if (item.alamatBaru != '-') _detailItem("Alamat Baru", item.alamatBaru),
+              
               const SizedBox(height: 20),
               Align(
                 alignment: Alignment.centerRight,
@@ -226,13 +232,11 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title,
-              style: const TextStyle(
-                  color: Colors.grey, fontWeight: FontWeight.w500)),
+              style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 2),
           Text(value,
               style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87)),
+                  fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87)),
         ],
       ),
     );
@@ -256,10 +260,8 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
                   labelText: "Jenis Mutasi",
                   border: OutlineInputBorder(),
                 ),
-                // Sesuaikan opsi ini dengan data di Backend
-                items: ["Pindah Rumah", "Keluar Perumahan", "Datang Baru"]
-                    .map((status) =>
-                        DropdownMenuItem(value: status, child: Text(status)))
+                items: filterOptions
+                    .map((status) => DropdownMenuItem(value: status, child: Text(status)))
                     .toList(),
                 onChanged: (val) => setState(() => selectedStatus = val),
               ),
@@ -268,9 +270,7 @@ class _DaftarMutasiPageState extends State<DaftarMutasiPage> {
           actions: [
             TextButton(
               onPressed: () {
-                setState(() {
-                  selectedStatus = null;
-                });
+                setState(() => selectedStatus = null);
                 Navigator.pop(context);
               },
               child: const Text("Reset"),
