@@ -18,7 +18,7 @@ import 'package:myapp/features/channel_transfer/presentation/pages/daftar_channe
 import 'package:myapp/features/channel_transfer/presentation/pages/tambah_channel_page.dart';
 
 import 'package:myapp/features/kegiatan_broadcast/presentation/pages/broadcast_daftar_page.dart';
-
+import 'package:myapp/features/kegiatan_broadcast/presentation/pages/broadcast_tambah_page.dart';
 // belum update
 
 // dashboard
@@ -31,7 +31,6 @@ import 'package:myapp/pages/home/data_warga_rumah/rumah_daftar_page.dart';
 import 'package:myapp/pages/home/data_warga_rumah/rumah_tambah_page.dart';
 import 'package:myapp/pages/home/data_warga_rumah/warga_daftar_page.dart';
 import 'package:myapp/pages/home/data_warga_rumah/warga_tambah_page.dart';
-import 'package:myapp/pages/home/kegiatan_broadcast/broadcast_tambah_page.dart';
 import 'package:myapp/pages/home/kegiatan_broadcast/kegiatan_daftar_page.dart';
 import 'package:myapp/pages/home/kegiatan_broadcast/kegiatan_tambah_page.dart';
 import 'package:myapp/pages/home/pemasukan/pemasukan_lain_daftar_page.dart';
