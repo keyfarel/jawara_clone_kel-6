@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:myapp/widgets/chart/doughnut_chart_widget.dart';
 import 'package:myapp/widgets/header_card/double_header_card_widget.dart';
 import '../../../layouts/pages_layout.dart';
-// import '../../../widgets/chart/doughnut_chart_widget.dart';
-// import '../../../widgets/chart/pie_chart_widget.dart';
-// import '../../../widgets/header_card/double_header_card_widget.dart';
 
 class KependudukanPage extends StatelessWidget {
   const KependudukanPage({super.key});
