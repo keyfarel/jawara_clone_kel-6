@@ -25,6 +25,10 @@ import 'features/channel_transfer/data/services/channel_service.dart';
 import 'routes/app_routes.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'features/kegiatan_broadcast/controllers/broadcast_controller.dart';
+import 'features/kegiatan_broadcast/data/services/broadcast_service.dart';
+import 'features/kegiatan_broadcast/data/repository/broadcast_repository.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -37,12 +41,14 @@ void main() async {
   final logService = LogAktifitasService();
   final mutasiService = MutasiService(); // <--- PERBAIKAN: Uncomment ini
   final channelService = ChannelService();
+  final broadcastService = BroadcastService();
 
   // 2. Repository
   final authRepo = AuthRepository(authService);
   final logRepo = LogAktifitasRepository(logService);
   final mutasiRepo = MutasiRepository(mutasiService); // Sekarang tidak error
   final channelRepo = ChannelRepository(channelService);
+  final broadcastRepo = BroadcastRepository(broadcastService);
 
   runApp(
     MultiProvider(
@@ -62,6 +68,9 @@ void main() async {
 
         // Channel Transfer
         ChangeNotifierProvider(create: (_) => ChannelController(channelRepo)),
+        ChangeNotifierProvider(
+          create: (_) => BroadcastController(broadcastRepo),
+        ),
       ],
       child: const MyApp(),
     ),
