@@ -4,48 +4,52 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'routes/app_routes.dart';
 
-// --- AUTH IMPORTS ---
+// Auth
 import 'features/auth/controllers/login_controller.dart';
 import 'features/auth/controllers/register_controller.dart';
 import 'features/auth/data/auth_repository.dart';
 import 'features/auth/data/auth_service.dart';
 
-// --- DASHBOARD IMPORTS (BARU) ---
+// Dashboard
 import 'features/dashboard/controllers/dashboard_controller.dart';
 import 'features/dashboard/data/repository/dashboard_repository.dart';
 import 'features/dashboard/data/services/dashboard_service.dart';
 
-// --- LOG AKTIFITAS IMPORTS ---
+// Log Aktivitas
 import 'features/log_aktifitas/controllers/log_aktifitas_controller.dart';
 import 'features/log_aktifitas/data/repository/log_aktifitas_repository.dart';
 import 'features/log_aktifitas/data/services/log_aktifitas_services.dart';
 
-// --- MUTASI KELUARGA IMPORTS ---
+// Mutasi Keluarga
 import 'features/mutasi_keluarga/controllers/mutasi_controller.dart';
 import 'features/mutasi_keluarga/data/repository/mutasi_repository.dart';
 import 'features/mutasi_keluarga/data/services/mutasi_service.dart';
 
-// --- CHANNEL TRANSFER IMPORTS ---
+// Channel Transfer
 import 'features/channel_transfer/controllers/channel_controller.dart';
 import 'features/channel_transfer/data/repository/channel_repository.dart';
 import 'features/channel_transfer/data/services/channel_service.dart';
 
-// --- MANAJEMEN PENGGUNA IMPORTS ---
+// Manajemen Pengguna
 import 'features/manajemen_pengguna/controllers/user_controller.dart';
 import 'features/manajemen_pengguna/data/repository/user_repository.dart';
 import 'features/manajemen_pengguna/data/services/user_service.dart';
 
-// --- PENERIMAAN WARGA IMPORTS ---
+// Penerimaan Warga
 import 'features/penerimaan_warga/controllers/penerimaan_warga_controller.dart';
 import 'features/penerimaan_warga/data/repository/penerimaan_warga_repository.dart';
 import 'features/penerimaan_warga/data/services/penerimaan_warga_service.dart';
 
-
+// Broadcast & Kegiatan
 import 'features/kegiatan_broadcast/controllers/broadcast_controller.dart';
 import 'features/kegiatan_broadcast/data/services/broadcast_service.dart';
 import 'features/kegiatan_broadcast/data/repository/broadcast_repository.dart';
 
-// data warga dan rumah
+import 'features/kegiatan_broadcast/controllers/kegiatan_controller.dart';
+import 'features/kegiatan_broadcast/data/repository/kegiatan_repository.dart';
+import 'features/kegiatan_broadcast/data/services/kegiatan_service.dart';
+
+// Data Warga & Rumah
 import 'features/data_warga_rumah/controllers/rumah_controller.dart';
 import 'features/data_warga_rumah/data/repository/rumah_repository.dart';
 import 'features/data_warga_rumah/data/services/rumah_service.dart';
@@ -54,21 +58,13 @@ import 'features/data_warga_rumah/controllers/citizen_controller.dart';
 import 'features/data_warga_rumah/data/repository/citizen_repository.dart';
 import 'features/data_warga_rumah/data/services/citizen_service.dart';
 
-import 'features/kegiatan_broadcast/controllers/kegiatan_controller.dart';
-import 'features/kegiatan_broadcast/data/repository/kegiatan_repository.dart';
-import 'features/kegiatan_broadcast/data/services/kegiatan_service.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Setup Format Tanggal Indonesia
   await initializeDateFormatting('id_ID', null);
 
-  // ==========================================
-  // 1. Inisialisasi SERVICE (Akses API)
-  // ==========================================
+  // Services
   final authService = AuthService();
-  final dashboardService = DashboardService(); // Tambahan Dashboard
+  final dashboardService = DashboardService();
   final logService = LogAktifitasService();
   final mutasiService = MutasiService();
   final channelService = ChannelService();
@@ -79,11 +75,9 @@ void main() async {
   final citizenService = CitizenService();
   final kegiatanService = KegiatanService();
 
-  // ==========================================
-  // 2. Inisialisasi REPOSITORY (Jembatan Data)
-  // ==========================================
+  // Repositories
   final authRepo = AuthRepository(authService);
-  final dashboardRepo = DashboardRepository(dashboardService); // Tambahan Dashboard
+  final dashboardRepo = DashboardRepository(dashboardService);
   final logRepo = LogAktifitasRepository(logService);
   final mutasiRepo = MutasiRepository(mutasiService);
   final channelRepo = ChannelRepository(channelService);
@@ -97,37 +91,20 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        // --- Auth Providers ---
         Provider<AuthService>.value(value: authService),
         Provider<AuthRepository>.value(value: authRepo),
+
         ChangeNotifierProvider(create: (_) => LoginController(authRepo)),
         ChangeNotifierProvider(create: (_) => RegisterController(authRepo)),
-
-        // --- Dashboard Provider (BARU) ---
         ChangeNotifierProvider(create: (_) => DashboardController(dashboardRepo)),
-
-        // --- Log Aktifitas Provider ---
         ChangeNotifierProvider(create: (_) => LogAktifitasController(logRepo)),
-
-        // --- Mutasi Keluarga Provider ---
         ChangeNotifierProvider(create: (_) => MutasiController(mutasiRepo)),
-
-        // --- Channel Transfer Provider ---
         ChangeNotifierProvider(create: (_) => ChannelController(channelRepo)),
-        ChangeNotifierProvider(
-          create: (_) => BroadcastController(broadcastRepo),
-        ),
-
-        // --- Manajemen Pengguna Provider ---
+        ChangeNotifierProvider(create: (_) => BroadcastController(broadcastRepo)),
         ChangeNotifierProvider(create: (_) => UserController(userRepo)),
-
-        // --- Penerimaan Warga Provider ---
         ChangeNotifierProvider(create: (_) => PenerimaanWargaController(penerimaanRepo)),
-
         ChangeNotifierProvider(create: (_) => RumahController(rumahRepo)),
-
         ChangeNotifierProvider(create: (_) => CitizenController(citizenRepo)),
-
         ChangeNotifierProvider(create: (_) => KegiatanController(kegiatanRepo)),
       ],
       child: const MyApp(),
@@ -146,8 +123,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.grey.shade50,
-        // Font global bisa diset disini jika perlu
-        fontFamily: 'Poppins', 
+        fontFamily: 'Poppins',
       ),
       initialRoute: AppRoutes.splash,
       routes: AppRoutes.routes,
