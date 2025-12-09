@@ -45,6 +45,19 @@ import 'features/kegiatan_broadcast/controllers/broadcast_controller.dart';
 import 'features/kegiatan_broadcast/data/services/broadcast_service.dart';
 import 'features/kegiatan_broadcast/data/repository/broadcast_repository.dart';
 
+// data warga dan rumah
+import 'features/data_warga_rumah/controllers/rumah_controller.dart';
+import 'features/data_warga_rumah/data/repository/rumah_repository.dart';
+import 'features/data_warga_rumah/data/services/rumah_service.dart';
+
+import 'features/data_warga_rumah/controllers/citizen_controller.dart';
+import 'features/data_warga_rumah/data/repository/citizen_repository.dart';
+import 'features/data_warga_rumah/data/services/citizen_service.dart';
+
+import 'features/kegiatan_broadcast/controllers/kegiatan_controller.dart';
+import 'features/kegiatan_broadcast/data/repository/kegiatan_repository.dart';
+import 'features/kegiatan_broadcast/data/services/kegiatan_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -62,6 +75,9 @@ void main() async {
   final broadcastService = BroadcastService();
   final userService = UserService();
   final penerimaanService = PenerimaanWargaService();
+  final rumahService = RumahService();
+  final citizenService = CitizenService();
+  final kegiatanService = KegiatanService();
 
   // ==========================================
   // 2. Inisialisasi REPOSITORY (Jembatan Data)
@@ -74,6 +90,9 @@ void main() async {
   final broadcastRepo = BroadcastRepository(broadcastService);
   final userRepo = UserRepository(userService);
   final penerimaanRepo = PenerimaanWargaRepository(penerimaanService);
+  final rumahRepo = RumahRepository(rumahService);
+  final citizenRepo = CitizenRepository(citizenService);
+  final kegiatanRepo = KegiatanRepository(kegiatanService);
 
   runApp(
     MultiProvider(
@@ -104,6 +123,12 @@ void main() async {
 
         // --- Penerimaan Warga Provider ---
         ChangeNotifierProvider(create: (_) => PenerimaanWargaController(penerimaanRepo)),
+
+        ChangeNotifierProvider(create: (_) => RumahController(rumahRepo)),
+
+        ChangeNotifierProvider(create: (_) => CitizenController(citizenRepo)),
+
+        ChangeNotifierProvider(create: (_) => KegiatanController(kegiatanRepo)),
       ],
       child: const MyApp(),
     ),

@@ -97,4 +97,27 @@ class ChannelService {
       rethrow;
     }
   }
+
+  Future<ChannelModel> getChannelDetail(int id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+    final uri = Uri.parse('$baseUrl/payment-channels/$id');
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      if (body['status'] == 'success') {
+        return ChannelModel.fromJson(body['data']);
+      }
+    }
+    throw Exception('Gagal memuat detail channel');
+  }
 }

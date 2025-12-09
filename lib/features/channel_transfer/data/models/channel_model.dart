@@ -2,10 +2,10 @@ class ChannelModel {
   final int id;
   final String channelName;
   final String type;
-  final String accountNumber;
+  final String accountNumber; // Mungkin null di list, tapi ada di detail
   final String accountName;
-  final String? thumbnail;
-  final String? qrCode;
+  final String? thumbnailUrl; // Ganti thumbnail jadi thumbnailUrl
+  final String? qrCodeUrl;    // Ganti qrCode jadi qrCodeUrl
   final String? notes;
   final bool isActive;
 
@@ -15,8 +15,8 @@ class ChannelModel {
     required this.type,
     required this.accountNumber,
     required this.accountName,
-    this.thumbnail,
-    this.qrCode,
+    this.thumbnailUrl,
+    this.qrCodeUrl,
     this.notes,
     required this.isActive,
   });
@@ -26,12 +26,14 @@ class ChannelModel {
       id: json['id'],
       channelName: json['channel_name'] ?? 'Tanpa Nama',
       type: json['type'] ?? 'General',
-      accountNumber: json['account_number'] ?? '-',
+      // Di list mungkin tidak dikirim, kasih default '-'
+      accountNumber: json['account_number'] ?? '-', 
       accountName: json['account_name'] ?? '-',
-      thumbnail: json['thumbnail'],
-      qrCode: json['qr_code'],
+      // Perhatikan key JSON dari backend: thumbnail_url & qr_code_url
+      thumbnailUrl: json['thumbnail_url'], 
+      qrCodeUrl: json['qr_code_url'],
       notes: json['notes'],
-      isActive: json['is_active'] ?? false,
+      isActive: json['is_active'] ?? true, // Default true jika null
     );
   }
 }
