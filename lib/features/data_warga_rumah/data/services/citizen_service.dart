@@ -1,0 +1,34 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/citizen_model.dart';
+
+class CitizenService {
+  final String baseUrl = 'https://unmoaning-lenora-photomechanically.ngrok-free.dev/api';
+
+  Future<List<CitizenModel>> getCitizens() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+    
+    final uri = Uri.parse('$baseUrl/citizens'); 
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      if (body['status'] == 'success') {
+        final List data = body['data'];
+        return data.map((json) => CitizenModel.fromJson(json)).toList();
+      }
+    }
+    
+    throw Exception('Gagal memuat data warga: ${response.statusCode}');
+  }
+}

@@ -4,19 +4,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/penerimaan_warga_model.dart';
 
 class PenerimaanWargaService {
-  final String baseUrl = 'http://127.0.0.1:8000/api'; // Sesuaikan URL API Anda
+  final String baseUrl = 'https://unmoaning-lenora-photomechanically.ngrok-free.dev/api'; 
 
   Future<List<PenerimaanWargaModel>> getVerificationList() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('access_token');
     final uri = Uri.parse('$baseUrl/citizens/verification-list');
 
+    print("Fetching from: $uri"); 
+
     final response = await http.get(
       uri,
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
-        'ngrok-skip-browser-warning': 'true',
+        'ngrok-skip-browser-warning': 'true', 
       },
     );
 
