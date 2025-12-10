@@ -15,6 +15,8 @@ import 'package:myapp/features/dashboard/presentation/pages/dashboard_keuangan_p
 import 'package:myapp/features/dashboard/presentation/pages/dashboard_kependudukan_page.dart';
 import 'package:myapp/features/dashboard/presentation/pages/dashboard_kegiatan_page.dart';
 
+import 'package:myapp/features/Keluarga/presentation/pages/keluarga_page.dart';
+
 // Log Aktivitas
 import 'package:myapp/features/log_aktifitas/presentation/pages/semua_aktifitas_page.dart';
 
@@ -47,7 +49,7 @@ import 'package:myapp/features/data_warga_rumah/presentation/pages/rumah_tambah_
 // =========================
 // STATIC / LEGACY PAGES
 // =========================
-import 'package:myapp/pages/home/data_warga_rumah/keluarga_page.dart';
+
 import 'package:myapp/pages/home/data_warga_rumah/warga_tambah_page.dart';
 
 import 'package:myapp/pages/home/pemasukan/pemasukan_lain_daftar_page.dart';
@@ -131,7 +133,7 @@ class AppRoutes {
     kependudukan: (_) => const KependudukanPage(),
 
     // Data Warga & Rumah
-    keluarga: (_) => const KeluargaDaftarPage(),
+    keluarga: (_) => const ListKeluargaPage(),
     rumahTambah: (_) => const RumahTambahPage(),
     wargaDaftar: (_) => const WargaDaftarPage(),
     wargaTambah: (_) => const TambahWargaPage(),
