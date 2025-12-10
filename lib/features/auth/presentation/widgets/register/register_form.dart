@@ -25,6 +25,8 @@ class RegisterForm extends StatefulWidget {
   final String? selectedHouseId;
   final String? selectedOwnership;
   final XFile? selectedImage;
+  final XFile? selectedSelfie; 
+  final VoidCallback onPickSelfie;
   
   final Function(String?) onGenderChanged;
   final Function(String?) onHouseChanged;
@@ -64,6 +66,8 @@ class RegisterForm extends StatefulWidget {
     this.selectedHouseId,
     this.selectedOwnership,
     this.selectedImage,
+    this.selectedSelfie,
+    required this.onPickSelfie,
     this.isLoadingHouses = false,
   });
 
@@ -86,6 +90,8 @@ class _RegisterFormState extends State<RegisterForm> {
         _buildResidenceSection(),
         const SizedBox(height: 24),
         _buildPhotoSection(),
+        const SizedBox(height: 24),
+        _buildSelfieSection(),
       ],
     );
   }
@@ -279,6 +285,60 @@ class _RegisterFormState extends State<RegisterForm> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSelfieSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle("Verifikasi Wajah"),
+        InkWell(
+          onTap: widget.onPickSelfie,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            decoration: BoxDecoration(
+              // Warna beda dikit biar kelihatan ini step penting
+              color: widget.selectedSelfie != null ? Colors.blue.shade50 : Colors.grey.shade50,
+              border: Border.all(
+                color: widget.selectedSelfie != null ? Colors.blue : Colors.grey.shade300,
+                width: 1.5,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  widget.selectedSelfie != null ? Icons.face_retouching_natural : Icons.camera_front,
+                  size: 32,
+                  color: widget.selectedSelfie != null ? Colors.blue : widget.primaryColor,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  widget.selectedSelfie != null ? "Selfie Tersimpan" : "Ambil Selfie",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: widget.selectedSelfie != null ? Colors.blue.shade700 : Colors.grey.shade700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                if (widget.selectedSelfie == null)
+                  const Text(
+                    "Wajib menggunakan kamera depan",
+                    style: TextStyle(fontSize: 11, color: Colors.grey, fontStyle: FontStyle.italic),
+                  )
+                else
+                  Text(
+                    "Siap Verifikasi",
+                    style: TextStyle(fontSize: 11, color: Colors.blue.shade700),
                   ),
               ],
             ),

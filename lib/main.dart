@@ -58,6 +58,10 @@ import 'features/data_warga_rumah/controllers/citizen_controller.dart';
 import 'features/data_warga_rumah/data/repository/citizen_repository.dart';
 import 'features/data_warga_rumah/data/services/citizen_service.dart';
 
+import 'features/laporan_keuangan/controllers/laporan_controller.dart';
+import 'features/laporan_keuangan/data/repository/laporan_repository.dart';
+import 'features/laporan_keuangan/data/services/laporan_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
@@ -74,6 +78,7 @@ void main() async {
   final rumahService = RumahService();
   final citizenService = CitizenService();
   final kegiatanService = KegiatanService();
+  final laporanService = LaporanService();
 
   // Repositories
   final authRepo = AuthRepository(authService);
@@ -87,6 +92,7 @@ void main() async {
   final rumahRepo = RumahRepository(rumahService);
   final citizenRepo = CitizenRepository(citizenService);
   final kegiatanRepo = KegiatanRepository(kegiatanService);
+  final laporanRepo = LaporanRepository(laporanService);
 
   runApp(
     MultiProvider(
@@ -106,6 +112,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => RumahController(rumahRepo)),
         ChangeNotifierProvider(create: (_) => CitizenController(citizenRepo)),
         ChangeNotifierProvider(create: (_) => KegiatanController(kegiatanRepo)),
+        ChangeNotifierProvider(create: (_) => LaporanController(laporanRepo)),
       ],
       child: const MyApp(),
     ),

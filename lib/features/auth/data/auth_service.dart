@@ -98,6 +98,28 @@ class AuthService {
       );
     }
 
+    if (request.idCardPhoto != null) {
+      final bytes = await request.idCardPhoto!.readAsBytes();
+      multipartRequest.files.add(
+        http.MultipartFile.fromBytes(
+          'id_card_photo',
+          bytes,
+          filename: request.idCardPhoto!.name,
+        ),
+      );
+    }
+
+    if (request.selfiePhoto != null) {
+      final bytes = await request.selfiePhoto!.readAsBytes();
+      multipartRequest.files.add(
+        http.MultipartFile.fromBytes(
+          'selfie_photo',
+          bytes,
+          filename: request.selfiePhoto!.name,
+        ),
+      );
+    }
+
     try {
       final streamedResponse = await multipartRequest.send().timeout(
         _timeOutDuration,
