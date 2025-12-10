@@ -11,6 +11,7 @@ class RegisterRequest {
   final String ownershipStatus;
   final String? houseId;
   final String? customHouseAddress;
+  final XFile? selfiePhoto;
 
   final XFile? idCardPhoto; // Ganti File → XFile (AMAN untuk Web & Android)
 
@@ -26,5 +27,6 @@ class RegisterRequest {
     this.houseId,
     this.customHouseAddress,
     this.idCardPhoto,
+    this.selfiePhoto,
   });
 }

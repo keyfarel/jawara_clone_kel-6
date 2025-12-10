@@ -29,6 +29,8 @@ dependencies:
 
   # 📌 WAJIB UNTUK UPLOAD FILE
   file_picker: ^8.0.0
+  pdf: ^3.11.3
+  printing: ^5.14.2
 
 dev_dependencies:
   flutter_test:
