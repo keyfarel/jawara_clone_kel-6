@@ -13,7 +13,7 @@ class AuthService {
   final String baseUrl =
       'https://unmoaning-lenora-photomechanically.ngrok-free.dev/api';
 
-  final Duration _timeOutDuration = const Duration(seconds: 10);
+  final Duration _timeOutDuration = const Duration(seconds: 60);
 Future<Map<String, dynamic>> login(LoginRequest request) async {
     final uri = Uri.parse('$baseUrl/login');
 
@@ -45,9 +45,9 @@ Future<Map<String, dynamic>> login(LoginRequest request) async {
     }
   }
 
-  // --- LOGIN WAJAH (BARU) ---
+  // face login
   Future<Map<String, dynamic>> loginFace(XFile selfiePhoto) async {
-    final uri = Uri.parse('$baseUrl/auth/login-face'); // Pastikan endpoint sesuai swagger
+    final uri = Uri.parse('$baseUrl/auth/login-face');
 
     var multipartRequest = http.MultipartRequest('POST', uri);
     multipartRequest.headers.addAll({'Accept': 'application/json'});

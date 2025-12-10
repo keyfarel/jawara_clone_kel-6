@@ -115,7 +115,11 @@ class _RegisterPageState extends State<RegisterPage> {
   // Ambil Foto KTP (Bisa Galeri/Kamera)
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 60, // KTP butuh agak jelas, 60-70 cukup
+        maxWidth: 1024,
+    );
     if (pickedFile != null) setState(() => idCardPhoto = pickedFile);
   }
 
@@ -125,7 +129,8 @@ class _RegisterPageState extends State<RegisterPage> {
     final pickedFile = await picker.pickImage(
       source: ImageSource.camera, 
       preferredCameraDevice: CameraDevice.front,
-      imageQuality: 50, // Kompres
+      imageQuality: 50, // KOMPRESI 50% (Sangat direkomendasikan)
+      maxWidth: 800,    // Resize lebar maks 800px
     );
     
     if (pickedFile != null) {
