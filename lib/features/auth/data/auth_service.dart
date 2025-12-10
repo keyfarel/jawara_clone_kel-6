@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
@@ -13,8 +14,7 @@ class AuthService {
       'https://unmoaning-lenora-photomechanically.ngrok-free.dev/api';
 
   final Duration _timeOutDuration = const Duration(seconds: 10);
-
-  Future<Map<String, dynamic>> login(LoginRequest request) async {
+Future<Map<String, dynamic>> login(LoginRequest request) async {
     final uri = Uri.parse('$baseUrl/login');
 
     try {
@@ -27,10 +27,7 @@ class AuthService {
           .timeout(_timeOutDuration);
 
       if (response.statusCode >= 500) {
-        return {
-          'status': 'error',
-          'message': 'Gangguan pada server. Silakan coba lagi nanti.',
-        };
+        return {'status': 'error', 'message': 'Gangguan pada server.'};
       }
 
       final body = json.decode(response.body);
@@ -43,24 +40,52 @@ class AuthService {
       }
 
       return body;
-    } on SocketException {
-      return {'status': 'error', 'message': 'Tidak ada koneksi internet.'};
-    } on TimeoutException {
-      return {'status': 'error', 'message': 'Server tidak merespons (RTO).'};
-    } on FormatException {
-      return {'status': 'error', 'message': 'Data server tidak valid.'};
-    } on http.ClientException catch (e) {
-      print('ClientException: $e');
-      return {
-        'status': 'error',
-        'message': 'Gagal menghubungi server. Periksa URL atau koneksi.',
-      };
     } catch (e) {
-      print('Unknown Error: $e');
       return {'status': 'error', 'message': 'Terjadi kesalahan sistem.'};
     }
   }
 
+  // --- LOGIN WAJAH (BARU) ---
+  Future<Map<String, dynamic>> loginFace(XFile selfiePhoto) async {
+    final uri = Uri.parse('$baseUrl/auth/login-face'); // Pastikan endpoint sesuai swagger
+
+    var multipartRequest = http.MultipartRequest('POST', uri);
+    multipartRequest.headers.addAll({'Accept': 'application/json'});
+
+    try {
+      final bytes = await selfiePhoto.readAsBytes();
+      multipartRequest.files.add(
+        http.MultipartFile.fromBytes(
+          'selfie_photo',
+          bytes,
+          filename: selfiePhoto.name,
+        ),
+      );
+
+      final streamedResponse = await multipartRequest.send().timeout(_timeOutDuration);
+      final response = await http.Response.fromStream(streamedResponse);
+
+      final body = json.decode(response.body);
+
+      if ((response.statusCode == 200) && body['status'] == 'success') {
+        final data = body['data'];
+        if (data != null && data['access_token'] != null) {
+          await _saveTokens(
+            data['access_token'],
+            data['refresh_token'] ?? '',
+          );
+        }
+      }
+
+      return body;
+    } on SocketException {
+      return {'status': 'error', 'message': 'Gagal terhubung. Periksa internet.'};
+    } on TimeoutException {
+      return {'status': 'error', 'message': 'Waktu habis. Coba lagi.'};
+    } catch (e) {
+      return {'status': 'error', 'message': 'Gagal Login Wajah: $e'};
+    }
+  }
   Future<Map<String, dynamic>> register(RegisterRequest request) async {
     final uri = Uri.parse('$baseUrl/register');
 

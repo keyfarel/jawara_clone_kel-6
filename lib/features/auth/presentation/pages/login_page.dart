@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/login_controller.dart';
-import '../widgets/login_form.dart';
+import '../widgets/login_form.dart'; // Sesuaikan path jika beda folder
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,9 +14,9 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<LoginFormState>();
-
   static const Color primaryColor = Color(0xFF1976D2);
 
+  // --- LOGIN BIASA ---
   void _handleLogin(BuildContext context) async {
     final controller = context.read<LoginController>();
 
@@ -26,11 +27,54 @@ class _LoginPageState extends State<LoginPage> {
 
     final result = await controller.login(email, password);
 
+    if (!mounted) return;
+
     if (result['status'] == 'success') {
-      Navigator.pushReplacementNamed(context, '/dashboard');
+      Navigator.pushNamedAndRemoveUntil(context, '/dashboard', (route) => false);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['message'] ?? 'Login gagal')),
+        SnackBar(
+          content: Text(result['message'] ?? 'Login gagal'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // --- LOGIN WAJAH ---
+  void _handleFaceLogin(BuildContext context) async {
+    final picker = ImagePicker();
+    // Wajib Kamera Depan
+    final selfie = await picker.pickImage(
+      source: ImageSource.camera,
+      preferredCameraDevice: CameraDevice.front,
+      imageQuality: 50,
+    );
+
+    if (selfie == null) return; // Batal ambil foto
+
+    if (!mounted) return;
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Memverifikasi wajah...")),
+    );
+
+    final controller = context.read<LoginController>();
+    final result = await controller.loginFace(selfie);
+
+    if (!mounted) return;
+
+    if (result['status'] == 'success') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Login Berhasil!"), backgroundColor: Colors.green),
+      );
+      Navigator.pushNamedAndRemoveUntil(context, '/dashboard', (route) => false);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['message'] ?? "Wajah tidak dikenali"),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -46,9 +90,9 @@ class _LoginPageState extends State<LoginPage> {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              // 🔵 Branding section
-              Column(
-                children: const [
+              // 1. Logo & Judul
+              const Column(
+                children: [
                   Icon(
                     Icons.school_rounded,
                     size: 80,
@@ -68,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
 
               const SizedBox(height: 32),
 
-              // 🟦 Card container modern
+              // 2. Card Login
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -84,9 +128,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 child: Column(
                   children: [
-                    LoginForm(key: _formKey),
+                    LoginForm(key: _formKey), // Form Email/Pass
                     const SizedBox(height: 24),
 
+                    // Tombol Login Biasa
                     SizedBox(
                       width: double.infinity,
                       height: 48,
@@ -101,11 +146,13 @@ class _LoginPageState extends State<LoginPage> {
                             ? null
                             : () => _handleLogin(context),
                         child: controller.isLoading
-                            ? const CircularProgressIndicator(
-                                color: Colors.white,
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                               )
                             : const Text(
-                                "Login",
+                                "Masuk",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -114,13 +161,55 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                       ),
                     ),
+                    
+                    const SizedBox(height: 20),
+                    
+                    // Divider "ATAU"
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Text("ATAU", style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                        ),
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 20),
+
+                    // Tombol Login Wajah
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: primaryColor),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: controller.isLoading
+                            ? null
+                            : () => _handleFaceLogin(context),
+                        icon: const Icon(Icons.face_retouching_natural, color: primaryColor),
+                        label: const Text(
+                          "Masuk dengan Wajah",
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
 
-              // 🟦 Bottom text
+              // 3. Footer Daftar
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
