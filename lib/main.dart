@@ -58,6 +58,9 @@ import 'features/data_warga_rumah/controllers/citizen_controller.dart';
 import 'features/data_warga_rumah/data/repository/citizen_repository.dart';
 import 'features/data_warga_rumah/data/services/citizen_service.dart';
 
+import 'features/Keluarga/controllers/keluarga_controller.dart';
+import 'features/Keluarga/data/repository/keluarga_repository.dart';
+import 'features/Keluarga/data/services/keluarga_service.dart';
 import 'features/laporan_keuangan/controllers/laporan_controller.dart';
 import 'features/laporan_keuangan/data/repository/laporan_repository.dart';
 import 'features/laporan_keuangan/data/services/laporan_service.dart';
@@ -78,6 +81,7 @@ void main() async {
   final rumahService = RumahService();
   final citizenService = CitizenService();
   final kegiatanService = KegiatanService();
+  final keluargaService = KeluargaService();
   final laporanService = LaporanService();
 
   // Repositories
@@ -92,6 +96,7 @@ void main() async {
   final rumahRepo = RumahRepository(rumahService);
   final citizenRepo = CitizenRepository(citizenService);
   final kegiatanRepo = KegiatanRepository(kegiatanService);
+  final keluargaRepo = KeluargaRepository(keluargaService);
   final laporanRepo = LaporanRepository(laporanService);
 
   runApp(
@@ -112,6 +117,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => RumahController(rumahRepo)),
         ChangeNotifierProvider(create: (_) => CitizenController(citizenRepo)),
         ChangeNotifierProvider(create: (_) => KegiatanController(kegiatanRepo)),
+        ChangeNotifierProvider(create: (_) => KeluargaController(keluargaRepo)),
         ChangeNotifierProvider(create: (_) => LaporanController(laporanRepo)),
       ],
       child: const MyApp(),
