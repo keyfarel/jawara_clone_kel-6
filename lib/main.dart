@@ -74,6 +74,10 @@ import 'features/tagih_iuran/controllers/billing_controller.dart';
 import 'features/tagih_iuran/data/repository/billing_repository.dart';
 import 'features/tagih_iuran/data/services/billing_service.dart';
 
+import 'features/tagihan_list/controllers/billing_list_controller.dart';
+import 'features/tagihan_list/data/repository/billing_list_repository.dart';
+import 'features/tagihan_list/data/services/billing_list_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
@@ -94,6 +98,7 @@ void main() async {
   final laporanService = LaporanService();
   final duesTypeService = DuesTypeService();
   final billingService = BillingService();
+  final billingListService = BillingListService();
 
   // Repositories
   final authRepo = AuthRepository(authService);
@@ -111,6 +116,7 @@ void main() async {
   final laporanRepo = LaporanRepository(laporanService);
   final duesTypeRepo = DuesTypeRepository(duesTypeService);
   final billingRepo = BillingRepository(billingService);
+  final billingListRepo = BillingListRepositoryImpl(billingListService);
 
   runApp(
     MultiProvider(
@@ -134,6 +140,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => LaporanController(laporanRepo)),
         ChangeNotifierProvider(create: (_) => DuesTypeController(duesTypeRepo)),
         ChangeNotifierProvider(create: (_) => BillingController(billingRepo)),
+        ChangeNotifierProvider(create: (_) => BillingListController(billingListRepo)),
       ],
       child: const MyApp(),
     ),
