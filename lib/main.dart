@@ -65,6 +65,11 @@ import 'features/laporan_keuangan/controllers/laporan_controller.dart';
 import 'features/laporan_keuangan/data/repository/laporan_repository.dart';
 import 'features/laporan_keuangan/data/services/laporan_service.dart';
 
+// kategori iuran
+import 'features/kategori_iuran/controllers/dues_type_controller.dart';
+import 'features/kategori_iuran/data/repository/dues_type_repository.dart';
+import 'features/kategori_iuran/data/services/dues_type_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
@@ -83,6 +88,7 @@ void main() async {
   final kegiatanService = KegiatanService();
   final keluargaService = KeluargaService();
   final laporanService = LaporanService();
+  final duesTypeService = DuesTypeService();
 
   // Repositories
   final authRepo = AuthRepository(authService);
@@ -98,6 +104,7 @@ void main() async {
   final kegiatanRepo = KegiatanRepository(kegiatanService);
   final keluargaRepo = KeluargaRepository(keluargaService);
   final laporanRepo = LaporanRepository(laporanService);
+  final duesTypeRepo = DuesTypeRepository(duesTypeService);
 
   runApp(
     MultiProvider(
@@ -119,6 +126,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => KegiatanController(kegiatanRepo)),
         ChangeNotifierProvider(create: (_) => KeluargaController(keluargaRepo)),
         ChangeNotifierProvider(create: (_) => LaporanController(laporanRepo)),
+        ChangeNotifierProvider(create: (_) => DuesTypeController(duesTypeRepo)),
       ],
       child: const MyApp(),
     ),
