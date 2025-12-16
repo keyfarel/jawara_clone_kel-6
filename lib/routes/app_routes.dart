@@ -54,6 +54,7 @@ import 'package:myapp/features/pengeluaran/presentation/tambah_page.dart';
 
 // Pemsukan
 import 'package:myapp/features/kategori_iuran/presentation/pages/kategori_iuran_page.dart';
+import 'package:myapp/features/tagih_iuran/presentation/pages/tagih_iuran_page.dart';
 
 // =========================
 // STATIC / LEGACY PAGES
@@ -63,7 +64,7 @@ import 'package:myapp/pages/home/data_warga_rumah/warga_tambah_page.dart';
 
 import 'package:myapp/pages/home/pemasukan/pemasukan_lain_daftar_page.dart';
 import 'package:myapp/pages/home/pemasukan/pemasukan_lain_tambah_page.dart';
-import 'package:myapp/pages/home/pemasukan/tagih_iuran_page.dart';
+
 
 import 'package:myapp/pages/home/pemasukan/tagihan_page.dart';
 
@@ -180,8 +181,5 @@ class AppRoutes {
     tambahChannel: (_) => const TambahChannelPage(),
     daftarMutasi: (_) => const DaftarMutasiPage(),
     tambahMutasi: (_) => const TambahMutasiPage(),
-
-    // pemasukan
-    kategoriIuran: (_) => const KategoriIuranPage(),
   };
 }
