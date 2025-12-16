@@ -58,9 +58,33 @@ import 'features/data_warga_rumah/controllers/citizen_controller.dart';
 import 'features/data_warga_rumah/data/repository/citizen_repository.dart';
 import 'features/data_warga_rumah/data/services/citizen_service.dart';
 
+import 'features/Keluarga/controllers/keluarga_controller.dart';
+import 'features/Keluarga/data/repository/keluarga_repository.dart';
+import 'features/Keluarga/data/services/keluarga_service.dart';
 import 'features/laporan_keuangan/controllers/laporan_controller.dart';
 import 'features/laporan_keuangan/data/repository/laporan_repository.dart';
 import 'features/laporan_keuangan/data/services/laporan_service.dart';
+
+// pemasukan
+import 'features/kategori_iuran/controllers/dues_type_controller.dart';
+import 'features/kategori_iuran/data/repository/dues_type_repository.dart';
+import 'features/kategori_iuran/data/services/dues_type_service.dart';
+
+import 'features/tagih_iuran/controllers/billing_controller.dart';
+import 'features/tagih_iuran/data/repository/billing_repository.dart';
+import 'features/tagih_iuran/data/services/billing_service.dart';
+
+import 'features/tagihan_list/controllers/billing_list_controller.dart';
+import 'features/tagihan_list/data/repository/billing_list_repository.dart';
+import 'features/tagihan_list/data/services/billing_list_service.dart';
+
+import 'features/list_pemasukan/controllers/other_income_list_controller.dart';
+import 'features/list_pemasukan/data/repository/other_income_list_repository.dart';
+import 'features/list_pemasukan/data/services/other_income_list_service.dart';
+
+import 'features/tambah_pemasukan/controllers/other_income_post_controller.dart';
+import 'features/tambah_pemasukan/data/repository/other_income_post_repository.dart';
+import 'features/tambah_pemasukan/data/services/other_income_post_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,7 +102,13 @@ void main() async {
   final rumahService = RumahService();
   final citizenService = CitizenService();
   final kegiatanService = KegiatanService();
+  final keluargaService = KeluargaService();
   final laporanService = LaporanService();
+  final duesTypeService = DuesTypeService();
+  final billingService = BillingService();
+  final billingListService = BillingListService();
+  final otherIncomeListService = OtherIncomeListService();
+  final otherIncomePostService = OtherIncomePostService();
 
   // Repositories
   final authRepo = AuthRepository(authService);
@@ -92,7 +122,13 @@ void main() async {
   final rumahRepo = RumahRepository(rumahService);
   final citizenRepo = CitizenRepository(citizenService);
   final kegiatanRepo = KegiatanRepository(kegiatanService);
+  final keluargaRepo = KeluargaRepository(keluargaService);
   final laporanRepo = LaporanRepository(laporanService);
+  final duesTypeRepo = DuesTypeRepository(duesTypeService);
+  final billingRepo = BillingRepository(billingService);
+  final billingListRepo = BillingListRepositoryImpl(billingListService);
+  final otherIncomeListRepo = OtherIncomeRepositoryImpl(otherIncomeListService);
+  final otherIncomePostRepo = OtherIncomePostRepositoryImpl(otherIncomePostService);
 
   runApp(
     MultiProvider(
@@ -112,7 +148,13 @@ void main() async {
         ChangeNotifierProvider(create: (_) => RumahController(rumahRepo)),
         ChangeNotifierProvider(create: (_) => CitizenController(citizenRepo)),
         ChangeNotifierProvider(create: (_) => KegiatanController(kegiatanRepo)),
+        ChangeNotifierProvider(create: (_) => KeluargaController(keluargaRepo)),
         ChangeNotifierProvider(create: (_) => LaporanController(laporanRepo)),
+        ChangeNotifierProvider(create: (_) => DuesTypeController(duesTypeRepo)),
+        ChangeNotifierProvider(create: (_) => BillingController(billingRepo)),
+        ChangeNotifierProvider(create: (_) => BillingListController(billingListRepo)),
+        ChangeNotifierProvider(create: (_) => OtherIncomeListController(otherIncomeListRepo)),
+        ChangeNotifierProvider(create: (_) => OtherIncomePostController(otherIncomePostRepo)),
       ],
       child: const MyApp(),
     ),

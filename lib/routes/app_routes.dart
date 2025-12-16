@@ -15,6 +15,8 @@ import 'package:myapp/features/dashboard/presentation/pages/dashboard_keuangan_p
 import 'package:myapp/features/dashboard/presentation/pages/dashboard_kependudukan_page.dart';
 import 'package:myapp/features/dashboard/presentation/pages/dashboard_kegiatan_page.dart';
 
+import 'package:myapp/features/Keluarga/presentation/pages/keluarga_page.dart';
+
 // Log Aktivitas
 import 'package:myapp/features/log_aktifitas/presentation/pages/semua_aktifitas_page.dart';
 
@@ -49,17 +51,25 @@ import 'package:myapp/features/laporan_keuangan/presentation/pages/cetak_laporan
 // laporan pengeluaran
 import 'package:myapp/features/pengeluaran/presentation/pengeluaran_daftar_page.dart';
 import 'package:myapp/features/pengeluaran/presentation/tambah_page.dart';
+
+// Pemsukan
+import 'package:myapp/features/kategori_iuran/presentation/pages/kategori_iuran_page.dart';
+import 'package:myapp/features/tagih_iuran/presentation/pages/tagih_iuran_page.dart';
+import 'package:myapp/features/tagihan_list/presentation/pages/tagihan_page.dart';
+import 'package:myapp/features/list_pemasukan/presentation/pages/pemasukan_lain_daftar_page.dart';
+import 'package:myapp/features/tambah_pemasukan/presentation/pages/pemasukan_lain_tambah_page.dart';
+
 // =========================
 // STATIC / LEGACY PAGES
 // =========================
-import 'package:myapp/pages/home/data_warga_rumah/keluarga_page.dart';
+
 import 'package:myapp/pages/home/data_warga_rumah/warga_tambah_page.dart';
 
-import 'package:myapp/pages/home/pemasukan/pemasukan_lain_daftar_page.dart';
-import 'package:myapp/pages/home/pemasukan/pemasukan_lain_tambah_page.dart';
-import 'package:myapp/pages/home/pemasukan/tagih_iuran_page.dart';
-import 'package:myapp/pages/home/pemasukan/kategori_iuran_page.dart';
-import 'package:myapp/pages/home/pemasukan/tagihan_page.dart';
+
+
+
+
+
 
 
 
@@ -134,7 +144,7 @@ class AppRoutes {
     kependudukan: (_) => const KependudukanPage(),
 
     // Data Warga & Rumah
-    keluarga: (_) => const KeluargaDaftarPage(),
+    keluarga: (_) => const ListKeluargaPage(),
     rumahTambah: (_) => const RumahTambahPage(),
     wargaDaftar: (_) => const WargaDaftarPage(),
     wargaTambah: (_) => const TambahWargaPage(),
