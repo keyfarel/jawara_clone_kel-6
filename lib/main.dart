@@ -58,9 +58,11 @@ import 'features/data_warga_rumah/controllers/citizen_controller.dart';
 import 'features/data_warga_rumah/data/repository/citizen_repository.dart';
 import 'features/data_warga_rumah/data/services/citizen_service.dart';
 
-import 'features/Keluarga/controllers/keluarga_controller.dart';
-import 'features/Keluarga/data/repository/keluarga_repository.dart';
-import 'features/Keluarga/data/services/keluarga_service.dart';
+import 'package:myapp/features/data_warga_rumah/controllers/family_controller.dart';
+import 'package:myapp/features/data_warga_rumah/data/repository/family_repository.dart';
+import 'package:myapp/features/data_warga_rumah/data/services/family_service.dart';
+
+// keuangan
 import 'features/laporan_keuangan/controllers/laporan_controller.dart';
 import 'features/laporan_keuangan/data/repository/laporan_repository.dart';
 import 'features/laporan_keuangan/data/services/laporan_service.dart';
@@ -102,7 +104,7 @@ void main() async {
   final rumahService = RumahService();
   final citizenService = CitizenService();
   final kegiatanService = KegiatanService();
-  final keluargaService = KeluargaService();
+  final keluargaService = FamilyService();
   final laporanService = LaporanService();
   final duesTypeService = DuesTypeService();
   final billingService = BillingService();
@@ -122,7 +124,7 @@ void main() async {
   final rumahRepo = RumahRepository(rumahService);
   final citizenRepo = CitizenRepository(citizenService);
   final kegiatanRepo = KegiatanRepository(kegiatanService);
-  final keluargaRepo = KeluargaRepository(keluargaService);
+  final keluargaRepo = FamilyRepository(keluargaService);
   final laporanRepo = LaporanRepository(laporanService);
   final duesTypeRepo = DuesTypeRepository(duesTypeService);
   final billingRepo = BillingRepository(billingService);
@@ -148,13 +150,14 @@ void main() async {
         ChangeNotifierProvider(create: (_) => RumahController(rumahRepo)),
         ChangeNotifierProvider(create: (_) => CitizenController(citizenRepo)),
         ChangeNotifierProvider(create: (_) => KegiatanController(kegiatanRepo)),
-        ChangeNotifierProvider(create: (_) => KeluargaController(keluargaRepo)),
+        ChangeNotifierProvider(create: (_) => FamilyController(keluargaRepo)),
         ChangeNotifierProvider(create: (_) => LaporanController(laporanRepo)),
         ChangeNotifierProvider(create: (_) => DuesTypeController(duesTypeRepo)),
         ChangeNotifierProvider(create: (_) => BillingController(billingRepo)),
         ChangeNotifierProvider(create: (_) => BillingListController(billingListRepo)),
         ChangeNotifierProvider(create: (_) => OtherIncomeListController(otherIncomeListRepo)),
         ChangeNotifierProvider(create: (_) => OtherIncomePostController(otherIncomePostRepo)),
+        ChangeNotifierProvider(create: (_) => FamilyController(keluargaRepo)),
       ],
       child: const MyApp(),
     ),
