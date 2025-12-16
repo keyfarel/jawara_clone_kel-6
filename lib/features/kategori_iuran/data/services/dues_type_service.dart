@@ -1,28 +1,32 @@
 // lib/features/dues_type/data/services/dues_type_service.dart
 
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/dues_type_model.dart';
 
 class DuesTypeService {
-  final String _baseUrl = 'https://unmoaning-lenora-photomechanically.ngrok-free.dev/api/dues-types';
+  final String baseUrl = 'https://unmoaning-lenora-photomechanically.ngrok-free.dev/api';
 
   Future<List<DuesTypeModel>> fetchListDuesTypes() async {
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('access_token');
+
+    // Asumsi endpoint untuk get all dues types
+    final uri = Uri.parse('$baseUrl/dues-types'); 
     
     if (token == null) {
       throw Exception('Autentikasi gagal: Access token tidak ditemukan.');
     }
 
     try {
+
       final response = await http.get(
-        Uri.parse(_baseUrl),
+        uri,
         headers: {
-          'accept': 'application/json',
+          'Accept': 'application/json',
           'Authorization': 'Bearer $token',
-          // Header tambahan untuk ngrok
-          'ngrok-skip-browser-warning': 'true', 
+          'ngrok-skip-browser-warning': 'true',
         },
       );
 
