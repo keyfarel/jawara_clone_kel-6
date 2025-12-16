@@ -57,6 +57,7 @@ import 'package:myapp/features/kategori_iuran/presentation/pages/kategori_iuran_
 import 'package:myapp/features/tagih_iuran/presentation/pages/tagih_iuran_page.dart';
 import 'package:myapp/features/tagihan_list/presentation/pages/tagihan_page.dart';
 import 'package:myapp/features/list_pemasukan/presentation/pages/pemasukan_lain_daftar_page.dart';
+import 'package:myapp/features/tambah_pemasukan/presentation/pages/pemasukan_lain_tambah_page.dart';
 
 // =========================
 // STATIC / LEGACY PAGES
@@ -65,7 +66,7 @@ import 'package:myapp/features/list_pemasukan/presentation/pages/pemasukan_lain_
 import 'package:myapp/pages/home/data_warga_rumah/warga_tambah_page.dart';
 
 
-import 'package:myapp/pages/home/pemasukan/pemasukan_lain_tambah_page.dart';
+
 
 
 
