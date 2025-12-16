@@ -78,6 +78,10 @@ import 'features/tagihan_list/controllers/billing_list_controller.dart';
 import 'features/tagihan_list/data/repository/billing_list_repository.dart';
 import 'features/tagihan_list/data/services/billing_list_service.dart';
 
+import 'features/list_pemasukan/controllers/other_income_list_controller.dart';
+import 'features/list_pemasukan/data/repository/other_income_list_repository.dart';
+import 'features/list_pemasukan/data/services/other_income_list_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
@@ -99,6 +103,7 @@ void main() async {
   final duesTypeService = DuesTypeService();
   final billingService = BillingService();
   final billingListService = BillingListService();
+  final otherIncomeListService = OtherIncomeListService();
 
   // Repositories
   final authRepo = AuthRepository(authService);
@@ -117,6 +122,7 @@ void main() async {
   final duesTypeRepo = DuesTypeRepository(duesTypeService);
   final billingRepo = BillingRepository(billingService);
   final billingListRepo = BillingListRepositoryImpl(billingListService);
+  final otherIncomeListRepo = OtherIncomeRepositoryImpl(otherIncomeListService);
 
   runApp(
     MultiProvider(
@@ -141,6 +147,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => DuesTypeController(duesTypeRepo)),
         ChangeNotifierProvider(create: (_) => BillingController(billingRepo)),
         ChangeNotifierProvider(create: (_) => BillingListController(billingListRepo)),
+        ChangeNotifierProvider(create: (_) => OtherIncomeListController(otherIncomeListRepo)),
       ],
       child: const MyApp(),
     ),

@@ -28,6 +28,8 @@ class OtherIncomeItemModel {
   final String? description;
   final DateTime createdAt;
   final OtherIncomeCategoryModel category;
+  // **PERBAIKAN 1: Tambahkan properti proofImageLink**
+  final String? proofImageLink; 
 
   OtherIncomeItemModel({
     required this.id,
@@ -37,6 +39,8 @@ class OtherIncomeItemModel {
     this.description,
     required this.createdAt,
     required this.category,
+    // Tambahkan ke constructor
+    this.proofImageLink, 
   });
 
   factory OtherIncomeItemModel.fromJson(Map<String, dynamic> json) {
@@ -56,6 +60,8 @@ class OtherIncomeItemModel {
       description: json['description'] as String?,
       createdAt: DateTime.tryParse(createdAtStr) ?? DateTime.now(),
       category: OtherIncomeCategoryModel.fromJson(json['category'] as Map<String, dynamic>? ?? {}),
+      // **PERBAIKAN 2: Ambil data dari JSON. Asumsi key API adalah 'proof_image_link'**
+      proofImageLink: json['proof_image_link'] as String?,
     );
   }
 }
