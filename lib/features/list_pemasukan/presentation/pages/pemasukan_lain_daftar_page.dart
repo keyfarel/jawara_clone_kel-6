@@ -63,157 +63,158 @@ class _PemasukanLainDaftarPageState extends State<PemasukanLainDaftarPage> {
                 icon: const Icon(Icons.refresh),
                 // Memastikan refresh tidak bisa dipanggil saat sedang loading
                 onPressed: isLoading ? null : () => controller.fetchOtherIncomes(),
-                ),
-                IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.pemasukanTambah);
-                    },
-                ),
-            ],
-            body: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  // Tombol filter
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6C63FF),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      ),
-                      icon: const Icon(Icons.filter_list, color: Colors.white),
-                      label: const Text(
-                        "Filter",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () => _showFilterDialog(context),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Tampilkan indikator loading saat memuat
-                  if (isLoading && incomes.isEmpty)
-                      const Expanded(child: Center(child: CircularProgressIndicator())),
-                  
-                  // Tampilkan error
-                  if (isError)
-                      Expanded(
-                          child: Center(
-                              child: Text(
-                                  "Gagal memuat: ${controller.errorMessage}",
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(color: Colors.red),
-                              ),
-                          ),
-                      ),
-                  
-                  // Tampilkan data kosong
-                  if (incomes.isEmpty && !isLoading && !isError)
-                      const Expanded(
-                          child: Center(
-                              child: Text("Tidak ada data pemasukan ditemukan."),
-                          ),
-                      ),
-                  
-                  // ===== Daftar data dari API =====
-                  if (incomes.isNotEmpty)
-                      Expanded(
-                        child: ListView.separated(
-                          itemCount: incomes.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 10),
-                          itemBuilder: (context, index) {
-                            final item = incomes[index];
-                            final nominalText = currencyFormatter.format(item.amount);
-                            
-                            return InkWell(
-                              onTap: () => _showDetail(context, item),
-                              borderRadius: BorderRadius.circular(12),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Header nama (title) dan nominal
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          // Menggunakan title dari API
-                                          child: Text(
-                                            item.title,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          nominalText,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    // Kategori dan tanggal
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        // Menggunakan category.name dari API
-                                        Text(
-                                          item.category.name,
-                                          style: TextStyle(
-                                            color: Colors.grey[600],
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Icon(Icons.calendar_today,
-                                                size: 14, color: Colors.grey),
-                                            const SizedBox(width: 4),
-                                            // Menggunakan transactionDate dari API
-                                            Text(
-                                              DateFormat('dd MMMM yyyy').format(item.transactionDate),
-                                              style: TextStyle(color: Colors.grey[700]),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
+              ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () {
+                  // TODO: Navigasi ke Tambah Pemasukan
+                },
+              ),
+            ],
+            body: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // Tombol filter
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF6C63FF),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                      ),
+                      icon: const Icon(Icons.filter_list, color: Colors.white),
+                      label: const Text(
+                        "Filter",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () => _showFilterDialog(context),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Tampilkan indikator loading saat memuat
+                  if (isLoading && incomes.isEmpty)
+                    const Expanded(child: Center(child: CircularProgressIndicator())),
+
+                  // Tampilkan error
+                  if (isError)
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          "Gagal memuat: ${controller.errorMessage}",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ),
+
+                  // Tampilkan data kosong
+                  if (incomes.isEmpty && !isLoading && !isError)
+                    const Expanded(
+                      child: Center(
+                        child: Text("Tidak ada data pemasukan ditemukan."),
+                      ),
+                    ),
+
+                  // ===== Daftar data dari API =====
+                  if (incomes.isNotEmpty)
+                    Expanded(
+                      child: ListView.separated(
+                        itemCount: incomes.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final item = incomes[index];
+                          final nominalText = currencyFormatter.format(item.amount);
+
+                          return InkWell(
+                            onTap: () => _showDetail(context, item),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Header nama (title) dan nominal
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        // Menggunakan title dari API
+                                        child: Text(
+                                          item.title,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        nominalText,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  // Kategori dan tanggal
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      // Menggunakan category.name dari API
+                                      Text(
+                                        item.category.name,
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+                                          const SizedBox(width: 4),
+                                          // Menggunakan transactionDate dari API
+                                          Text(
+                                            DateFormat('dd MMMM yyyy').format(item.transactionDate),
+                                            style: TextStyle(color: Colors.grey[700]),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   // ======================
   // DETAIL MODAL (Tidak ada perubahan)
