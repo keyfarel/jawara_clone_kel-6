@@ -12,110 +12,82 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  // Kita inisialisasi variabel dengan Text panjang agar kelihatan kalau UI muncul
-  String _debugStatus = "1. Menunggu Frame UI Selesai...";
-
+  
   @override
   void initState() {
     super.initState();
-    
-    // PENTING: Jangan panggil setState atau logic berat langsung di sini.
-    // Gunakan addPostFrameCallback agar dijalankan SETELAH UI tampil.
+    // Jalankan logic setelah frame pertama selesai dirender
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _startCheck();
+      _checkSession();
     });
-  }
-
-  // Fungsi wrapper agar kode lebih rapi
-  void _startCheck() async {
-    _updateStatus('2. Frame Selesai. InitState OK.');
-    _checkSession();
-  }
-
-  void _updateStatus(String message) {
-    print(message); 
-    // Cek mounted agar tidak error jika user keluar aplikasi tiba-tiba
-    if (mounted) {
-      setState(() {
-        _debugStatus += "\n$message";
-      });
-    }
   }
 
   void _checkSession() async {
     try {
-      _updateStatus('3. Mencari Provider AuthService...');
-      // Ambil provider
       final authService = Provider.of<AuthService>(context, listen: false);
-      
-      _updateStatus('4. Provider Ditemukan. Delay 1 detik...');
-      await Future.delayed(const Duration(seconds: 1)); // Delay diperlama biar terbaca
 
-      _updateStatus('5. Memanggil authService.checkAutoLogin()...');
-      final isLoggedIn = await authService.checkAutoLogin();
+      // Kita gunakan Future.wait agar dua proses jalan berbarengan:
+      // 1. Cek Auto Login (Database/API)
+      // 2. Delay minimal 2 detik (Agar logo sempat terlihat / branding)
+      final results = await Future.wait([
+        authService.checkAutoLogin(),             // index 0
+        Future.delayed(const Duration(seconds: 2)), // index 1 (hanya timer)
+      ]);
 
-      _updateStatus('6. Hasil Login: $isLoggedIn');
+      // Ambil hasil dari checkAutoLogin (index 0)
+      final bool isLoggedIn = results[0] as bool;
 
       if (!mounted) return;
 
-      // Tambah delay lagi sebelum pindah halaman
-      _updateStatus('7. Tunggu sebentar sebelum navigasi...');
-      await Future.delayed(const Duration(seconds: 2)); 
-
+      // Navigasi sesuai status login
       if (isLoggedIn) {
-        _updateStatus('➡️ PINDAH KE DASHBOARD');
         Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
       } else {
-        _updateStatus('➡️ PINDAH KE LOGIN');
         Navigator.pushReplacementNamed(context, AppRoutes.login);
       }
     } catch (e) {
-      _updateStatus('❌ ERROR FATAL: $e');
+      // Jika error fatal, arahkan ke login saja atau tampilkan dialog error
+      print("Error di Splash: $e"); // Log di console saja, jangan di UI
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, AppRoutes.login);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Pastikan background putih
-      body: SingleChildScrollView( // Pakai scroll biar kalau log panjang tidak error overflow
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(30.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 50), // Jarak aman dari atas
-                const CircularProgressIndicator(),
-                const SizedBox(height: 20),
-                const Text(
-                  "DEBUG MODE",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.blue),
-                ),
-                const SizedBox(height: 20),
-                // Kotak Log
-                Container(
-                  width: double.infinity, // Lebar penuh
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200], // Warna abu-abu muda
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: Text(
-                    _debugStatus,
-                    textAlign: TextAlign.left, // Rata kiri agar mudah dibaca
-                    style: const TextStyle(
-                      fontFamily: 'monospace', 
-                      fontSize: 14,
-                      color: Colors.black87,
-                      height: 1.5 // Jarak antar baris
-                    ),
-                  ),
-                ),
-              ],
+      backgroundColor: Colors.white, 
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // --- AREA LOGO ---
+            // Ganti Icon di bawah ini dengan Image.asset jika punya logo
+            // Contoh: Image.asset('assets/images/logo_jawara.png', width: 150),
+            const Icon(
+              Icons.home_work_rounded, // Placeholder logo (bisa diganti)
+              size: 100,
+              color: Colors.blue,
             ),
-          ),
+            
+            const SizedBox(height: 20),
+            
+            // Text Judul Aplikasi (Opsional)
+            const Text(
+              "JAWARA",
+              style: TextStyle(
+                fontSize: 24, 
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2
+              ),
+            ),
+
+            const SizedBox(height: 50),
+
+            // Loading Indicator standar
+            const CircularProgressIndicator(),
+          ],
         ),
       ),
     );
