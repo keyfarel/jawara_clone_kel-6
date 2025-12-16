@@ -22,6 +22,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
+  AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
   final Color primaryColor = const Color(0xFF1976D2);
 
   // --- 1. CONTROLLERS ---
@@ -142,6 +143,12 @@ class _RegisterPageState extends State<RegisterPage> {
   void _handleRegister(BuildContext context) async {
     // 1. VALIDASI CLIENT SIDE
     if (!_formKey.currentState!.validate()) {
+      // JIKA ERROR: Aktifkan mode validasi real-time
+      setState(() {
+        _autoValidateMode = AutovalidateMode.onUserInteraction;
+      });
+
+      // Focus ke field yang error (Logic Anda sudah benar disini)
       if (nameController.text.isEmpty) nameFocus.requestFocus();
       else if (nikController.text.isEmpty) nikFocus.requestFocus();
       else if (emailController.text.isEmpty) emailFocus.requestFocus();
@@ -257,6 +264,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   child: Form(
                     key: _formKey,
+                    autovalidateMode: _autoValidateMode,
                     child: Column(
                       children: [
                         // PANGGIL REGISTER FORM WIDGET
