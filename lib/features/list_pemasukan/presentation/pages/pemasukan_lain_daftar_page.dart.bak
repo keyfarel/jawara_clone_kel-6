@@ -62,7 +62,7 @@ class _PemasukanLainDaftarPageState extends State<PemasukanLainDaftarPage> {
                 IconButton(
                     icon: const Icon(Icons.add),
                     onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.pemasukanTambah);
+                        // TODO: Navigasi ke Tambah Pemasukan
                     },
                 ),
             ],
