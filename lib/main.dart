@@ -65,6 +65,19 @@ import 'features/laporan_keuangan/controllers/laporan_controller.dart';
 import 'features/laporan_keuangan/data/repository/laporan_repository.dart';
 import 'features/laporan_keuangan/data/services/laporan_service.dart';
 
+// pemasukan
+import 'features/kategori_iuran/controllers/dues_type_controller.dart';
+import 'features/kategori_iuran/data/repository/dues_type_repository.dart';
+import 'features/kategori_iuran/data/services/dues_type_service.dart';
+
+import 'features/tagih_iuran/controllers/billing_controller.dart';
+import 'features/tagih_iuran/data/repository/billing_repository.dart';
+import 'features/tagih_iuran/data/services/billing_service.dart';
+
+import 'features/tagihan_list/controllers/billing_list_controller.dart';
+import 'features/tagihan_list/data/repository/billing_list_repository.dart';
+import 'features/tagihan_list/data/services/billing_list_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
@@ -83,6 +96,9 @@ void main() async {
   final kegiatanService = KegiatanService();
   final keluargaService = KeluargaService();
   final laporanService = LaporanService();
+  final duesTypeService = DuesTypeService();
+  final billingService = BillingService();
+  final billingListService = BillingListService();
 
   // Repositories
   final authRepo = AuthRepository(authService);
@@ -98,6 +114,9 @@ void main() async {
   final kegiatanRepo = KegiatanRepository(kegiatanService);
   final keluargaRepo = KeluargaRepository(keluargaService);
   final laporanRepo = LaporanRepository(laporanService);
+  final duesTypeRepo = DuesTypeRepository(duesTypeService);
+  final billingRepo = BillingRepository(billingService);
+  final billingListRepo = BillingListRepositoryImpl(billingListService);
 
   runApp(
     MultiProvider(
@@ -119,6 +138,9 @@ void main() async {
         ChangeNotifierProvider(create: (_) => KegiatanController(kegiatanRepo)),
         ChangeNotifierProvider(create: (_) => KeluargaController(keluargaRepo)),
         ChangeNotifierProvider(create: (_) => LaporanController(laporanRepo)),
+        ChangeNotifierProvider(create: (_) => DuesTypeController(duesTypeRepo)),
+        ChangeNotifierProvider(create: (_) => BillingController(billingRepo)),
+        ChangeNotifierProvider(create: (_) => BillingListController(billingListRepo)),
       ],
       child: const MyApp(),
     ),
