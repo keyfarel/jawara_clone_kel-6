@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../layouts/pages_layout.dart';
+import '../../../../widgets/layouts/pages_layout.dart';
 import '../../../../features/kegiatan_broadcast/controllers/broadcast_controller.dart';
 
 class BroadcastDaftarPage extends StatefulWidget {

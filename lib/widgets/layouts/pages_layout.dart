@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/side_nav_widget.dart';
+import 'side_nav_widget.dart';
 
 class PageLayout extends StatelessWidget {
   final String title;

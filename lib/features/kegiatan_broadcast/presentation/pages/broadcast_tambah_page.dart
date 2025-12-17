@@ -5,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../features/kegiatan_broadcast/controllers/broadcast_controller.dart';
-import '../../../../layouts/pages_layout.dart';
+import '../../../../widgets/layouts/pages_layout.dart';
 
 class BroadcastTambahPage extends StatefulWidget {
   const BroadcastTambahPage({super.key});

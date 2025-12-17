@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 // Import Layout & Controllers
-import '../../../../layouts/pages_layout.dart';
+import '../../../../widgets/layouts/pages_layout.dart';
 import '../../controllers/other_income_post_controller.dart';
 import '../../../shared/controllers/transaction_category_controller.dart';
 import '../../../shared/data/models/transaction_category_model.dart';

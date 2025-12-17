@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../layouts/pages_layout.dart';
+import '../../../widgets/layouts/pages_layout.dart';
 import '../controllers/pengeluaran_controller.dart';
 
 class TambahPage extends StatefulWidget {
