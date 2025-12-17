@@ -1,3 +1,8 @@
+// lib/features/dashboard/data/models/dashboard_model.dart
+
+// ==========================================
+// 1. MAIN DASHBOARD MODEL
+// ==========================================
 class DashboardModel {
   final PopulationData population;
   final int totalFamilies;
@@ -15,12 +20,11 @@ class DashboardModel {
 
   factory DashboardModel.fromJson(Map<String, dynamic> json) {
     return DashboardModel(
-      // Perhatikan key menggunakan SPASI sesuai JSON API Anda
-      population: PopulationData.fromJson(json['total population'] ?? {}),
-      totalFamilies: json['total families'] ?? 0,
-      activityStats: ActivityData.fromJson(json['total activity'] ?? {}),
+      population: PopulationData.fromJson(json['total_population'] ?? {}),
+      totalFamilies: _parseInt(json['total_families']),
+      activityStats: ActivityData.fromJson(json['total_activity'] ?? {}),
       cash: CashData.fromJson(json['cash'] ?? {}),
-      newActivities: List<String>.from(json['new activity'] ?? []),
+      newActivities: List<String>.from(json['new_activity'] ?? []),
     );
   }
 }
@@ -33,11 +37,10 @@ class PopulationData {
 
   factory PopulationData.fromJson(Map<String, dynamic> json) {
     return PopulationData(
-      male: json['male population'] ?? 0,   // Key pakai spasi
-      female: json['female population'] ?? 0, // Key pakai spasi
+      male: _parseInt(json['male_population']),
+      female: _parseInt(json['female_population']),
     );
   }
-
   int get total => male + female;
 }
 
@@ -54,12 +57,11 @@ class ActivityData {
 
   factory ActivityData.fromJson(Map<String, dynamic> json) {
     return ActivityData(
-      completed: json['completed'] ?? 0,
-      upcoming: json['upcoming'] ?? 0,
-      ongoing: json['ongoing'] ?? 0,
+      completed: _parseInt(json['completed']),
+      upcoming: _parseInt(json['upcoming']),
+      ongoing: _parseInt(json['ongoing']),
     );
   }
-  
   int get total => completed + upcoming + ongoing;
 }
 
@@ -75,16 +77,17 @@ class CashData {
   });
 
   factory CashData.fromJson(Map<String, dynamic> json) {
-    // PENTING: Gunakan (json[...] as num).toDouble() agar aman 
-    // jika API mengembalikan int tapi Dart butuh double.
     return CashData(
-      totalCash: (json['total cash'] ?? 0).toDouble(), // Key pakai spasi
-      income: (json['income'] ?? 0).toDouble(),
-      expense: (json['expense'] ?? 0).toDouble(),
+      totalCash: _parseDouble(json['total_cash']),
+      income: _parseDouble(json['income']),
+      expense: _parseDouble(json['expense']),
     );
   }
 }
 
+// ==========================================
+// 2. FINANCIAL DASHBOARD MODEL
+// ==========================================
 class FinancialDashboardModel {
   final double totalIncome;
   final double totalExpense;
@@ -107,41 +110,22 @@ class FinancialDashboardModel {
   });
 
   factory FinancialDashboardModel.fromJson(Map<String, dynamic> json) {
-    // Helper untuk parsing Map<String, double>
-    Map<String, double> parseMap(dynamic data) {
-      if (data == null || data is! Map) return {};
-      // Handle jika value berupa String ("15000.00") atau Number
-      return data.map((key, value) => MapEntry(
-        key.toString(), 
-        double.tryParse(value.toString()) ?? 0.0
-      ));
-    }
-
-    // Helper untuk parsing amount (String/Num -> double)
-    double parseAmount(dynamic value) {
-      return double.tryParse(value.toString()) ?? 0.0;
-    }
-
     return FinancialDashboardModel(
-      totalIncome: parseAmount(json['total_income']),
-      totalExpense: parseAmount(json['total_expense']),
-      totalCash: parseAmount(json['total_cash']),
-      transactions: json['transactions'] ?? 0,
-      
-      // JSON Anda menggunakan array [] jika kosong, dan object {} jika isi.
-      // Di Dart, array kosong adalah List, object adalah Map.
-      // Kita perlu cek tipe datanya.
-      incomePerMonth: (json['income_per_month'] is List) ? {} : parseMap(json['income_per_month']),
-      expensePerMonth: (json['expense_per_month'] is List) ? {} : parseMap(json['expense_per_month']),
-      incomePerCategory: (json['income_per_category'] is List) ? {} : parseMap(json['income_per_category']),
-      expensePerCategory: (json['expense_per_category'] is List) ? {} : parseMap(json['expense_per_category']),
+      totalIncome: _parseDouble(json['total_income']),
+      totalExpense: _parseDouble(json['total_expense']),
+      totalCash: _parseDouble(json['total_cash']),
+      transactions: _parseInt(json['transactions']),
+      incomePerMonth: _parseMapStringDouble(json['income_per_month']),
+      expensePerMonth: _parseMapStringDouble(json['expense_per_month']),
+      incomePerCategory: _parseMapStringDouble(json['income_per_category']),
+      expensePerCategory: _parseMapStringDouble(json['expense_per_category']),
     );
   }
 }
 
-// ... model DashboardModel & FinancialDashboardModel yang lama ...
-
-// TAMBAHAN BARU: PopulationDashboardModel
+// ==========================================
+// 3. POPULATION DASHBOARD MODEL
+// ==========================================
 class PopulationDashboardModel {
   final int totalFamilies;
   final int totalPopulation;
@@ -164,31 +148,22 @@ class PopulationDashboardModel {
   });
 
   factory PopulationDashboardModel.fromJson(Map<String, dynamic> json) {
-    // Helper parsing Map<String, int>
-    Map<String, int> parseDist(dynamic data) {
-      if (data == null || data is! Map) return {};
-      return data.map((key, value) => MapEntry(
-        key.toString(), 
-        int.tryParse(value.toString()) ?? 0
-      ));
-    }
-
     return PopulationDashboardModel(
-      totalFamilies: json['total_families'] ?? 0,
-      totalPopulation: json['total_population'] ?? 0,
-      statusDistribution: parseDist(json['status_distribution']),
-      genderDistribution: parseDist(json['gender_distribution']),
-      rolesDistribution: parseDist(json['roles_distribution']),
-      religionDistribution: parseDist(json['religion_distribution']),
-      educationLevelDistribution: parseDist(json['education_level_distribution']),
-      occupationDistribution: parseDist(json['occupation_distribution']),
+      totalFamilies: _parseInt(json['total_families']),
+      totalPopulation: _parseInt(json['total_population']),
+      statusDistribution: _parseMapStringInt(json['status_distribution']),
+      genderDistribution: _parseMapStringInt(json['gender_distribution']),
+      rolesDistribution: _parseMapStringInt(json['roles_distribution']),
+      religionDistribution: _parseMapStringInt(json['religion_distribution']),
+      educationLevelDistribution: _parseMapStringInt(json['education_level_distribution']),
+      occupationDistribution: _parseMapStringInt(json['occupation_distribution']),
     );
   }
 }
 
-// ... model DashboardModel & FinancialDashboardModel & PopulationDashboardModel ...
-
-// TAMBAHAN BARU: ActivityDashboardModel
+// ==========================================
+// 4. ACTIVITY DASHBOARD MODEL
+// ==========================================
 class ActivityDashboardModel {
   final int totalActivities;
   final int upcomingActivities;
@@ -209,23 +184,47 @@ class ActivityDashboardModel {
   });
 
   factory ActivityDashboardModel.fromJson(Map<String, dynamic> json) {
-    // Helper Parsing Map<String, int>
-    Map<String, int> parseMap(dynamic data) {
-      if (data == null || data is! Map) return {};
-      return data.map((key, value) => MapEntry(
-        key.toString(), 
-        int.tryParse(value.toString()) ?? 0
-      ));
-    }
-
     return ActivityDashboardModel(
-      totalActivities: json['total_activities'] ?? 0,
-      upcomingActivities: json['upcoming_activities'] ?? 0,
-      ongoingActivities: json['ongoing_activities'] ?? 0,
-      completeActivities: json['complete_activities'] ?? 0,
-      cancelledActivities: json['cancelled_activities'] ?? 0,
-      typeOfActivity: parseMap(json['type_of_activity']),
-      activitiesPerMonth: parseMap(json['activities_per_month']),
+      totalActivities: _parseInt(json['total_activities']),
+      upcomingActivities: _parseInt(json['upcoming_activities']),
+      ongoingActivities: _parseInt(json['ongoing_activities']),
+      completeActivities: _parseInt(json['complete_activities']),
+      cancelledActivities: _parseInt(json['cancelled_activities']),
+      typeOfActivity: _parseMapStringInt(json['type_of_activity']),
+      activitiesPerMonth: _parseMapStringInt(json['activities_per_month']),
     );
   }
+}
+
+// ==========================================
+// HELPER FUNCTIONS (Safe Parsing)
+// ==========================================
+
+double _parseDouble(dynamic value) {
+  if (value == null) return 0.0;
+  return double.tryParse(value.toString()) ?? 0.0;
+}
+
+int _parseInt(dynamic value) {
+  if (value == null) return 0;
+  // Handle jika API kirim string "10" atau double 10.0
+  return int.tryParse(value.toString().split('.').first) ?? 0;
+}
+
+Map<String, double> _parseMapStringDouble(dynamic json) {
+  if (json == null || json is! Map) return {};
+  Map<String, double> result = {};
+  json.forEach((key, value) {
+    result[key.toString()] = _parseDouble(value);
+  });
+  return result;
+}
+
+Map<String, int> _parseMapStringInt(dynamic json) {
+  if (json == null || json is! Map) return {};
+  Map<String, int> result = {};
+  json.forEach((key, value) {
+    result[key.toString()] = _parseInt(value);
+  });
+  return result;
 }

@@ -1,3 +1,5 @@
+// lib/features/dashboard/controllers/dashboard_controller.dart
+
 import 'package:flutter/material.dart';
 import '../data/models/dashboard_model.dart';
 import '../data/repository/dashboard_repository.dart';
@@ -7,6 +9,7 @@ class DashboardController extends ChangeNotifier {
 
   DashboardController(this.repository);
 
+  // --- 1. MAIN DASHBOARD ---
   DashboardModel? _data;
   bool _isLoading = false;
   String? _errorMessage;
@@ -15,7 +18,9 @@ class DashboardController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> loadDashboard() async {
+  Future<void> loadDashboard({bool force = false}) async {
+    if (!force && _data != null) return;
+
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -24,23 +29,24 @@ class DashboardController extends ChangeNotifier {
       final result = await repository.fetchDashboardData();
       _data = result;
     } catch (e) {
-      print("Error Dashboard: $e"); // Cek log di debug console
-      _errorMessage = e.toString();
+      print("Error Dashboard: $e");
+      _errorMessage = e.toString().replaceAll("Exception: ", "");
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  // ... kode sebelumnya ...
-
+  // --- 2. FINANCIAL DASHBOARD ---
   FinancialDashboardModel? _financialData;
   bool _isFinancialLoading = false;
 
   FinancialDashboardModel? get financialData => _financialData;
   bool get isFinancialLoading => _isFinancialLoading;
 
-  Future<void> loadFinancial() async {
+  Future<void> loadFinancial({bool force = false}) async {
+    if (!force && _financialData != null) return; // Cache check
+
     _isFinancialLoading = true;
     notifyListeners();
 
@@ -49,25 +55,24 @@ class DashboardController extends ChangeNotifier {
       _financialData = result;
     } catch (e) {
       print("Error Financial: $e");
-      // Opsional: set error message terpisah
     } finally {
       _isFinancialLoading = false;
       notifyListeners();
     }
   }
 
-  // ... kode sebelumnya ...
-
+  // --- 3. POPULATION DASHBOARD ---
   PopulationDashboardModel? _populationData;
   bool _isPopulationLoading = false;
 
   PopulationDashboardModel? get populationData => _populationData;
   bool get isPopulationLoading => _isPopulationLoading;
 
-  Future<void> loadPopulation() async {
+  Future<void> loadPopulation({bool force = false}) async {
+    if (!force && _populationData != null) return; // Cache check
+
     _isPopulationLoading = true;
     notifyListeners();
-
     try {
       final result = await repository.fetchPopulationData();
       _populationData = result;
@@ -79,15 +84,21 @@ class DashboardController extends ChangeNotifier {
     }
   }
 
-  // ... kode sebelumnya ...
-
+  // --- 4. ACTIVITY DASHBOARD ---
   ActivityDashboardModel? _activityData;
   bool _isActivityLoading = false;
 
   ActivityDashboardModel? get activityData => _activityData;
   bool get isActivityLoading => _isActivityLoading;
 
-  Future<void> loadActivity() async {
+  // PERBAIKAN: Tambah parameter {bool force = false}
+  Future<void> loadActivity({bool force = false}) async {
+    // LOGIC CACHING:
+    // Jika tidak dipaksa refresh (force=false) DAN data sudah ada, stop.
+    if (!force && _activityData != null) {
+      return;
+    }
+
     _isActivityLoading = true;
     notifyListeners();
 

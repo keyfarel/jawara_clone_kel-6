@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../data/menu_item_data.dart';
-import '../../data/child_to_route.dart';
+import '../../core/constants/app_menu_items.dart';
+import '../../core/constants/navigation_map.dart';
 
 class NavListWidget extends StatefulWidget {
   const NavListWidget({super.key});
@@ -30,9 +30,9 @@ class _NavListWidgetState extends State<NavListWidget>
 
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: menuItems.length,
+      itemCount: appMenuItems.length,
       itemBuilder: (context, index) {
-        final item = menuItems[index];
+        final item = appMenuItems[index];
 
         _controllers.putIfAbsent(
           index,
@@ -118,8 +118,8 @@ class _NavListWidgetState extends State<NavListWidget>
                       onTap: () {
                         final rootContext = Navigator.of(context, rootNavigator: true).context;
 
-                        if (childToRoute.containsKey(child)) {
-                          Navigator.pushNamed(rootContext, childToRoute[child]!);
+                        if (navigationMap.containsKey(child)) {
+                          Navigator.pushNamed(rootContext, navigationMap[child]!);
                         }
                       },
                     ),
