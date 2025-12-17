@@ -91,14 +91,23 @@ import 'features/list_pemasukan/data/services/other_income_list_service.dart';
 import 'features/tambah_pemasukan/controllers/other_income_post_controller.dart';
 import 'features/tambah_pemasukan/data/repository/other_income_post_repository.dart';
 import 'features/tambah_pemasukan/data/services/other_income_post_service.dart';
-import 'features/tambah_pemasukan/controllers/transaction_category_controller.dart';
-import 'features/tambah_pemasukan/data/repository/transaction_category_repository.dart';
-import 'features/tambah_pemasukan/data/services/transaction_category_service.dart';
+import 'features/shared/controllers/transaction_category_controller.dart';
+import 'features/shared/data/repository/transaction_category_repository.dart';
+import 'features/shared/data/services/transaction_category_service.dart';
 
 // Informasi Aspirasi
 import 'features/informasi_aspirasi/controllers/aspirasi_controller.dart';
 import 'features/informasi_aspirasi/data/repository/aspirasi_repository.dart';
 import 'features/informasi_aspirasi/data/services/aspirasi_service.dart';
+
+// pengeluaran
+import 'features/tambah_pengeluaran/controllers/other_expense_controller.dart';
+import 'features/tambah_pengeluaran/data/repository/other_expense_repository.dart';
+import 'features/tambah_pengeluaran/data/services/other_expense_service.dart';
+
+import 'features/list_pengeluaran/controllers/other_expense_list_controller.dart';
+import 'features/list_pengeluaran/data/repository/other_expense_list_repository.dart';
+import 'features/list_pengeluaran/data/services/other_expense_list_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -126,6 +135,8 @@ void main() async {
   final transactionCategoryService = TransactionCategoryService();
   final aspirasiService = AspirasiService();
   final semuaPengeluaranService = SemuaPengeluaranService();
+  final otherExpenseService = OtherExpenseService();
+  final otherExpenseListService = OtherExpenseListService();
 
   // Repositories
   final authRepo = AuthRepository(authService);
@@ -149,6 +160,8 @@ void main() async {
   final transactionCategoryRepo = TransactionCategoryRepository(transactionCategoryService);
   final aspirasiRepo = AspirasiRepository(aspirasiService);
   final semuaPengeluaranRepo = SemuaPengeluaranRepository(service: semuaPengeluaranService);
+  final otherExpenseRepo = OtherExpenseRepository(otherExpenseService);
+  final otherExpenseListRepo = OtherExpenseListRepository(otherExpenseListService);
 
   runApp(
     MultiProvider(
@@ -179,6 +192,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AspirasiController(aspirasiRepo)),
         ChangeNotifierProvider(create: (_) => FamilyController(keluargaRepo)),
         Provider(create: (_) => SemuaPengeluaranController(repository: semuaPengeluaranRepo)),
+        ChangeNotifierProvider(create: (_) => OtherExpenseController(otherExpenseRepo)),
+        ChangeNotifierProvider(create: (_) => OtherExpenseListController(otherExpenseListRepo)),
       ],
       child: const MyApp(),
     ),

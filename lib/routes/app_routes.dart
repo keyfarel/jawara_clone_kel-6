@@ -51,8 +51,8 @@ import 'package:myapp/features/laporan_keuangan/presentation/pages/cetak_laporan
 import 'package:myapp/features/laporan_keuangan/presentation/pages/semua_pengeluaran_page.dart';
 
 // laporan pengeluaran
-import 'package:myapp/features/pengeluaran/presentation/pengeluaran_daftar_page.dart';
-import 'package:myapp/features/pengeluaran/presentation/tambah_page.dart';
+import 'package:myapp/features/list_pengeluaran/presentation/pages/daftar_page.dart';
+import 'package:myapp/features/tambah_pengeluaran/presentation/pages/TambahPage.dart';
 
 // Pemsukan
 import 'package:myapp/features/kategori_iuran/presentation/pages/kategori_iuran_page.dart';

@@ -9,8 +9,8 @@ import 'package:intl/intl.dart';
 // Import Layout & Controllers
 import '../../../../layouts/pages_layout.dart';
 import '../../controllers/other_income_post_controller.dart';
-import '../../controllers/transaction_category_controller.dart';
-import '../../data/models/transaction_category_model.dart';
+import '../../../shared/controllers/transaction_category_controller.dart';
+import '../../../shared/data/models/transaction_category_model.dart';
 
 class PemasukanLainTambahPage extends StatefulWidget {
   const PemasukanLainTambahPage({super.key});
@@ -28,7 +28,7 @@ class _PemasukanLainTambahPageState extends State<PemasukanLainTambahPage> {
   final _deskripsiController = TextEditingController();
 
   // State Data
-  TransactionCategoryModel? _selectedCategory; // Tipe data dari model asli
+  TransactionCategory? _selectedCategory; // Tipe data dari model asli
   DateTime? _tanggal = DateTime.now();
   File? _buktiImage;
   Uint8List? _buktiImageBytes;
@@ -207,21 +207,23 @@ class _PemasukanLainTambahPageState extends State<PemasukanLainTambahPage> {
                     // Kategori (Dinamis dari API)
                     Consumer<TransactionCategoryController>(
                       builder: (context, catCtrl, child) {
-                        return DropdownButtonFormField<TransactionCategoryModel>(
+                        // AMBIL HANYA KATEGORI INCOME
+                        final categories = catCtrl.incomeCategories;
+
+                        return DropdownButtonFormField<TransactionCategory>(
                           value: _selectedCategory,
                           decoration: InputDecoration(
                             labelText: "Kategori Pemasukan",
+                            hintText: catCtrl.isLoading ? "Memuat..." : "Pilih Kategori",
                             border: const OutlineInputBorder(),
-                            suffixIcon: catCtrl.isLoading 
-                                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) 
-                                : null,
                           ),
-                          items: catCtrl.categories.map((cat) {
-                            return DropdownMenuItem(value: cat, child: Text(cat.name));
+                          items: categories.map((cat) {
+                            return DropdownMenuItem(
+                              value: cat, 
+                              child: Text(cat.name)
+                            );
                           }).toList(),
-                          onChanged: (isLoading || catCtrl.isLoading) 
-                              ? null 
-                              : (val) => setState(() => _selectedCategory = val),
+                          onChanged: (val) => setState(() => _selectedCategory = val),
                           validator: (val) => val == null ? "Pilih kategori" : null,
                         );
                       },
