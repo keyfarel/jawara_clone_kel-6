@@ -101,7 +101,7 @@ class AuthService {
     var multipartRequest = http.MultipartRequest('POST', uri);
     multipartRequest.headers.addAll({'Accept': 'application/json'});
 
-    multipartRequest.fields.addAll({
+   multipartRequest.fields.addAll({
       'full_name': request.name,
       'nik': request.nik,
       'email': request.email,
@@ -110,15 +110,23 @@ class AuthService {
       'password_confirmation': request.passwordConfirmation,
       'gender': request.gender,
       'ownership_status': request.ownershipStatus,
+      
+      // TAMBAHKAN INI
+      'birth_place': request.birthPlace,
+      'birth_date': request.birthDate,
+      'religion': request.religion,
+      'family_role': request.familyRole,
+      'education': request.education,
+      'occupation': request.occupation,
     });
 
     if (request.houseId != null) {
       multipartRequest.fields['house_id'] = request.houseId!;
-    }
-
-    if (request.customHouseAddress != null) {
-      multipartRequest.fields['custom_house_address'] =
-          request.customHouseAddress!;
+    } else {
+      // Jika House ID kosong, kirim detail rumah baru
+      if (request.houseBlock != null) multipartRequest.fields['house_block'] = request.houseBlock!;
+      if (request.houseNumber != null) multipartRequest.fields['house_number'] = request.houseNumber!;
+      if (request.houseStreet != null) multipartRequest.fields['house_street'] = request.houseStreet!; // Mapping ke 'address' di Laravel
     }
 
     if (request.idCardPhoto != null) {

@@ -1,48 +1,18 @@
 import 'package:flutter/material.dart';
 
-// 1. DEKORASI UMUM (Style)
-InputDecoration modernInputDecoration(
-  String hint,
-  IconData icon,
-  Color color, {
-  Widget? suffixIcon,
-}) {
-  return InputDecoration(
-    hintText: hint,
-    hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-    prefixIcon: Icon(icon, color: Colors.grey.shade400, size: 22),
-    suffixIcon: suffixIcon,
-    filled: true,
-    fillColor: Colors.grey.shade50,
-    contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide.none,
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: Colors.grey.shade200),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: color, width: 1.5),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: Colors.red.shade200),
-    ),
-  );
-}
-
-// 2. TEXT FIELD BIASA
+// --- 1. MODERN TEXT FIELD (Updated) ---
 class ModernTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final IconData icon;
+  final Color primaryColor;
   final TextInputType inputType;
   final String? Function(String?)? validator;
-  final Color primaryColor;
-  final FocusNode? focusNode; // Opsional: Support FocusNode jika nanti butuh
+  final FocusNode? focusNode;
+  
+  // TAMBAHAN PARAMETER BARU
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   const ModernTextField({
     super.key,
@@ -53,6 +23,9 @@ class ModernTextField extends StatelessWidget {
     this.inputType = TextInputType.text,
     this.validator,
     this.focusNode,
+    // Default false agar textfield biasa tetap bisa diketik
+    this.readOnly = false, 
+    this.onTap,
   });
 
   @override
@@ -62,13 +35,70 @@ class ModernTextField extends StatelessWidget {
       focusNode: focusNode,
       keyboardType: inputType,
       validator: validator,
-      style: const TextStyle(fontSize: 15),
+      // Pass parameter baru ke sini
+      readOnly: readOnly,
+      onTap: onTap,
+      
+      style: const TextStyle(fontWeight: FontWeight.w500),
       decoration: modernInputDecoration(hint, icon, primaryColor),
     );
   }
 }
 
-// 3. DROPDOWN
+// --- 2. MODERN PASSWORD FIELD ---
+class ModernPasswordField extends StatefulWidget {
+  final TextEditingController controller;
+  final String hint;
+  final Color primaryColor;
+  final String? Function(String?)? validator;
+  final FocusNode? focusNode;
+
+  const ModernPasswordField({
+    super.key,
+    required this.controller,
+    required this.hint,
+    required this.primaryColor,
+    this.validator,
+    this.focusNode,
+  });
+
+  @override
+  State<ModernPasswordField> createState() => _ModernPasswordFieldState();
+}
+
+class _ModernPasswordFieldState extends State<ModernPasswordField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: widget.controller,
+      focusNode: widget.focusNode,
+      obscureText: _obscureText,
+      validator: widget.validator,
+      style: const TextStyle(fontWeight: FontWeight.w500),
+      decoration: modernInputDecoration(
+        widget.hint,
+        Icons.lock_outline,
+        widget.primaryColor,
+      ).copyWith(
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureText ? Icons.visibility_off : Icons.visibility,
+            color: Colors.grey,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        ),
+      ),
+    );
+  }
+}
+
+// --- 3. MODERN DROPDOWN ---
 class ModernDropdown extends StatelessWidget {
   final String? value;
   final String hint;
@@ -91,12 +121,14 @@ class ModernDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
       value: value,
-      icon: const Icon(Icons.keyboard_arrow_down_rounded),
+      icon: const Icon(Icons.keyboard_arrow_down),
+      isExpanded: true,
       decoration: modernInputDecoration(hint, icon, primaryColor),
-      items: items.map((item) {
-        return DropdownMenuItem(
+      hint: Text(hint, style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
+      items: items.map((String item) {
+        return DropdownMenuItem<String>(
           value: item,
-          child: Text(item, style: const TextStyle(fontSize: 15)),
+          child: Text(item, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
         );
       }).toList(),
       onChanged: onChanged,
@@ -105,50 +137,34 @@ class ModernDropdown extends StatelessWidget {
   }
 }
 
-// 4. PASSWORD FIELD (Menangani Hide/Show sendiri)
-class ModernPasswordField extends StatefulWidget {
-  final TextEditingController controller;
-  final String hint;
-  final Color primaryColor;
-  final String? Function(String?)? validator;
-  final FocusNode? focusNode;
-
-  const ModernPasswordField({
-    super.key,
-    required this.controller,
-    required this.hint,
-    required this.primaryColor,
-    this.validator,
-    this.focusNode,
-  });
-
-  @override
-  State<ModernPasswordField> createState() => _ModernPasswordFieldState();
-}
-
-class _ModernPasswordFieldState extends State<ModernPasswordField> {
-  bool _isHidden = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget.controller,
-      focusNode: widget.focusNode,
-      obscureText: _isHidden,
-      validator: widget.validator,
-      style: const TextStyle(fontSize: 15),
-      decoration: modernInputDecoration(
-        widget.hint,
-        widget.hint.contains("Ulangi") ? Icons.lock_reset_outlined : Icons.lock_outline,
-        widget.primaryColor,
-        suffixIcon: IconButton(
-          icon: Icon(
-            _isHidden ? Icons.visibility : Icons.visibility_off,
-            color: Colors.grey,
-          ),
-          onPressed: () => setState(() => _isHidden = !_isHidden),
-        ),
-      ),
-    );
-  }
+// --- 4. DECORATION HELPER ---
+InputDecoration modernInputDecoration(String hint, IconData icon, Color primaryColor) {
+  return InputDecoration(
+    prefixIcon: Icon(icon, color: Colors.grey.shade500, size: 22),
+    hintText: hint,
+    hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+    filled: true,
+    fillColor: Colors.grey.shade50,
+    contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide.none,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey.shade200, width: 1),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: primaryColor, width: 1.5),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.red, width: 1),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Colors.red, width: 1.5),
+    ),
+  );
 }
