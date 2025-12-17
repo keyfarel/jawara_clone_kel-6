@@ -15,8 +15,6 @@ import 'package:myapp/features/dashboard/presentation/pages/dashboard_keuangan_p
 import 'package:myapp/features/dashboard/presentation/pages/dashboard_kependudukan_page.dart';
 import 'package:myapp/features/dashboard/presentation/pages/dashboard_kegiatan_page.dart';
 
-import 'package:myapp/features/Keluarga/presentation/pages/keluarga_page.dart';
-
 // Log Aktivitas
 import 'package:myapp/features/log_aktifitas/presentation/pages/semua_aktifitas_page.dart';
 
@@ -45,6 +43,8 @@ import 'package:myapp/features/penerimaan_warga/presentation/pages/penerimaan_wa
 import 'package:myapp/features/data_warga_rumah/presentation/pages/rumah_daftar_page.dart';
 import 'package:myapp/features/data_warga_rumah/presentation/pages/warga_daftar_page.dart';
 import 'package:myapp/features/data_warga_rumah/presentation/pages/rumah_tambah_page.dart';
+import 'package:myapp/features/data_warga_rumah/presentation/pages/warga_tambah_page.dart';
+import 'package:myapp/features/data_warga_rumah/presentation/pages/keluarga_page.dart';
 
 // laporan_keuangan
 import 'package:myapp/features/laporan_keuangan/presentation/pages/cetak_laporan_page.dart';
@@ -65,17 +65,6 @@ import 'package:myapp/features/informasi_aspirasi/presentation/pages/informasi_a
 // =========================
 // STATIC / LEGACY PAGES
 // =========================
-
-import 'package:myapp/pages/home/data_warga_rumah/warga_tambah_page.dart';
-
-
-
-
-
-
-
-
-
 import 'package:myapp/pages/home/laporan_keuangan/semua_pemasukan_page.dart';
 import 'package:myapp/pages/home/laporan_keuangan/semua_pengeluaran_page.dart';
 
@@ -147,7 +136,7 @@ class AppRoutes {
     kependudukan: (_) => const KependudukanPage(),
 
     // Data Warga & Rumah
-    keluarga: (_) => const ListKeluargaPage(),
+    keluarga: (_) => const KeluargaDaftarPage(),
     rumahTambah: (_) => const RumahTambahPage(),
     wargaDaftar: (_) => const WargaDaftarPage(),
     wargaTambah: (_) => const TambahWargaPage(),
