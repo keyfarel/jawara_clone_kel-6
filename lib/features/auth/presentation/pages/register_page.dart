@@ -4,14 +4,15 @@ import 'package:provider/provider.dart';
 
 // Imports Components
 import '../widgets/register/register_form.dart';
-import '../widgets/register/register_header.dart'; 
-import '../widgets/register/register_footer.dart'; 
+import '../widgets/register/register_header.dart';
+import '../widgets/register/register_footer.dart';
 
 // Imports Logic & Data
 import '../../controllers/register_controller.dart';
 import '../../data/models/register_request.dart';
 import '../../data/auth_repository.dart';
 import '../../data/auth_service.dart';
+import '../../../data_warga_rumah/controllers/citizen_controller.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -24,6 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
   final Color primaryColor = const Color(0xFF1976D2);
+  bool isNewHouseMode = false;
 
   // --- 1. CONTROLLERS ---
   final nameController = TextEditingController();
@@ -33,8 +35,15 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final customAddressController = TextEditingController();
+  final blockController = TextEditingController();
+  final numberController = TextEditingController();
+  final streetController = TextEditingController();
 
-  // --- 2. FOCUS NODES (Untuk Auto Focus Error) ---
+  // Controller Baru (Kependudukan)
+  final birthPlaceController = TextEditingController();
+  final birthDateController = TextEditingController();
+
+  // --- 2. FOCUS NODES ---
   final nameFocus = FocusNode();
   final nikFocus = FocusNode();
   final emailFocus = FocusNode();
@@ -42,13 +51,23 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordFocus = FocusNode();
   final confirmPasswordFocus = FocusNode();
   final customAddressFocus = FocusNode();
+  final blockFocus = FocusNode();
+  final numberFocus = FocusNode();
+  final streetFocus = FocusNode();
 
   // --- 3. STATE VARIABLES ---
   String? selectedGender;
   String? selectedHouseId;
   String? selectedOwnership;
+  String? selectedEducation;
+  String? selectedOccupation;
+
+  // State Baru (Dropdown)
+  String? selectedReligion;
+  String? selectedBloodType;
+
   XFile? idCardPhoto;
-  XFile? selfiePhoto; // Tambahan Selfie
+  XFile? selfiePhoto;
 
   List<dynamic> _houseOptions = [];
   bool _isLoadingHouses = true;
@@ -72,6 +91,10 @@ class _RegisterPageState extends State<RegisterPage> {
     confirmPasswordController.dispose();
     customAddressController.dispose();
 
+    // Dispose yang baru
+    birthPlaceController.dispose();
+    birthDateController.dispose();
+
     nameFocus.dispose();
     nikFocus.dispose();
     emailFocus.dispose();
@@ -79,6 +102,13 @@ class _RegisterPageState extends State<RegisterPage> {
     passwordFocus.dispose();
     confirmPasswordFocus.dispose();
     customAddressFocus.dispose();
+    blockController.dispose();
+    numberController.dispose();
+    streetController.dispose();
+
+    blockFocus.dispose();
+    numberFocus.dispose();
+    streetFocus.dispose();
     super.dispose();
   }
 
@@ -111,29 +141,50 @@ class _RegisterPageState extends State<RegisterPage> {
     } else if (errors.containsKey('custom_house_address')) {
       customAddressFocus.requestFocus();
     }
+
+    if (errors.containsKey('house_block')) {
+      blockFocus.requestFocus();
+    } else if (errors.containsKey('house_number')) {
+      numberFocus.requestFocus();
+    } else if (errors.containsKey('house_street')) {
+      streetFocus.requestFocus();
+    }
   }
 
-  // Ambil Foto KTP (Bisa Galeri/Kamera)
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 60, // KTP butuh agak jelas, 60-70 cukup
-        maxWidth: 1024,
+      source: ImageSource.gallery,
+      imageQuality: 60,
+      maxWidth: 1024,
     );
     if (pickedFile != null) setState(() => idCardPhoto = pickedFile);
   }
 
-  // Ambil Selfie (WAJIB KAMERA DEPAN)
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(2000),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        birthDateController.text =
+            "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+      });
+    }
+  }
+
   Future<void> _pickSelfie() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
-      source: ImageSource.camera, 
+      source: ImageSource.camera,
       preferredCameraDevice: CameraDevice.front,
-      imageQuality: 50, // KOMPRESI 50% (Sangat direkomendasikan)
-      maxWidth: 800,    // Resize lebar maks 800px
+      imageQuality: 50,
+      maxWidth: 800,
     );
-    
+
     if (pickedFile != null) {
       setState(() => selfiePhoto = pickedFile);
     }
@@ -141,44 +192,106 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // --- 6. SUBMIT HANDLER ---
   void _handleRegister(BuildContext context) async {
-    // 1. VALIDASI CLIENT SIDE
     if (!_formKey.currentState!.validate()) {
-      // JIKA ERROR: Aktifkan mode validasi real-time
-      setState(() {
-        _autoValidateMode = AutovalidateMode.onUserInteraction;
-      });
-
-      // Focus ke field yang error (Logic Anda sudah benar disini)
-      if (nameController.text.isEmpty) nameFocus.requestFocus();
-      else if (nikController.text.isEmpty) nikFocus.requestFocus();
-      else if (emailController.text.isEmpty) emailFocus.requestFocus();
-      else if (phoneController.text.isEmpty) phoneFocus.requestFocus();
-      else if (passwordController.text.isEmpty) passwordFocus.requestFocus();
-      else if (confirmPasswordController.text.isEmpty) confirmPasswordFocus.requestFocus();
-      else if (selectedHouseId == null && customAddressController.text.isEmpty) {
+      setState(() => _autoValidateMode = AutovalidateMode.onUserInteraction);
+      if (nameController.text.isEmpty)
+        nameFocus.requestFocus();
+      else if (nikController.text.isEmpty)
+        nikFocus.requestFocus();
+      else if (emailController.text.isEmpty)
+        emailFocus.requestFocus();
+      else if (phoneController.text.isEmpty)
+        phoneFocus.requestFocus();
+      else if (passwordController.text.isEmpty)
+        passwordFocus.requestFocus();
+      else if (confirmPasswordController.text.isEmpty)
+        confirmPasswordFocus.requestFocus();
+      else if (selectedHouseId == null &&
+          customAddressController.text.isEmpty) {
         customAddressFocus.requestFocus();
       }
-      return; 
+
+      if (selectedHouseId == null) {
+        if (blockController.text.isEmpty)
+          blockFocus.requestFocus();
+        else if (numberController.text.isEmpty)
+          numberFocus.requestFocus();
+        else if (streetController.text.isEmpty)
+          streetFocus.requestFocus();
+      }
+
+      if (isNewHouseMode) {
+        if (blockController.text.isEmpty)
+          blockFocus.requestFocus();
+        else if (numberController.text.isEmpty)
+          numberFocus.requestFocus();
+        else if (streetController.text.isEmpty)
+          streetFocus.requestFocus();
+      }
+      return;
     }
 
-    if (idCardPhoto == null) {
+    if (selectedHouseId == null) {
+      if (blockController.text.isEmpty ||
+          numberController.text.isEmpty ||
+          streetController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Jika membuat rumah baru, mohon lengkapi Blok, Nomor, dan Jalan.",
+            ),
+          ),
+        );
+        return;
+      }
+    }
+
+    if (!isNewHouseMode && selectedHouseId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Mohon upload foto identitas (KTP)")),
+        const SnackBar(
+          content: Text("Silakan pilih rumah atau ganti ke mode 'Buat Baru'."),
+        ),
       );
       return;
     }
 
-    if (selfiePhoto == null) {
+    if (birthPlaceController.text.isEmpty ||
+        birthDateController.text.isEmpty ||
+        selectedReligion == null ||
+        selectedEducation == null || // Cek Education
+        selectedOccupation ==
+            null // Cek Occupation
+            ) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Mohon ambil foto selfie untuk verifikasi wajah")),
+        const SnackBar(
+          content: Text(
+            "Mohon lengkapi data kependudukan (Lahir, Agama, Pendidikan, Pekerjaan)",
+          ),
+        ),
       );
       return;
     }
 
-    // Mapping Status Ownership
-    String ownership = "owner"; 
-    if (selectedOwnership == "Sewa") ownership = "renter";
-    else if (selectedOwnership == "Keluarga") ownership = "family";
+    // Validasi Data Kependudukan
+    if (birthPlaceController.text.isEmpty ||
+        birthDateController.text.isEmpty ||
+        selectedReligion == null ||
+        selectedBloodType == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Mohon lengkapi data kependudukan (Lahir, Agama, Gol. Darah)",
+          ),
+        ),
+      );
+      return;
+    }
+
+    String ownership = "owner";
+    if (selectedOwnership == "Sewa")
+      ownership = "renter";
+    else if (selectedOwnership == "Keluarga")
+      ownership = "family";
 
     final request = RegisterRequest(
       name: nameController.text,
@@ -189,10 +302,20 @@ class _RegisterPageState extends State<RegisterPage> {
       passwordConfirmation: confirmPasswordController.text,
       gender: selectedGender == "Laki-laki" ? "male" : "female",
       ownershipStatus: ownership,
-      houseId: selectedHouseId,
-      customHouseAddress: customAddressController.text,
       idCardPhoto: idCardPhoto,
       selfiePhoto: selfiePhoto,
+      houseId: (!isNewHouseMode) ? selectedHouseId : null,
+
+      // Kirim Data Baru
+      birthPlace: birthPlaceController.text,
+      birthDate: birthDateController.text,
+      religion: selectedReligion!,
+      bloodType: (selectedBloodType == "-") ? null : selectedBloodType,
+      education: selectedEducation!,
+      occupation: selectedOccupation!,
+      houseBlock: (selectedHouseId == null) ? blockController.text : null,
+      houseNumber: (selectedHouseId == null) ? numberController.text : null,
+      houseStreet: (selectedHouseId == null) ? streetController.text : null,
     );
 
     final controller = context.read<RegisterController>();
@@ -201,28 +324,41 @@ class _RegisterPageState extends State<RegisterPage> {
     if (!mounted) return;
 
     if (result['status'] == 'success') {
+      try {
+        // force: true artinya hiraukan cache, ambil baru dari API
+        await context.read<CitizenController>().loadCitizens(force: true);
+      } catch (e) {
+        // Catch error jaga-jaga jika CitizenController belum di-provide di tree (jarang terjadi)
+        print("Gagal refresh citizen list: $e");
+      }
+      // --------------------------------
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text("Registrasi Berhasil!"),
           backgroundColor: primaryColor,
         ),
       );
-      Navigator.pushNamedAndRemoveUntil(context, '/dashboard', (route) => false);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/dashboard',
+        (route) => false,
+      );
     } else {
-      // 2. VALIDASI SERVER SIDE
       String errorMessage = result['message'] ?? "Registrasi Gagal";
 
       if (result['errors'] != null && result['errors'] is Map) {
         final errors = result['errors'] as Map<String, dynamic>;
         _requestFocusOnError(errors);
 
-        // Cek error selfie spesifik
         if (errors.containsKey('selfie_photo')) {
-           final errList = errors['selfie_photo'] as List;
-           errorMessage = errList.first; 
+          final errList = errors['selfie_photo'] as List;
+          errorMessage = errList.first;
         } else {
-           final firstError = errors.values.first;
-           errorMessage = (firstError is List) ? firstError.first : firstError.toString();
+          final firstError = errors.values.first;
+          errorMessage = (firstError is List)
+              ? firstError.first
+              : firstError.toString();
         }
       }
 
@@ -230,6 +366,35 @@ class _RegisterPageState extends State<RegisterPage> {
         SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
       );
     }
+  }
+
+  void _removeImage() {
+    setState(() {
+      idCardPhoto = null;
+    });
+  }
+
+  void _removeSelfie() {
+    setState(() {
+      selfiePhoto = null;
+    });
+  }
+
+  void _toggleHouseMode(bool isNew) {
+    setState(() {
+      isNewHouseMode = isNew;
+
+      // RESET LOGIC
+      if (isNew) {
+        // Jika pindah ke Buat Baru -> Reset Pilihan Dropdown
+        selectedHouseId = null;
+      } else {
+        // Jika pindah ke Pilih Rumah -> Reset Form Manual
+        blockController.clear();
+        numberController.clear();
+        streetController.clear();
+      }
+    });
   }
 
   // --- 7. UI BUILD ---
@@ -245,10 +410,8 @@ class _RegisterPageState extends State<RegisterPage> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                // 1. Header
                 RegisterHeader(primaryColor: primaryColor),
 
-                // 2. Form Container
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
@@ -267,9 +430,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     autovalidateMode: _autoValidateMode,
                     child: Column(
                       children: [
-                        // PANGGIL REGISTER FORM WIDGET
                         RegisterForm(
-                          // Controllers
+                          // Controllers Lama
                           nameController: nameController,
                           nikController: nikController,
                           emailController: emailController,
@@ -277,7 +439,18 @@ class _RegisterPageState extends State<RegisterPage> {
                           passwordController: passwordController,
                           confirmPasswordController: confirmPasswordController,
                           customAddressController: customAddressController,
-                          
+                          blockController: blockController,
+                          numberController: numberController,
+                          streetController: streetController,
+
+                          blockFocus: blockFocus,
+                          numberFocus: numberFocus,
+                          streetFocus: streetFocus,
+
+                          // Controllers Baru
+                          birthPlaceController: birthPlaceController,
+                          birthDateController: birthDateController,
+
                           // Focus Nodes
                           nameFocus: nameFocus,
                           nikFocus: nikFocus,
@@ -287,32 +460,62 @@ class _RegisterPageState extends State<RegisterPage> {
                           confirmPasswordFocus: confirmPasswordFocus,
                           customAddressFocus: customAddressFocus,
 
-                          // Data & State
+                          // Data State
                           houseOptions: _houseOptions,
                           isLoadingHouses: _isLoadingHouses,
                           primaryColor: primaryColor,
+
                           selectedGender: selectedGender,
                           selectedHouseId: selectedHouseId,
                           selectedOwnership: selectedOwnership,
+
+                          // State Baru
+                          selectedReligion: selectedReligion,
+                          selectedBloodType: selectedBloodType,
+                          selectedEducation: selectedEducation,
+                          selectedOccupation: selectedOccupation,
+
+                          onEducationChanged: (val) =>
+                              setState(() => selectedEducation = val),
+                          onOccupationChanged: (val) =>
+                              setState(() => selectedOccupation = val),
                           selectedImage: idCardPhoto,
-                          selectedSelfie: selfiePhoto, // Tambahan Selfie
-                          
+                          selectedSelfie: selfiePhoto,
+                          onRemoveImage: _removeImage,
+                          onRemoveSelfie: _removeSelfie,
+                          isNewHouseMode: isNewHouseMode,
+                          onToggleHouseMode: _toggleHouseMode,
+
                           // Callbacks
-                          onGenderChanged: (val) => setState(() => selectedGender = val),
+                          onGenderChanged: (val) =>
+                              setState(() => selectedGender = val),
                           onHouseChanged: (val) {
                             setState(() {
                               selectedHouseId = val;
-                              if (val != null) customAddressController.clear();
+                              // Jika user memilih rumah, kita bisa kosongkan form manual
+                              if (val != null) {
+                                blockController.clear();
+                                numberController.clear();
+                                streetController.clear();
+                              }
                             });
                           },
-                          onOwnershipChanged: (val) => setState(() => selectedOwnership = val),
+                          onOwnershipChanged: (val) =>
+                              setState(() => selectedOwnership = val),
+
+                          // Callback Baru
+                          onReligionChanged: (val) =>
+                              setState(() => selectedReligion = val),
+                          onBloodTypeChanged: (val) =>
+                              setState(() => selectedBloodType = val),
+                          onDateTap: () => _selectDate(context),
+
                           onPickImage: _pickImage,
-                          onPickSelfie: _pickSelfie, // Tambahan Selfie
+                          onPickSelfie: _pickSelfie,
                         ),
 
                         const SizedBox(height: 32),
 
-                        // TOMBOL DAFTAR (PENTING: Jangan Dihapus)
                         SizedBox(
                           width: double.infinity,
                           height: 54,
@@ -351,7 +554,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
 
-                // 3. Footer
                 RegisterFooter(
                   primaryColor: primaryColor,
                   onLoginTap: () => Navigator.pushNamed(context, '/login'),
