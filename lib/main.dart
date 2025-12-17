@@ -58,11 +58,11 @@ import 'features/data_warga_rumah/controllers/citizen_controller.dart';
 import 'features/data_warga_rumah/data/repository/citizen_repository.dart';
 import 'features/data_warga_rumah/data/services/citizen_service.dart';
 
-import 'package:myapp/features/data_warga_rumah/controllers/family_controller.dart';
-import 'package:myapp/features/data_warga_rumah/data/repository/family_repository.dart';
-import 'package:myapp/features/data_warga_rumah/data/services/family_service.dart';
+import 'features/data_warga_rumah/controllers/family_controller.dart';
+import 'features/data_warga_rumah/data/repository/family_repository.dart';
+import 'features/data_warga_rumah/data/services/family_service.dart';
 
-// keuangan
+// Keuangan (Laporan & Pemasukan Lain - BARU)
 import 'features/laporan_keuangan/controllers/laporan_controller.dart';
 import 'features/laporan_keuangan/data/repository/laporan_repository.dart';
 import 'features/laporan_keuangan/data/services/laporan_service.dart';
@@ -71,7 +71,13 @@ import 'features/laporan_keuangan/controllers/semua_pengeluaran_controller.dart'
 import 'features/laporan_keuangan/data/repository/semua_pengeluaran_repository.dart';
 import 'features/laporan_keuangan/data/services/semua_pengeluaran_service.dart';
 
-// pemasukan
+// --- IMPORT BARU UNTUK SEMUA PEMASUKAN ---
+import 'features/laporan_keuangan/controllers/other_income_controller.dart';
+import 'features/laporan_keuangan/data/repository/other_income_repository.dart';
+import 'features/laporan_keuangan/data/services/other_income_service.dart';
+// -----------------------------------------
+
+// Kategori & Tagihan
 import 'features/kategori_iuran/controllers/dues_type_controller.dart';
 import 'features/kategori_iuran/data/repository/dues_type_repository.dart';
 import 'features/kategori_iuran/data/services/dues_type_service.dart';
@@ -84,6 +90,7 @@ import 'features/tagihan_list/controllers/billing_list_controller.dart';
 import 'features/tagihan_list/data/repository/billing_list_repository.dart';
 import 'features/tagihan_list/data/services/billing_list_service.dart';
 
+// List & Tambah Pemasukan (Existing/Lama)
 import 'features/list_pemasukan/controllers/other_income_list_controller.dart';
 import 'features/list_pemasukan/data/repository/other_income_list_repository.dart';
 import 'features/list_pemasukan/data/services/other_income_list_service.dart';
@@ -113,7 +120,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
 
-  // Services
+  // --- Services ---
   final authService = AuthService();
   final dashboardService = DashboardService();
   final logService = LogAktifitasService();
@@ -126,7 +133,11 @@ void main() async {
   final citizenService = CitizenService();
   final kegiatanService = KegiatanService();
   final keluargaService = FamilyService();
+  
+  // Keuangan Services
   final laporanService = LaporanService();
+  final otherIncomeService = OtherIncomeService(); // --- BARU ---
+  
   final duesTypeService = DuesTypeService();
   final billingService = BillingService();
   final billingListService = BillingListService();
@@ -138,7 +149,7 @@ void main() async {
   final otherExpenseService = OtherExpenseService();
   final otherExpenseListService = OtherExpenseListService();
 
-  // Repositories
+  // --- Repositories ---
   final authRepo = AuthRepository(authService);
   final dashboardRepo = DashboardRepository(dashboardService);
   final logRepo = LogAktifitasRepository(logService);
@@ -151,7 +162,11 @@ void main() async {
   final citizenRepo = CitizenRepository(citizenService);
   final kegiatanRepo = KegiatanRepository(kegiatanService);
   final keluargaRepo = FamilyRepository(keluargaService);
+  
+  // Keuangan Repos
   final laporanRepo = LaporanRepository(laporanService);
+  final otherIncomeRepo = OtherIncomeRepository(otherIncomeService); // --- BARU ---
+
   final duesTypeRepo = DuesTypeRepository(duesTypeService);
   final billingRepo = BillingRepository(billingService);
   final billingListRepo = BillingListRepositoryImpl(billingListService);
@@ -182,7 +197,11 @@ void main() async {
         ChangeNotifierProvider(create: (_) => CitizenController(citizenRepo)),
         ChangeNotifierProvider(create: (_) => KegiatanController(kegiatanRepo)),
         ChangeNotifierProvider(create: (_) => FamilyController(keluargaRepo)),
+        
+        // --- Provider Keuangan ---
         ChangeNotifierProvider(create: (_) => LaporanController(laporanRepo)),
+        ChangeNotifierProvider(create: (_) => OtherIncomeController(otherIncomeRepo)), // --- BARU (SUDAH DIPERBAIKI) ---
+        
         ChangeNotifierProvider(create: (_) => DuesTypeController(duesTypeRepo)),
         ChangeNotifierProvider(create: (_) => BillingController(billingRepo)),
         ChangeNotifierProvider(create: (_) => BillingListController(billingListRepo)),

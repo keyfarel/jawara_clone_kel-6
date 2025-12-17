@@ -15,6 +15,10 @@ class TambahWargaPage extends StatefulWidget {
 class _TambahWargaPageState extends State<TambahWargaPage> {
   final _formKey = GlobalKey<FormState>();
 
+  // --- 1. STATE UNTUK ERROR HANDLING ---
+  // Default disabled, akan berubah jadi onUserInteraction setelah tombol simpan ditekan
+  AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
+
   // --- Controllers ---
   final _nameController = TextEditingController();
   final _nikController = TextEditingController();
@@ -22,11 +26,13 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
   final _birthPlaceController = TextEditingController();
   final _birthDateController = TextEditingController();
   
-  // Controller Baru (Untuk KK Baru)
-  final _addressController = TextEditingController();
+  // Controller Baru (Untuk Rumah Baru - Dipecah biar sama kayak Register)
+  final _blockController = TextEditingController();
+  final _numberController = TextEditingController();
+  final _streetController = TextEditingController();
 
   // --- State Variables ---
-  bool _isNewFamily = false; // Toggle: Tambah ke KK lama atau Buat KK baru
+  bool _isNewFamily = false; // False = Pilih Keluarga, True = Buat Baru
   
   String? _selectedFamilyId;
   String? _selectedUserId;
@@ -37,8 +43,6 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
   String? _selectedEducation;
   String? _selectedOccupation;
   String? _selectedStatus;
-  
-  // State Baru (Untuk KK Baru)
   String? _selectedOwnership; 
 
   final Color primaryColor = Colors.blue;
@@ -58,7 +62,10 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
     _phoneController.dispose();
     _birthPlaceController.dispose();
     _birthDateController.dispose();
-    _addressController.dispose();
+    // Dispose Controller Rumah Baru
+    _blockController.dispose();
+    _numberController.dispose();
+    _streetController.dispose();
     super.dispose();
   }
 
@@ -83,11 +90,36 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
     return "Keluarga ID ${family['id']}";
   }
 
+  // --- LOGIC UI: TOGGLE MODE ---
+  void _toggleFamilyMode(bool isNew) {
+    setState(() {
+      _isNewFamily = isNew;
+      // Reset logic agar data tidak tercampur dan UI bersih
+      if (isNew) {
+        _selectedFamilyId = null;
+        _selectedRole = "Kepala Keluarga"; // Default jika buat KK baru
+      } else {
+        _blockController.clear();
+        _numberController.clear();
+        _streetController.clear();
+        _selectedOwnership = null;
+      }
+    });
+  }
+
   // --- LOGIC SUBMIT (UPDATED) ---
   void _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    // 1. Cek Validasi Form
+    if (!_formKey.currentState!.validate()) {
+      // JIKA ERROR: Aktifkan mode auto validate
+      // Agar saat user memperbaiki input, error langsung hilang (realtime)
+      setState(() {
+        _autoValidateMode = AutovalidateMode.onUserInteraction;
+      });
+      return;
+    }
 
-    // 1. Base Data (Data Diri Warga)
+    // 2. Persiapan Data Base
     final data = {
       "user_id": _selectedUserId != null ? int.tryParse(_selectedUserId!) : null,
       "nik": _nikController.text,
@@ -97,14 +129,14 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
       "birth_date": _birthDateController.text,
       "gender": _selectedGender == "Laki-laki" ? "male" : "female",
       "religion": _selectedReligion,
-      "blood_type": _selectedBloodType,
+      "blood_type": (_selectedBloodType == "-") ? null : _selectedBloodType, 
       "education": _selectedEducation ?? "Lainnya",
       "occupation": _selectedOccupation ?? "Lainnya",
       "status": _selectedStatus == "Tidak Aktif" ? "inactive" : "active",
-      "id_card_photo": null,
+      "id_card_photo": null, 
     };
 
-    // 2. Logic Role Mapping
+    // 3. Logic Role Mapping
     String roleToSend = "other";
     if (_selectedRole == "Kepala Keluarga") roleToSend = "head_of_family";
     else if (_selectedRole == "Istri") roleToSend = "wife";
@@ -112,13 +144,16 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
     
     data["family_role"] = roleToSend;
 
-    // 3. Logic Family / House (Sesuai Backend Store)
+    // 4. Logic Family / House
     if (_isNewFamily) {
-      // Skenario B: Buat KK Baru
-      data["family_id"] = null; // Kosongkan family_id
-      data["custom_house_address"] = _addressController.text;
+      // Skenario B: Buat KK & Rumah Baru
+      data["family_id"] = null;
       
-      // Mapping Ownership
+      // Kirim Detail Rumah (Pecahan)
+      data["house_block"] = _blockController.text;
+      data["house_number"] = _numberController.text;
+      data["house_street"] = _streetController.text;
+      
       String ownerStatus = "other";
       if (_selectedOwnership == "Milik Sendiri") ownerStatus = "owner";
       else if (_selectedOwnership == "Sewa") ownerStatus = "renter";
@@ -128,7 +163,6 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
     } else {
       // Skenario A: Masuk KK Lama
       data["family_id"] = int.tryParse(_selectedFamilyId ?? "0");
-      // custom_house_address & ownership_status otomatis diabaikan backend
     }
 
     final controller = context.read<CitizenController>();
@@ -159,6 +193,8 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
       enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade300)),
       focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: primaryColor, width: 1.5)),
+      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.red, width: 1)),
+      focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.red, width: 1.5)),
     );
   }
 
@@ -175,6 +211,32 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
     );
   }
 
+  // Widget Tab Pilihan (Mirip Register)
+  Widget _buildTabOption(String title, bool isActive, VoidCallback onTap) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: isActive ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: isActive ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4)] : [],
+          ),
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: isActive ? primaryColor : Colors.grey.shade600,
+              fontSize: 13,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<CitizenController>();
@@ -185,6 +247,8 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
         padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
+          // Mengaktifkan validasi otomatis SETELAH submit pertama kali gagal
+          autovalidateMode: _autoValidateMode,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -202,35 +266,25 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
                   ),
                 ),
 
-              // --- 1. TOGGLE MODE KELUARGA ---
+              // --- 1. PILIHAN KELUARGA (TAB STYLE) ---
+              // Solusi bug UI: Menggunakan Tab container statis agar tidak lompat ukuran
               Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
+                  color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.blue.shade200),
                 ),
-                child: SwitchListTile(
-                  title: const Text("Buat Kartu Keluarga (KK) Baru?", style: TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: const Text("Aktifkan jika warga ini adalah Kepala Keluarga baru"),
-                  value: _isNewFamily,
-                  activeColor: primaryColor,
-                  onChanged: (val) {
-                    setState(() {
-                      _isNewFamily = val;
-                      // Reset pilihan jika toggle berubah
-                      _selectedFamilyId = null;
-                      _addressController.clear();
-                      _selectedOwnership = null;
-                      // Auto set role jika buat KK baru
-                      if(_isNewFamily) _selectedRole = "Kepala Keluarga";
-                    });
-                  },
+                child: Row(
+                  children: [
+                    _buildTabOption("Masuk Keluarga Ada", !_isNewFamily, () => _toggleFamilyMode(false)),
+                    _buildTabOption("Buat KK Baru", _isNewFamily, () => _toggleFamilyMode(true)),
+                  ],
                 ),
               ),
 
               // --- 2. FORM KELUARGA (DINAMIS) ---
-              _buildSectionHeader(_isNewFamily ? "Data Rumah & KK Baru" : "Pilih Keluarga Existing"),
-
+              
               if (!_isNewFamily) 
                 // A. MODE PILIH KELUARGA
                 DropdownButtonFormField<String>(
@@ -247,24 +301,55 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
                   validator: (val) => !_isNewFamily && val == null ? "Wajib dipilih" : null,
                 )
               else 
-                // B. MODE BUAT RUMAH BARU
-                Column(
-                  children: [
-                    TextFormField(
-                      controller: _addressController,
-                      decoration: _inputDecor("Alamat Rumah", Icons.home),
-                      maxLines: 2,
-                      validator: (val) => _isNewFamily && val!.isEmpty ? "Alamat wajib diisi" : null,
-                    ),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      decoration: _inputDecor("Status Kepemilikan", Icons.verified_user),
-                      value: _selectedOwnership,
-                      items: ["Milik Sendiri", "Sewa", "Keluarga"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-                      onChanged: (val) => setState(() => _selectedOwnership = val),
-                      validator: (val) => _isNewFamily && val == null ? "Wajib dipilih" : null,
-                    ),
-                  ],
+                // B. MODE BUAT RUMAH BARU (DIPECAH 3 FIELD - Mirip Register)
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.blue.shade100),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("Alamat Rumah Baru", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _blockController,
+                              decoration: _inputDecor("Blok", Icons.domain),
+                              validator: (val) => _isNewFamily && val!.isEmpty ? "Wajib" : null,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _numberController,
+                              decoration: _inputDecor("Nomor", Icons.format_list_numbered),
+                              keyboardType: TextInputType.number,
+                              validator: (val) => _isNewFamily && val!.isEmpty ? "Wajib" : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _streetController,
+                        decoration: _inputDecor("Jalan / RT RW", Icons.add_road),
+                        validator: (val) => _isNewFamily && val!.isEmpty ? "Wajib" : null,
+                      ),
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<String>(
+                        decoration: _inputDecor("Status Kepemilikan", Icons.verified_user),
+                        value: _selectedOwnership,
+                        items: ["Milik Sendiri", "Sewa", "Keluarga"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                        onChanged: (val) => setState(() => _selectedOwnership = val),
+                        validator: (val) => _isNewFamily && val == null ? "Wajib dipilih" : null,
+                      ),
+                    ],
+                  ),
                 ),
               
               const SizedBox(height: 16),
@@ -357,6 +442,14 @@ class _TambahWargaPageState extends State<TambahWargaPage> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 16),
+
+              DropdownButtonFormField<String>(
+                decoration: _inputDecor("Golongan Darah", Icons.bloodtype),
+                value: _selectedBloodType,
+                items: ["A", "B", "AB", "O", "-"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                onChanged: (val) => setState(() => _selectedBloodType = val),
               ),
               const SizedBox(height: 16),
 
