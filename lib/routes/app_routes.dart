@@ -49,7 +49,7 @@ import 'package:myapp/features/data_warga_rumah/presentation/pages/keluarga_page
 // laporan_keuangan
 import 'package:myapp/features/laporan_keuangan/presentation/pages/cetak_laporan_page.dart';
 // laporan pengeluaran
-import 'package:myapp/features/pengeluaran/presentation/pengeluaran_daftar_page.dart';
+import 'package:myapp/features/list_pengeluaran/presentation/pages/daftar_page.dart';
 import 'package:myapp/features/tambah_pengeluaran/presentation/pages/TambahPage.dart';
 
 // Pemsukan
