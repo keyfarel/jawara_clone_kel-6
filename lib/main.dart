@@ -86,6 +86,11 @@ import 'features/tambah_pemasukan/controllers/other_income_post_controller.dart'
 import 'features/tambah_pemasukan/data/repository/other_income_post_repository.dart';
 import 'features/tambah_pemasukan/data/services/other_income_post_service.dart';
 
+// Informasi Aspirasi
+import 'features/informasi_aspirasi/controllers/aspirasi_controller.dart';
+import 'features/informasi_aspirasi/data/repository/aspirasi_repository.dart';
+import 'features/informasi_aspirasi/data/services/aspirasi_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
@@ -109,6 +114,7 @@ void main() async {
   final billingListService = BillingListService();
   final otherIncomeListService = OtherIncomeListService();
   final otherIncomePostService = OtherIncomePostService();
+  final aspirasiService = AspirasiService();
 
   // Repositories
   final authRepo = AuthRepository(authService);
@@ -129,6 +135,7 @@ void main() async {
   final billingListRepo = BillingListRepositoryImpl(billingListService);
   final otherIncomeListRepo = OtherIncomeRepositoryImpl(otherIncomeListService);
   final otherIncomePostRepo = OtherIncomePostRepositoryImpl(otherIncomePostService);
+  final aspirasiRepo = AspirasiRepository(aspirasiService);
 
   runApp(
     MultiProvider(
@@ -155,6 +162,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => BillingListController(billingListRepo)),
         ChangeNotifierProvider(create: (_) => OtherIncomeListController(otherIncomeListRepo)),
         ChangeNotifierProvider(create: (_) => OtherIncomePostController(otherIncomePostRepo)),
+        ChangeNotifierProvider(create: (_) => AspirasiController(aspirasiRepo)),
       ],
       child: const MyApp(),
     ),
