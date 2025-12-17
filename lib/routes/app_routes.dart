@@ -59,13 +59,16 @@ import 'package:myapp/features/tagihan_list/presentation/pages/tagihan_page.dart
 import 'package:myapp/features/list_pemasukan/presentation/pages/pemasukan_lain_daftar_page.dart';
 import 'package:myapp/features/tambah_pemasukan/presentation/pages/pemasukan_lain_tambah_page.dart';
 
+// Informasi Aspirasi
+import 'package:myapp/features/informasi_aspirasi/presentation/pages/informasi_aspirasi_page.dart';
+
 // =========================
 // STATIC / LEGACY PAGES
 // =========================
 import 'package:myapp/pages/home/laporan_keuangan/semua_pemasukan_page.dart';
 import 'package:myapp/pages/home/laporan_keuangan/semua_pengeluaran_page.dart';
 
-import 'package:myapp/pages/home/pesan_warga/informasi_aspirasi_page.dart';
+
 
 class AppRoutes {
   // Essentials

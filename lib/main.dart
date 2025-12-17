@@ -87,6 +87,14 @@ import 'features/list_pemasukan/data/services/other_income_list_service.dart';
 import 'features/tambah_pemasukan/controllers/other_income_post_controller.dart';
 import 'features/tambah_pemasukan/data/repository/other_income_post_repository.dart';
 import 'features/tambah_pemasukan/data/services/other_income_post_service.dart';
+import 'features/tambah_pemasukan/controllers/transaction_category_controller.dart';
+import 'features/tambah_pemasukan/data/repository/transaction_category_repository.dart';
+import 'features/tambah_pemasukan/data/services/transaction_category_service.dart';
+
+// Informasi Aspirasi
+import 'features/informasi_aspirasi/controllers/aspirasi_controller.dart';
+import 'features/informasi_aspirasi/data/repository/aspirasi_repository.dart';
+import 'features/informasi_aspirasi/data/services/aspirasi_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -111,6 +119,8 @@ void main() async {
   final billingListService = BillingListService();
   final otherIncomeListService = OtherIncomeListService();
   final otherIncomePostService = OtherIncomePostService();
+  final transactionCategoryService = TransactionCategoryService();
+  final aspirasiService = AspirasiService();
 
   // Repositories
   final authRepo = AuthRepository(authService);
@@ -131,6 +141,8 @@ void main() async {
   final billingListRepo = BillingListRepositoryImpl(billingListService);
   final otherIncomeListRepo = OtherIncomeRepositoryImpl(otherIncomeListService);
   final otherIncomePostRepo = OtherIncomePostRepositoryImpl(otherIncomePostService);
+  final transactionCategoryRepo = TransactionCategoryRepository(transactionCategoryService);
+  final aspirasiRepo = AspirasiRepository(aspirasiService);
 
   runApp(
     MultiProvider(
@@ -157,6 +169,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => BillingListController(billingListRepo)),
         ChangeNotifierProvider(create: (_) => OtherIncomeListController(otherIncomeListRepo)),
         ChangeNotifierProvider(create: (_) => OtherIncomePostController(otherIncomePostRepo)),
+        ChangeNotifierProvider(create: (_) => TransactionCategoryController(transactionCategoryRepo)),
+        ChangeNotifierProvider(create: (_) => AspirasiController(aspirasiRepo)),
         ChangeNotifierProvider(create: (_) => FamilyController(keluargaRepo)),
       ],
       child: const MyApp(),
