@@ -16,9 +16,9 @@ class LoginFormState extends State<LoginForm> {
   String? emailError;
   String? passwordError;
 
-  // 1. Tambahkan variable state untuk visibilitas password
   bool _isPasswordVisible = false;
 
+  // Fungsi validasi tetap dipanggil dari Parent (LoginPage)
   bool validate() {
     setState(() {
       if (email.text.trim().isEmpty) {
@@ -42,15 +42,14 @@ class LoginFormState extends State<LoginForm> {
     return emailError == null && passwordError == null;
   }
 
-  // 2. Update fungsi ini agar menerima parameter opsional suffixIcon
   InputDecoration _inputDecoration(String label, String? error, {Widget? suffixIcon}) {
     return InputDecoration(
       labelText: label,
-      errorText: error,
+      errorText: error, // Error akan hilang jika variabel error di-set null
       filled: true,
       fillColor: Colors.grey.shade100,
       labelStyle: const TextStyle(color: primaryColor),
-      suffixIcon: suffixIcon, // Tambahkan properti ini
+      suffixIcon: suffixIcon,
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: primaryColor, width: 2),
@@ -58,6 +57,14 @@ class LoginFormState extends State<LoginForm> {
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: Colors.grey.shade400),
+      ),
+      errorBorder: OutlineInputBorder( // Style border saat error
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.red),
+      ),
+      focusedErrorBorder: OutlineInputBorder( // Style border saat error & fokus
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.red, width: 2),
       ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -73,26 +80,42 @@ class LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // --- EMAIL TEXTFIELD ---
         TextField(
           controller: email,
           cursorColor: primaryColor,
+          keyboardType: TextInputType.emailAddress,
+          // LOGIKA BARU: Hilangkan error saat mengetik
+          onChanged: (value) {
+            if (emailError != null) {
+              setState(() {
+                emailError = null;
+              });
+            }
+          },
           decoration: _inputDecoration('Email', emailError),
         ),
+        
         const SizedBox(height: 16),
         
-        // 3. Update TextField Password
+        // --- PASSWORD TEXTFIELD ---
         TextField(
           controller: password,
-          // Jika visible = true, maka obscureText = false (teks terlihat)
-          obscureText: !_isPasswordVisible, 
+          obscureText: !_isPasswordVisible,
           cursorColor: primaryColor,
+          // LOGIKA BARU: Hilangkan error saat mengetik
+          onChanged: (value) {
+            if (passwordError != null) {
+              setState(() {
+                passwordError = null;
+              });
+            }
+          },
           decoration: _inputDecoration(
-            'Password', 
+            'Password',
             passwordError,
-            // Tambahkan tombol mata disini
             suffixIcon: IconButton(
               icon: Icon(
-                // Logika Icon: Jika terlihat -> Mata biasa. Jika tersembunyi -> Mata silang.
                 _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                 color: Colors.grey,
               ),

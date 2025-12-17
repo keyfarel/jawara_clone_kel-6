@@ -10,11 +10,14 @@ import 'models/login_request.dart';
 import 'models/register_request.dart';
 
 class AuthService {
+  List<dynamic>? _houseCache; // cache data rumah (memory)
   final String baseUrl =
       'https://unmoaning-lenora-photomechanically.ngrok-free.dev/api';
 
   final Duration _timeOutDuration = const Duration(seconds: 60);
-Future<Map<String, dynamic>> login(LoginRequest request) async {
+
+  // Login email & password
+  Future<Map<String, dynamic>> login(LoginRequest request) async {
     final uri = Uri.parse('$baseUrl/login');
 
     try {
@@ -32,6 +35,7 @@ Future<Map<String, dynamic>> login(LoginRequest request) async {
 
       final body = json.decode(response.body);
 
+      // Simpan token jika login berhasil
       if (response.statusCode == 200 && body['status'] == 'success') {
         final data = body['data'];
         if (data != null && data['access_token'] != null) {
@@ -45,9 +49,9 @@ Future<Map<String, dynamic>> login(LoginRequest request) async {
     }
   }
 
-  // face login
+  // Login menggunakan foto wajah
   Future<Map<String, dynamic>> loginFace(XFile selfiePhoto) async {
-    final uri = Uri.parse('$baseUrl/auth/login-face');
+    final uri = Uri.parse('$baseUrl/login-face');
 
     var multipartRequest = http.MultipartRequest('POST', uri);
     multipartRequest.headers.addAll({'Accept': 'application/json'});
@@ -62,30 +66,35 @@ Future<Map<String, dynamic>> login(LoginRequest request) async {
         ),
       );
 
-      final streamedResponse = await multipartRequest.send().timeout(_timeOutDuration);
+      final streamedResponse = await multipartRequest.send().timeout(
+        _timeOutDuration,
+      );
       final response = await http.Response.fromStream(streamedResponse);
 
       final body = json.decode(response.body);
 
-      if ((response.statusCode == 200) && body['status'] == 'success') {
+      // Simpan token jika sukses
+      if (response.statusCode == 200 && body['status'] == 'success') {
         final data = body['data'];
         if (data != null && data['access_token'] != null) {
-          await _saveTokens(
-            data['access_token'],
-            data['refresh_token'] ?? '',
-          );
+          await _saveTokens(data['access_token'], data['refresh_token'] ?? '');
         }
       }
 
       return body;
     } on SocketException {
-      return {'status': 'error', 'message': 'Gagal terhubung. Periksa internet.'};
+      return {
+        'status': 'error',
+        'message': 'Gagal terhubung. Periksa internet.',
+      };
     } on TimeoutException {
       return {'status': 'error', 'message': 'Waktu habis. Coba lagi.'};
     } catch (e) {
       return {'status': 'error', 'message': 'Gagal Login Wajah: $e'};
     }
   }
+
+  // Register + auto login
   Future<Map<String, dynamic>> register(RegisterRequest request) async {
     final uri = Uri.parse('$baseUrl/register');
 
@@ -157,17 +166,15 @@ Future<Map<String, dynamic>> login(LoginRequest request) async {
 
       final body = json.decode(response.body);
 
-      // LOGIKA BARU: Simpan Token (Auto Login)
-      if (response.statusCode == 201 || response.statusCode == 200) {
-        if (body['status'] == 'success') {
-          final data = body['data'];
-
-          if (data != null && data['access_token'] != null) {
-            await _saveTokens(
-              data['access_token'],
-              data['refresh_token'] ?? '',
-            );
-          }
+      // Auto login setelah register
+      if ((response.statusCode == 201 || response.statusCode == 200) &&
+          body['status'] == 'success') {
+        final data = body['data'];
+        if (data != null && data['access_token'] != null) {
+          await _saveTokens(
+            data['access_token'],
+            data['refresh_token'] ?? '',
+          );
         }
       }
 
@@ -187,10 +194,22 @@ Future<Map<String, dynamic>> login(LoginRequest request) async {
     }
   }
 
+  // Ambil opsi rumah dengan cache
   Future<List<dynamic>> fetchHouseOptions() async {
-    final uri = Uri.parse('$baseUrl/houses/options');
+    if (_houseCache != null && _houseCache!.isNotEmpty) {
+      return _houseCache!;
+    }
 
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? cachedString = prefs.getString('house_options_cache');
+
+      if (cachedString != null) {
+        _houseCache = json.decode(cachedString);
+        return _houseCache!;
+      }
+
+      final uri = Uri.parse('$baseUrl/houses/options');
       final response = await http
           .get(
             uri,
@@ -203,19 +222,18 @@ Future<Map<String, dynamic>> login(LoginRequest request) async {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
+        _houseCache = data;
+        await prefs.setString('house_options_cache', json.encode(data));
         return data;
       } else {
         return [];
       }
-    } on SocketException {
-      throw Exception('Tidak ada koneksi internet');
-    } on TimeoutException {
-      throw Exception('Request timeout');
     } catch (e) {
       throw Exception('Gagal memuat data rumah: $e');
     }
   }
 
+  // Cek token untuk auto login
   Future<bool> checkAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     final refreshToken = prefs.getString('refresh_token');
@@ -234,6 +252,7 @@ Future<Map<String, dynamic>> login(LoginRequest request) async {
     return await _performRefreshToken(refreshToken);
   }
 
+  // Refresh access token
   Future<bool> _performRefreshToken(String refreshToken) async {
     final uri = Uri.parse('$baseUrl/refresh-token');
 
@@ -260,25 +279,24 @@ Future<Map<String, dynamic>> login(LoginRequest request) async {
           );
           return true;
         }
-
-        return false;
       } else if (response.statusCode == 401) {
         await logout();
-        return false;
-      } else {
-        return false;
       }
+
+      return false;
     } catch (_) {
       return false;
     }
   }
 
+  // Simpan token ke local storage
   Future<void> _saveTokens(String access, String refresh) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('access_token', access);
     await prefs.setString('refresh_token', refresh);
   }
 
+  // Logout & hapus semua data
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();

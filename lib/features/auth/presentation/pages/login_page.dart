@@ -14,13 +14,19 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<LoginFormState>();
+  AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
   static const Color primaryColor = Color(0xFF1976D2);
 
   // --- LOGIN BIASA ---
   void _handleLogin(BuildContext context) async {
     final controller = context.read<LoginController>();
 
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      setState(() {
+        _autoValidateMode = AutovalidateMode.onUserInteraction;
+      });
+      return;
+    }
 
     final email = _formKey.currentState!.email.text.trim();
     final password = _formKey.currentState!.password.text;

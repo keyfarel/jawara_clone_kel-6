@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart'; // Tambahkan ini utk XFile
 class AuthRepository {
   // Properti ini PUBLIC (tidak pakai underscore), jadi bisa diakses via repository.service
   final AuthService service;
-
   AuthRepository(this.service);
 
   Future<Map<String, dynamic>> login(LoginRequest request) {

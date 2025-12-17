@@ -1,10 +1,12 @@
+// lib/features/data_warga_rumah/data/models/citizen_model.dart
+
 class CitizenModel {
   final int id;
   final String nik;
   final String name;
   final String phone;
   final String gender; // male/female
-  final String status; // permanent, moved
+  final String status; // active, inactive, permanent, moved
   final String? idCardPhoto;
   final String familyRole;
   final String? birthDate;
@@ -12,9 +14,13 @@ class CitizenModel {
   final String? religion;
   final String? bloodType;
   
+  // Field Baru
+  final String? education;
+  final String? occupation;
+
   // Nested Data
-  final String? address; // Diambil dari family -> house -> address
-  final String? houseName; // Diambil dari family -> house -> house_name
+  final String? address; // family -> house -> address
+  final String? houseName; // family -> house -> house_name
 
   CitizenModel({
     required this.id,
@@ -29,6 +35,8 @@ class CitizenModel {
     this.birthPlace,
     this.religion,
     this.bloodType,
+    this.education,
+    this.occupation,
     this.address,
     this.houseName,
   });
@@ -49,13 +57,18 @@ class CitizenModel {
       name: json['name'] ?? 'Tanpa Nama',
       phone: json['phone'] ?? '-',
       gender: json['gender'] ?? 'male',
-      status: json['status'] ?? 'permanent',
+      status: json['status'] ?? 'active',
       idCardPhoto: json['id_card_photo'],
       familyRole: json['family_role'] ?? 'Anggota',
       birthDate: json['birth_date'],
       birthPlace: json['birth_place'],
       religion: json['religion'],
       bloodType: json['blood_type'],
+      
+      // Mapping field baru
+      education: json['education'],
+      occupation: json['occupation'],
+      
       address: addr ?? 'Alamat tidak tersedia',
       houseName: hName ?? '-',
     );
