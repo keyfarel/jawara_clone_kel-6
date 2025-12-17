@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import '../../../../layouts/pages_layout.dart';
+import '../../../../widgets/layouts/pages_layout.dart';
 
 // Import Billing Controller & Model
 import '../../controllers/billing_controller.dart';

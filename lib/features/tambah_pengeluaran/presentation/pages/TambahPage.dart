@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../layouts/pages_layout.dart';
+import '../../../../widgets/layouts/pages_layout.dart';
 import '../../controllers/other_expense_controller.dart';
 import '../../../shared/controllers/transaction_category_controller.dart';
 

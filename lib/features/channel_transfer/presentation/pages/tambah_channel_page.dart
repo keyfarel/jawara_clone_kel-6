@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../layouts/pages_layout.dart';
+import '../../../../widgets/layouts/pages_layout.dart';
 import '../../controllers/channel_controller.dart';
 import '../widgets/tambah_channel/channel_input_label.dart';
 import '../widgets/tambah_channel/image_picker_field.dart';

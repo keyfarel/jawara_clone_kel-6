@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../layouts/pages_layout.dart';
+import '../../../../widgets/layouts/pages_layout.dart';
 import '../../controllers/rumah_controller.dart';
 import '../../data/models/rumah_model.dart';
 

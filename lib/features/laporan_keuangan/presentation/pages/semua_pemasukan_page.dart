@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import '../../../../layouts/pages_layout.dart';
+import '../../../../widgets/layouts/pages_layout.dart';
 import '../../controllers/other_income_controller.dart';
 
 class SemuaPemasukanPage extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../utils/pdf_generator.dart';
-import '../../../../layouts/pages_layout.dart';
+import '../../../../widgets/layouts/pages_layout.dart';
 import '../../controllers/laporan_controller.dart';
 import '../../data/models/finance_report_model.dart';
 

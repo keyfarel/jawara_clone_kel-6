@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/layouts/pages_layout.dart';
+import 'package:myapp/widgets/layouts/pages_layout.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 

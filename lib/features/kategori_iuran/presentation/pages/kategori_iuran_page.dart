@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // <-- Import Provider
 import 'package:intl/intl.dart'; // <-- Perlu untuk format Rupiah/Mata Uang 
-import '../../../../layouts/pages_layout.dart';
+import '../../../../widgets/layouts/pages_layout.dart';
 
 // Import Dues Type components
 import '../../controllers/dues_type_controller.dart';

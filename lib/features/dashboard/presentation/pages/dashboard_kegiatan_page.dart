@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../layouts/pages_layout.dart';
+import '../../../../widgets/layouts/pages_layout.dart';
 import '../../../../widgets/header_card/double_header_card_widget.dart';
 import '../../../../widgets/chart/doughnut_chart_widget.dart';
 import '../../../../widgets/chart/pie_chart_widget.dart';
