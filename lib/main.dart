@@ -85,9 +85,9 @@ import 'features/list_pemasukan/data/services/other_income_list_service.dart';
 import 'features/tambah_pemasukan/controllers/other_income_post_controller.dart';
 import 'features/tambah_pemasukan/data/repository/other_income_post_repository.dart';
 import 'features/tambah_pemasukan/data/services/other_income_post_service.dart';
-import 'features/tambah_pemasukan/controllers/transaction_category_controller.dart';
-import 'features/tambah_pemasukan/data/repository/transaction_category_repository.dart';
-import 'features/tambah_pemasukan/data/services/transaction_category_service.dart';
+import 'features/shared/controllers/transaction_category_controller.dart';
+import 'features/shared/data/repository/transaction_category_repository.dart';
+import 'features/shared/data/services/transaction_category_service.dart';
 
 // Informasi Aspirasi
 import 'features/informasi_aspirasi/controllers/aspirasi_controller.dart';
