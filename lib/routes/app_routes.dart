@@ -47,6 +47,7 @@ import 'package:myapp/features/data_warga_rumah/presentation/pages/warga_tambah_
 import 'package:myapp/features/data_warga_rumah/presentation/pages/keluarga_page.dart';
 
 // laporan_keuangan
+import 'package:myapp/features/laporan_keuangan/presentation/pages/semua_pemasukan_page.dart';
 import 'package:myapp/features/laporan_keuangan/presentation/pages/cetak_laporan_page.dart';
 import 'package:myapp/features/laporan_keuangan/presentation/pages/semua_pengeluaran_page.dart';
 
@@ -54,7 +55,7 @@ import 'package:myapp/features/laporan_keuangan/presentation/pages/semua_pengelu
 import 'package:myapp/features/list_pengeluaran/presentation/pages/daftar_page.dart';
 import 'package:myapp/features/tambah_pengeluaran/presentation/pages/TambahPage.dart';
 
-// Pemsukan
+// Pemasukan
 import 'package:myapp/features/kategori_iuran/presentation/pages/kategori_iuran_page.dart';
 import 'package:myapp/features/tagih_iuran/presentation/pages/tagih_iuran_page.dart';
 import 'package:myapp/features/tagihan_list/presentation/pages/tagihan_page.dart';
@@ -66,10 +67,7 @@ import 'package:myapp/features/informasi_aspirasi/presentation/pages/informasi_a
 
 // =========================
 // STATIC / LEGACY PAGES
-// =========================
-import 'package:myapp/pages/home/laporan_keuangan/semua_pemasukan_page.dart';
-
-
+// ==========================
 
 class AppRoutes {
   // Essentials
