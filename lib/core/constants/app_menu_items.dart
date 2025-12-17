@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
-import '../models/nav_item.dart';
+import './navigation_map.dart';
 
-const List<NavItem> menuItems = [
-  NavItem(
+class MenuItem {
+  final String title;
+  final IconData icon;
+  final List<String> children;
+
+  MenuItem({required this.title, required this.icon, this.children = const []});
+}
+
+final List<MenuItem> appMenuItems = [
+  MenuItem(
     title: "Dashboard",
     icon: Icons.dashboard,
     children: ["Dashboard", "Keuangan", "Kegiatan", "Kependudukan"],
   ),
-  NavItem(
+  MenuItem(
     title: "Data Warga & Rumah",
     icon: Icons.home,
     children: [
@@ -18,7 +26,7 @@ const List<NavItem> menuItems = [
       "Rumah - Tambah",
     ],
   ),
-  NavItem(
+  MenuItem(
     title: "Pemasukan",
     icon: Icons.attach_money,
     children: [
@@ -29,17 +37,17 @@ const List<NavItem> menuItems = [
       "Pemasukan Lain - Tambah",
     ],
   ),
-  NavItem(
+  MenuItem(
     title: "Pengeluaran",
     icon: Icons.money_off,
     children: ["Daftar", "Tambah"],
   ),
-  NavItem(
+  MenuItem(
     title: "Laporan Keuangan",
     icon: Icons.bar_chart,
     children: ["Semua Pemasukan", "Semua Pengeluaran", "Cetak Laporan"],
   ),
-  NavItem(
+  MenuItem(
     title: "Kegiatan & Broadcast",
     icon: Icons.campaign,
     children: [
@@ -49,32 +57,32 @@ const List<NavItem> menuItems = [
       "Broadcast - Tambah",
     ],
   ),
-  NavItem(
+  MenuItem(
     title: "Pesan Warga",
     icon: Icons.message,
     children: ["Informasi Aspirasi"],
   ),
-  NavItem(
+  MenuItem(
     title: "Penerimaan Warga",
     icon: Icons.people,
     children: ["Penerimaan Warga"],
   ),
-  NavItem(
+  MenuItem(
     title: "Mutasi Keluarga",
     icon: Icons.sync_alt,
     children: ["Daftar Mutasi", "Tambah Mutasi"],
   ),
-  NavItem(
+  MenuItem(
     title: "Log Aktifitas",
     icon: Icons.history,
     children: ["Semua Aktifitas"],
   ),
-  NavItem(
+  MenuItem(
     title: "Manajemen Pengguna",
     icon: Icons.manage_accounts,
     children: ["Daftar Pengguna", "Tambah Pengguna"],
   ),
-  NavItem(
+  MenuItem(
     title: "Channel Transfer",
     icon: Icons.send,
     children: ["Daftar Channel", "Tambah Channel"],

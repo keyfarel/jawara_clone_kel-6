@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../routes/app_routes.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../../data/auth_service.dart';
 
 class SplashPage extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:myapp/features/auth/data/auth_service.dart';
-import 'package:myapp/routes/app_routes.dart';
+import 'package:myapp/core/routes/app_routes.dart';
 
 class ProfileBottomWidget extends StatelessWidget {
   final BuildContext rootContext;
