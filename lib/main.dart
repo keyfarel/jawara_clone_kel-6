@@ -67,6 +67,10 @@ import 'features/laporan_keuangan/controllers/laporan_controller.dart';
 import 'features/laporan_keuangan/data/repository/laporan_repository.dart';
 import 'features/laporan_keuangan/data/services/laporan_service.dart';
 
+import 'features/laporan_keuangan/controllers/semua_pengeluaran_controller.dart';
+import 'features/laporan_keuangan/data/repository/semua_pengeluaran_repository.dart';
+import 'features/laporan_keuangan/data/services/semua_pengeluaran_service.dart';
+
 // pemasukan
 import 'features/kategori_iuran/controllers/dues_type_controller.dart';
 import 'features/kategori_iuran/data/repository/dues_type_repository.dart';
@@ -121,6 +125,7 @@ void main() async {
   final otherIncomePostService = OtherIncomePostService();
   final transactionCategoryService = TransactionCategoryService();
   final aspirasiService = AspirasiService();
+  final semuaPengeluaranService = SemuaPengeluaranService();
 
   // Repositories
   final authRepo = AuthRepository(authService);
@@ -143,6 +148,7 @@ void main() async {
   final otherIncomePostRepo = OtherIncomePostRepositoryImpl(otherIncomePostService);
   final transactionCategoryRepo = TransactionCategoryRepository(transactionCategoryService);
   final aspirasiRepo = AspirasiRepository(aspirasiService);
+  final semuaPengeluaranRepo = SemuaPengeluaranRepository(service: semuaPengeluaranService);
 
   runApp(
     MultiProvider(
@@ -172,6 +178,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => TransactionCategoryController(transactionCategoryRepo)),
         ChangeNotifierProvider(create: (_) => AspirasiController(aspirasiRepo)),
         ChangeNotifierProvider(create: (_) => FamilyController(keluargaRepo)),
+        Provider(create: (_) => SemuaPengeluaranController(repository: semuaPengeluaranRepo)),
       ],
       child: const MyApp(),
     ),
