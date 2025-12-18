@@ -1,14 +1,10 @@
-// lib/data/models/keluarga_model.dart
-
 class KeluargaModel {
   final int id;
   final String kkNumber;
   final String ownershipStatus; 
   final String status;
-  final String namaKepalaKeluarga; 
+  final String namaKepalaKeluarga; // Ini field dinamis (Bisa Nama / Bisa No KK)
   final String alamatRumah;
-  
-  // TAMBAHAN: Menyimpan list anggota keluarga mentah dari API
   final List<dynamic> citizens; 
 
   KeluargaModel({
@@ -18,7 +14,7 @@ class KeluargaModel {
     required this.status,
     required this.namaKepalaKeluarga,
     required this.alamatRumah,
-    required this.citizens, // Tambahkan di constructor
+    required this.citizens,
   });
 
   factory KeluargaModel.fromJson(Map<String, dynamic> json) {
@@ -27,30 +23,45 @@ class KeluargaModel {
       addr = json['house']['address'] ?? '-';
     }
 
-    // Ambil list citizens dari JSON
+    // Ambil Nomor KK
+    String noKK = json['kk_number'] ?? '-';
+
+    // Ambil List Warga
     List<dynamic> listAnggota = json['citizens'] ?? [];
 
-    // Cari Nama Kepala Keluarga
-    String kkName = 'Belum Ada KK';
+    // --- LOGIC PENENTUAN NAMA UTAMA ---
+    // Default: Gunakan Nomor KK
+    String displayName = noKK; 
+
+    // Jika ada anggota keluarga, cari Kepala Keluarga
     if (listAnggota.isNotEmpty) {
-      final head = listAnggota.firstWhere(
+      // Cari role 'kepala keluarga' atau 'head_of_family'
+      var head = listAnggota.firstWhere(
         (c) {
           final role = (c['family_role'] ?? '').toString().toLowerCase();
-          return role == 'kepala keluarga' || role == 'head_of_family' || role == 'husband';
+          return role == 'kepala keluarga' || role == 'head_of_family';
         },
-        orElse: () => listAnggota.first,
+        // Jika tidak ada yang berstatus kepala keluarga, kembalikan null
+        orElse: () => null, 
       );
-      kkName = head['name'] ?? '-';
+
+      // Jika ketemu Kepala Keluarga, GANTI displayName jadi Namanya
+      if (head != null) {
+        displayName = head['name'] ?? noKK;
+      } 
+      // Opsi Tambahan: Jika tidak ada kepala keluarga tapi ada anggota lain, 
+      // apakah tetap mau No KK atau nama anggota pertama?
+      // Sesuai request Anda, jika belum ada kepala, kita biarkan No KK.
     }
 
     return KeluargaModel(
       id: json['id'],
-      kkNumber: json['kk_number'] ?? '-',
+      kkNumber: noKK,
       ownershipStatus: json['ownership_status'] ?? 'owner',
       status: json['status'] ?? 'active',
-      namaKepalaKeluarga: kkName,
+      namaKepalaKeluarga: displayName, // <--- Hasil Logic di atas
       alamatRumah: addr,
-      citizens: listAnggota, // Simpan listnya di sini
+      citizens: listAnggota,
     );
   }
 }

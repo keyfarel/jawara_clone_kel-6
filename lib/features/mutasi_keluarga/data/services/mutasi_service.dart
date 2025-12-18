@@ -34,6 +34,7 @@ class MutasiService {
 
   Future<bool> createMutation({
     required int familyId,
+    int? citizenId,
     required String mutationType,
     required String date, // Format YYYY-MM-DD
     required String reason,
@@ -52,6 +53,7 @@ class MutasiService {
       },
       body: jsonEncode({
         'family_id': familyId,
+        'citizen_id': citizenId,
         'mutation_type': mutationType,
         'mutation_date': date,
         'reason': reason,
@@ -90,5 +92,31 @@ class MutasiService {
       }).toList();
     }
     return []; // Return kosong jika gagal
+  }
+
+  Future<List<Map<String, dynamic>>> getCitizensByFamily(int familyId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+    
+    // Asumsi endpoint detail keluarga: /api/families/{id}
+    final uri = Uri.parse('$baseUrl/families/$familyId'); 
+
+    final response = await http.get(
+      uri,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      // Struktur biasanya body['data']['citizens']
+      if (body['data'] != null && body['data']['citizens'] != null) {
+        return List<Map<String, dynamic>>.from(body['data']['citizens']);
+      }
+    }
+    return [];
   }
 }

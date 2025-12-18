@@ -8,7 +8,8 @@ final Map<String, String> navigationMap = {
   // Data Warga & Rumah
   "Warga - Daftar": '/warga_daftar',
   "Warga - Tambah": '/warga_tambah',
-  "Keluarga": '/keluarga',
+  "Keluarga - Daftar": '/keluarga',
+  "Keluarga - Tambah": '/keluarga_tambah',
   "Rumah - Daftar": '/rumah_daftar',
   "Rumah - Tambah": '/rumah_tambah',
 

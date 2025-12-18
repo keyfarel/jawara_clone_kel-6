@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../widgets/layouts/pages_layout.dart';
+import '../../../../widgets/layouts/pages_layout.dart'; // Sesuaikan path jika berbeda
 import '../../../../widgets/chart/doughnut_chart_widget.dart';
 import '../../../../widgets/header_card/double_header_card_widget.dart';
 import '../../controllers/dashboard_controller.dart';
@@ -18,35 +18,33 @@ class _KependudukanPageState extends State<KependudukanPage> {
   @override
   void initState() {
     super.initState();
-    // Load data awal dengan cache
+    // Load data awal (Gunakan Cache jika ada)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<DashboardController>().loadPopulation();
     });
   }
 
+  // --- LOGIC REFRESH ---
   Future<void> _handleRefresh() async {
-    // Pastikan controller mendukung force refresh
-    await context.read<DashboardController>().loadPopulation();
+    // PENTING: Gunakan force: true agar data diambil ulang dari API
+    await context.read<DashboardController>().loadPopulation(force: true);
   }
 
   // --- Helper Warna Konsisten ---
-  // Menggunakan hashcode string agar warna konsisten tiap refresh (bukan random acak)
   Color _getConsistentColor(String key, int index) {
-    // List warna palette yang cantik
     final List<Color> palette = [
       Colors.blueAccent, Colors.orangeAccent, Colors.greenAccent, Colors.purpleAccent,
       Colors.redAccent, Colors.tealAccent, Colors.pinkAccent, Colors.amberAccent,
       Colors.indigoAccent, Colors.cyanAccent, Colors.limeAccent, Colors.deepOrangeAccent
     ];
-    // Pilih warna berdasarkan index atau hash karakter pertama
     return palette[index % palette.length];
   }
 
-  // Helper Mapping Data API ke Chart Widget
+  // --- Helper Mapping Data ---
   List<Map<String, dynamic>> _mapToChartData(Map<String, int> data, {Map<String, Color>? colorMap}) {
     if (data.isEmpty) return [];
 
-    // Filter value yang 0 agar chart lebih bersih
+    // Hanya ambil data yang nilainya > 0
     final filteredEntries = data.entries.where((e) => e.value > 0).toList();
 
     return filteredEntries.asMap().entries.map((entry) {
@@ -54,9 +52,9 @@ class _KependudukanPageState extends State<KependudukanPage> {
       MapEntry<String, int> e = entry.value;
 
       String label = e.key;
-      if (label.isEmpty) label = "Tidak Diketahui"; 
+      if (label.isEmpty) label = "Lainnya"; 
       
-      // Translate manual (optional)
+      // Translate Label (Opsional)
       if (label == 'permanent') label = 'Tetap';
       if (label == 'active') label = 'Aktif';
       if (label == 'inactive') label = 'Tidak Aktif';
@@ -67,13 +65,13 @@ class _KependudukanPageState extends State<KependudukanPage> {
       return {
         'kategori': label,
         'value': e.value,
-        // Prioritas: Warna Map -> Warna Konsisten
+        // Prioritas Warna: Map Custom -> Warna Konsisten
         'color': colorMap?[e.key] ?? _getConsistentColor(e.key, index),
       };
     }).toList();
   }
 
-  // --- Widget: Placeholder Chart Kosong ---
+  // --- Widget: Placeholder (Chart Kosong) ---
   Widget _buildEmptyChartPlaceholder(String title, IconData icon) {
     return Container(
       height: 250,
@@ -101,7 +99,7 @@ class _KependudukanPageState extends State<KependudukanPage> {
     );
   }
 
-  // --- Widget: Empty State ---
+  // --- Widget: Empty State (Halaman Kosong) ---
   Widget _buildEmptyState() {
     return Center(
       child: Padding(
@@ -132,17 +130,17 @@ class _KependudukanPageState extends State<KependudukanPage> {
     final data = controller.populationData;
     final isLoading = controller.isPopulationLoading;
 
-    // --- Loading ---
+    // 1. Loading State
     if (isLoading) {
       return const PageLayout(title: 'Kependudukan', body: Center(child: CircularProgressIndicator()));
     }
 
-    // --- Empty Data ---
+    // 2. Empty Data State
     if (data == null) {
       return PageLayout(title: 'Kependudukan', body: _buildEmptyState());
     }
 
-    // --- PREPARE CHART DATA ---
+    // --- DATA PREPARATION ---
     final statusData = _mapToChartData(data.statusDistribution, colorMap: {
       'permanent': Colors.green,
       'active': Colors.green,
@@ -173,7 +171,7 @@ class _KependudukanPageState extends State<KependudukanPage> {
             children: [
               const SizedBox(height: 12),
 
-              // --- Card Statistik Utama ---
+              // --- HEADER STATISTIK ---
               DoubleHeaderCardWidget(
                 leftIcon: Icons.home_work_rounded,
                 leftTitle: 'Total Keluarga',
@@ -186,7 +184,7 @@ class _KependudukanPageState extends State<KependudukanPage> {
               const SizedBox(height: 24),
               const Divider(thickness: 0.5),
 
-              // --- Status Penduduk ---
+              // --- 1. STATUS PENDUDUK ---
               const SizedBox(height: 12),
               Builder(builder: (_) {
                 if (statusData.isEmpty) return _buildEmptyChartPlaceholder("Status Penduduk", Icons.info_outline);
@@ -200,7 +198,7 @@ class _KependudukanPageState extends State<KependudukanPage> {
               const SizedBox(height: 24),
               const Divider(thickness: 0.5),
 
-              // --- Jenis Kelamin ---
+              // --- 2. JENIS KELAMIN ---
               const SizedBox(height: 12),
               Builder(builder: (_) {
                 if (genderData.isEmpty) return _buildEmptyChartPlaceholder("Jenis Kelamin", Icons.wc);
@@ -214,7 +212,7 @@ class _KependudukanPageState extends State<KependudukanPage> {
               const SizedBox(height: 24),
               const Divider(thickness: 0.5),
 
-              // --- Pekerjaan ---
+              // --- 3. PEKERJAAN ---
               const SizedBox(height: 12),
               Builder(builder: (_) {
                 if (jobData.isEmpty) return _buildEmptyChartPlaceholder("Pekerjaan", Icons.work_outline);
@@ -228,7 +226,7 @@ class _KependudukanPageState extends State<KependudukanPage> {
               const SizedBox(height: 24),
               const Divider(thickness: 0.5),
 
-              // --- Peran Keluarga ---
+              // --- 4. PERAN KELUARGA ---
               const SizedBox(height: 12),
               Builder(builder: (_) {
                 if (rolesData.isEmpty) return _buildEmptyChartPlaceholder("Peran Keluarga", Icons.family_restroom);
@@ -242,12 +240,12 @@ class _KependudukanPageState extends State<KependudukanPage> {
               const SizedBox(height: 24),
               const Divider(thickness: 0.5),
 
-              // --- Agama ---
+              // --- 5. AGAMA ---
               const SizedBox(height: 12),
               Builder(builder: (_) {
                 if (religionData.isEmpty) return _buildEmptyChartPlaceholder("Agama", Icons.mosque);
                 return DoughnutChartWidget(
-                  icon: Icons.mosque_rounded, // Icon bisa disesuaikan general (misal account_balance)
+                  icon: Icons.mosque_rounded,
                   title: 'Agama',
                   data: religionData,
                 );
@@ -256,7 +254,7 @@ class _KependudukanPageState extends State<KependudukanPage> {
               const SizedBox(height: 24),
               const Divider(thickness: 0.5),
 
-              // --- Pendidikan ---
+              // --- 6. PENDIDIKAN ---
               const SizedBox(height: 12),
               Builder(builder: (_) {
                 if (eduData.isEmpty) return _buildEmptyChartPlaceholder("Pendidikan", Icons.school);

@@ -14,7 +14,8 @@ import '../../features/data_warga_rumah/presentation/pages/rumah_daftar_page.dar
 import '../../features/data_warga_rumah/presentation/pages/warga_daftar_page.dart';
 import '../../features/data_warga_rumah/presentation/pages/rumah_tambah_page.dart';
 import '../../features/data_warga_rumah/presentation/pages/warga_tambah_page.dart';
-import '../../features/data_warga_rumah/presentation/pages/keluarga_page.dart';
+import '../../features/data_warga_rumah/presentation/pages/keluarga_daftar_page.dart';
+import '../../features/data_warga_rumah/presentation/pages/keluarga_tambah_page.dart';
 
 // --- KEUANGAN (Laporan, Pemasukan, Pengeluaran, Tagihan) ---
 import '../../features/laporan_keuangan/presentation/pages/semua_pemasukan_page.dart';
@@ -64,6 +65,7 @@ class AppRoutes {
     '/kependudukan': (_) => const KependudukanPage(),
     // Data Warga & Rumah
     '/keluarga': (_) => const KeluargaDaftarPage(),
+    '/keluarga_tambah': (_) => const KeluargaTambahPage(),
     '/rumah_tambah': (_) => const RumahTambahPage(),
     '/warga_daftar': (_) => const WargaDaftarPage(),
     '/warga_tambah': (_) => const TambahWargaPage(),
