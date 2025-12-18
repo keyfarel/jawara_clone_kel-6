@@ -1,4 +1,4 @@
-// lib/features/data_warga_rumah/presentation/controllers/family_controller.dart
+// lib/features/data_warga_rumah/controllers/family_controller.dart
 
 import 'package:flutter/material.dart';
 import '../data/models/keluarga_model.dart';
@@ -16,7 +16,12 @@ class FamilyController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> loadFamilies() async {
+  // --- 1. LOAD FAMILIES (DENGAN CACHE) ---
+  Future<void> loadFamilies({bool force = false}) async {
+    if (!force && _families.isNotEmpty) {
+      return; 
+    }
+
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -29,6 +34,24 @@ class FamilyController extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  // --- 2. ADD FAMILY (AUTO UPDATE) ---
+  Future<bool> addFamily(Map<String, dynamic> data) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await repository.createFamily(data);
+      await loadFamilies(force: true); 
+      
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return false;
     }
   }
 }

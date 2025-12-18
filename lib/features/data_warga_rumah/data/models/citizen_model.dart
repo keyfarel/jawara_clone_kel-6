@@ -19,8 +19,9 @@ class CitizenModel {
   final String? occupation;
 
   // Nested Data
-  final String? address; // family -> house -> address
-  final String? houseName; // family -> house -> house_name
+  final String? address;     // family -> house -> address
+  final String? houseName;   // family -> house -> house_name
+  final String familyKk;     // family -> kk_number (Identitas Keluarga)
 
   CitizenModel({
     required this.id,
@@ -39,16 +40,24 @@ class CitizenModel {
     this.occupation,
     this.address,
     this.houseName,
+    required this.familyKk, // Wajib ada (default '-')
   });
 
   factory CitizenModel.fromJson(Map<String, dynamic> json) {
-    // Navigasi nested object untuk ambil alamat
+    // Navigasi nested object untuk ambil alamat & KK
     String? addr;
     String? hName;
+    String kkNum = '-'; // Default jika belum masuk KK
     
-    if (json['family'] != null && json['family']['house'] != null) {
-      addr = json['family']['house']['address'];
-      hName = json['family']['house']['house_name'];
+    if (json['family'] != null) {
+      // 1. Ambil Nomor KK sebagai identitas Keluarga
+      kkNum = json['family']['kk_number'] ?? '-';
+
+      // 2. Ambil Info Rumah
+      if (json['family']['house'] != null) {
+        addr = json['family']['house']['address'];
+        hName = json['family']['house']['house_name'];
+      }
     }
 
     return CitizenModel(
@@ -69,8 +78,10 @@ class CitizenModel {
       education: json['education'],
       occupation: json['occupation'],
       
+      // Data Nested
       address: addr ?? 'Alamat tidak tersedia',
       houseName: hName ?? '-',
+      familyKk: kkNum, // Simpan No KK di sini
     );
   }
 }

@@ -9,4 +9,8 @@ class FamilyRepository {
   Future<List<KeluargaModel>> fetchFamilies() async {
     return await service.getFamilies();
   }
+
+  Future<bool> createFamily(Map<String, dynamic> data) async {
+    return await service.createFamily(data);
+  }
 }

@@ -42,4 +42,28 @@ class FamilyService {
     
     throw Exception('Gagal load keluarga: ${response.statusCode}');
   }
+
+  Future<bool> createFamily(Map<String, dynamic> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+    final uri = Uri.parse('$baseUrl/families');
+
+    final response = await http.post(
+      uri,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      return true;
+    } else {
+      // Ambil pesan error dari API jika ada
+      final body = json.decode(response.body);
+      throw Exception(body['message'] ?? 'Gagal menambah keluarga');
+    }
+  }
 }

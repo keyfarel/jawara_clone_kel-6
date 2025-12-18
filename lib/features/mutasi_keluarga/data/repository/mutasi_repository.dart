@@ -27,4 +27,8 @@ class MutasiRepository {
   Future<List<Map<String, dynamic>>> getFamilyOptions() async {
     return await service.getFamilyOptions();
   }
+
+  Future<List<Map<String, dynamic>>> fetchCitizensByFamily(int familyId) async {
+    return await service.getCitizensByFamily(familyId);
+  }
 }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import '../../../../widgets/layouts/pages_layout.dart';
 import '../../controllers/mutasi_controller.dart';
+import '../../../dashboard/controllers/dashboard_controller.dart';
 
 class TambahMutasiPage extends StatefulWidget {
   const TambahMutasiPage({super.key});
@@ -15,13 +16,15 @@ class TambahMutasiPage extends StatefulWidget {
 class _TambahMutasiPageState extends State<TambahMutasiPage> {
   final _formKey = GlobalKey<FormState>();
 
+  // State Form
   String? selectedJenisLabel;
-  Map<String, dynamic>? selectedKeluargaData; // Object keluarga terpilih
+  Map<String, dynamic>? selectedKeluargaData;
+  int? selectedCitizenId; // ID Warga terpilih
   
   final TextEditingController alasanController = TextEditingController();
   DateTime? selectedDate;
 
-  // --- DATA STATIS (MAPPING) ---
+  // Mapping Frontend -> Backend
   final Map<String, String> mutationTypesMap = {
     'Pindah Domisili': 'move_out',
     'Meninggal Dunia': 'deceased',
@@ -32,29 +35,73 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
   @override
   void initState() {
     super.initState();
-    // PANGGIL DATA KELUARGA DARI API
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MutasiController>().loadFamilyOptions();
     });
   }
 
+  // Reset semua form
+  void _resetForm() {
+    setState(() {
+      selectedJenisLabel = null;
+      selectedKeluargaData = null;
+      selectedCitizenId = null;
+      alasanController.clear();
+      selectedDate = null;
+    });
+    // Reset list warga di controller juga (opsional)
+  }
+
+  void _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      final backendType = mutationTypesMap[selectedJenisLabel!]; 
+      final familyId = selectedKeluargaData!['id'] as int;
+      final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate!);
+
+      final controller = context.read<MutasiController>();
+
+      // Logic Khusus: Passing citizenId ke Controller
+      // (Pastikan controller.addMutation sudah diupdate untuk kirim JSON citizen_id)
+      final isSuccess = await controller.addMutation(
+        familyId: familyId,
+        citizenId: selectedCitizenId, // Kirim ID warga (bisa null)
+        mutationType: backendType!,
+        date: formattedDate,
+        reason: alasanController.text,
+      );
+
+      if (!mounted) return;
+
+      if (isSuccess) {
+        context.read<DashboardController>().refreshData(); // Refresh Dashboard
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Data mutasi berhasil disimpan!'), backgroundColor: Colors.green),
+        );
+        Navigator.pop(context); 
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(controller.errorMessage ?? 'Gagal menyimpan'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Watch Controller
     final controller = context.watch<MutasiController>();
-    final isLoading = controller.isLoading; // Loading saat submit
-    final isFamilyLoading = controller.isFamilyOptionsLoading; // Loading opsi
-    final familyList = controller.familyOptions; // Data opsi
+    
+    // Cek apakah jenis mutasi = Meninggal Dunia (Wajib pilih orang)
+    final isDeceasedType = mutationTypesMap[selectedJenisLabel] == 'deceased';
 
     return PageLayout(
       title: 'Buat Mutasi Keluarga',
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Card(
-          elevation: 4,
-          shadowColor: Colors.grey.withOpacity(0.3),
+          elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.grey.shade200)
           ),
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -63,106 +110,144 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 🔹 Jenis Mutasi (Tetap Statis)
+                  // 1. JENIS MUTASI
                   const Text('Jenis Mutasi', style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 6),
                   DropdownButtonFormField<String>(
                     value: selectedJenisLabel,
-                    decoration: _inputDecoration('-- Pilih Jenis Mutasi --'),
+                    decoration: _inputDecoration('Pilih Jenis Mutasi', Icons.category),
                     items: mutationTypesMap.keys.map((label) {
                       return DropdownMenuItem(value: label, child: Text(label));
                     }).toList(),
-                    onChanged: (value) => setState(() => selectedJenisLabel = value),
-                    validator: (value) => value == null ? 'Pilih jenis mutasi' : null,
+                    onChanged: (value) {
+                      setState(() {
+                         selectedJenisLabel = value;
+                         // Jika ganti jenis, validasi citizen mungkin berubah, jadi reset citizenId jika mau aman
+                         // selectedCitizenId = null; 
+                      });
+                    },
+                    validator: (value) => value == null ? 'Wajib dipilih' : null,
                   ),
                   const SizedBox(height: 16),
 
-                  // 🔹 Keluarga (SEKARANG DINAMIS)
+                  // 2. KELUARGA
                   const Text('Keluarga', style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 6),
                   DropdownButtonFormField<Map<String, dynamic>>(
                     value: selectedKeluargaData,
-                    decoration: _inputDecoration('-- Pilih Keluarga --'),
-                    // Jika loading, tampilkan item kosong atau loading text
-                    items: isFamilyLoading 
-                        ? [] 
-                        : familyList.map((keluarga) {
-                            return DropdownMenuItem<Map<String, dynamic>>(
-                              value: keluarga, // Map {'id': 15, 'nama': 'Bapak...'}
-                              child: Text(keluarga['nama']),
-                            );
-                          }).toList(),
-                    onChanged: isFamilyLoading 
-                        ? null // Disable saat loading
-                        : (value) => setState(() => selectedKeluargaData = value),
-                    validator: (value) => value == null ? 'Pilih keluarga' : null,
-                    // Hint Text berubah saat loading
-                    hint: isFamilyLoading 
-                        ? const Text("Memuat data keluarga...")
-                        : const Text("-- Pilih Keluarga --"),
+                    decoration: _inputDecoration('Pilih Keluarga', Icons.family_restroom),
+                    items: controller.familyOptions.map((keluarga) {
+                        return DropdownMenuItem<Map<String, dynamic>>(
+                          value: keluarga, 
+                          child: Text(keluarga['nama']),
+                        );
+                      }).toList(),
+                    onChanged: controller.isFamilyOptionsLoading 
+                        ? null 
+                        : (value) {
+                            setState(() {
+                              selectedKeluargaData = value;
+                              selectedCitizenId = null; // Reset warga saat ganti keluarga
+                            });
+                            // Load Warga Keluarga ini
+                            if (value != null) {
+                              controller.loadCitizensByFamily(value['id']);
+                            }
+                          },
+                    validator: (value) => value == null ? 'Wajib dipilih' : null,
                   ),
                   const SizedBox(height: 16),
 
-                  // ... (Field Alasan & Tanggal sama seperti sebelumnya) ...
-                  // 🔹 Alasan
-                  const Text('Alasan Mutasi', style: TextStyle(fontWeight: FontWeight.w600)),
+                  // 3. ANGGOTA KELUARGA (DINAMIS)
+                  // Hanya muncul jika keluarga sudah dipilih
+                  if (selectedKeluargaData != null) ...[
+                     Text(
+                       isDeceasedType 
+                          ? 'Anggota yang Meninggal (Wajib)' 
+                          : 'Anggota Spesifik (Opsional - Kosongkan jika sekeluarga)', 
+                       style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)
+                     ),
+                     const SizedBox(height: 6),
+                     DropdownButtonFormField<int>(
+                       value: selectedCitizenId,
+                       decoration: _inputDecoration(
+                         controller.isCitizensLoading ? 'Memuat data...' : 'Pilih Nama Warga', 
+                         Icons.person
+                       ),
+                       items: controller.citizensOptions.map((citizen) {
+                          return DropdownMenuItem<int>(
+                             value: citizen['id'],
+                             child: Text("${citizen['name']} (${citizen['family_role']})"),
+                          );
+                       }).toList(),
+                       onChanged: (val) => setState(() => selectedCitizenId = val),
+                       validator: (val) {
+                          // Validasi Khusus: Jika Meninggal, Wajib pilih orang
+                          if (isDeceasedType && val == null) {
+                             return "Wajib memilih siapa yang meninggal";
+                          }
+                          return null;
+                       },
+                     ),
+                     const SizedBox(height: 16),
+                  ],
+
+                  // 4. ALASAN
+                  const Text('Alasan / Keterangan', style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: alasanController,
                     maxLines: 3,
-                    decoration: _inputDecoration('Masukkan alasan disini...'),
-                    validator: (value) => (value == null || value.isEmpty)
-                        ? 'Alasan tidak boleh kosong'
-                        : null,
+                    decoration: _inputDecoration('Tulis alasan lengkap...', Icons.note),
+                    validator: (val) => (val == null || val.isEmpty) ? 'Wajib diisi' : null,
                   ),
                   const SizedBox(height: 16),
 
-                  // 🔹 Tanggal
-                  const Text('Tanggal Mutasi', style: TextStyle(fontWeight: FontWeight.w600)),
+                  // 5. TANGGAL
+                  const Text('Tanggal Kejadian', style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 6),
-                  GestureDetector(
+                  TextFormField(
+                    readOnly: true,
                     onTap: _pickDate,
-                    child: AbsorbPointer(
-                      child: TextFormField(
-                        decoration: _inputDecoration('Pilih tanggal'),
-                        controller: TextEditingController(
-                          text: selectedDate == null
-                              ? ''
-                              : DateFormat('dd/MM/yyyy').format(selectedDate!),
-                        ),
-                        validator: (_) => selectedDate == null ? 'Pilih tanggal' : null,
-                      ),
+                    decoration: _inputDecoration(
+                      selectedDate == null ? 'Pilih Tanggal' : DateFormat('dd MMMM yyyy', 'id_ID').format(selectedDate!),
+                      Icons.calendar_today
                     ),
+                    controller: TextEditingController(text: selectedDate == null ? '' : ' '), // Hack biar validator jalan
+                    validator: (_) => selectedDate == null ? 'Wajib dipilih' : null,
                   ),
                   const SizedBox(height: 24),
 
-                  // 🔹 Tombol Aksi
+                  // TOMBOL AKSI
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      ElevatedButton.icon(
-                        onPressed: _resetForm,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Reset'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[300],
-                          foregroundColor: Colors.black87,
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: _resetForm,
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+                          ),
+                          child: const Text("Reset"),
                         ),
                       ),
                       const SizedBox(width: 12),
-                      ElevatedButton.icon(
-                        onPressed: isLoading ? null : _submitForm,
-                        icon: isLoading 
-                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                            : const Icon(Icons.save),
-                        label: Text(isLoading ? 'Menyimpan...' : 'Simpan'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.indigo,
-                          foregroundColor: Colors.white,
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: controller.isLoading ? null : _submitForm,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+                          ),
+                          child: controller.isLoading 
+                             ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                             : const Text("Simpan Mutasi"),
                         ),
                       ),
                     ],
-                  ),
+                  )
                 ],
               ),
             ),
@@ -172,37 +257,26 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
     );
   }
 
-  // ... (Helper _inputDecoration, _resetForm, _pickDate sama seperti sebelumnya) ...
-  
-  InputDecoration _inputDecoration(String hint) {
+  // --- UI Helpers ---
+  InputDecoration _inputDecoration(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
+      prefixIcon: Icon(icon, color: Colors.grey),
       filled: true,
-      fillColor: Colors.grey[100],
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      fillColor: Colors.grey[50],
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade300)),
       enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade300)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Colors.indigo, width: 1.2)),
     );
   }
 
-  void _resetForm() {
-    setState(() {
-      selectedJenisLabel = null;
-      selectedKeluargaData = null;
-      alasanController.clear();
-      selectedDate = null;
-    });
-  }
-
   void _pickDate() async {
-    final now = DateTime.now();
-    final DateTime? picked = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate ?? now,
+      initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      builder: (context, child) {
+       builder: (context, child) {
         return Localizations(
           locale: const Locale('id', 'ID'),
           delegates: const [
@@ -215,43 +289,5 @@ class _TambahMutasiPageState extends State<TambahMutasiPage> {
       },
     );
     if (picked != null) setState(() => selectedDate = picked);
-  }
-
-  void _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      // 1. Ambil Data
-      final backendType = mutationTypesMap[selectedJenisLabel!]; 
-      final familyId = selectedKeluargaData!['id'] as int; // ID asli dari API
-      final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate!);
-
-      final controller = context.read<MutasiController>();
-
-      // 2. Submit
-      final isSuccess = await controller.addMutation(
-        familyId: familyId,
-        mutationType: backendType!,
-        date: formattedDate,
-        reason: alasanController.text,
-      );
-
-      if (!mounted) return;
-
-      if (isSuccess) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Data mutasi keluarga berhasil disimpan!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Navigator.pop(context); 
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(controller.errorMessage ?? 'Gagal menyimpan'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
   }
 }

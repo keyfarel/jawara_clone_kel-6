@@ -21,7 +21,8 @@ final List<MenuItem> appMenuItems = [
     children: [
       "Warga - Daftar",
       "Warga - Tambah",
-      "Keluarga",
+      "Keluarga - Daftar",
+      "Keluarga - Tambah",
       "Rumah - Daftar",
       "Rumah - Tambah",
     ],
